@@ -1,0 +1,6 @@
+group_type,group,code,display,system
+"Condition","Hypertension","59621000","Essential hypertension",http://snomed.info/sct"
+"Procedure","Medication Reconciliation","430193006","Medication Reconciliation","http://snomed.info/sct"
+"Medication","Anti-hypertensive medication","308136","amLODIPine 2.5 MG Oral Tablet","http://www.nlm.nih.gov/research/umls/rxnorm"
+"Observation","Blood pressure","85354-9","Blood Pressure","http://loinc.org"
+"Observation","BMI","39156-5","Body Mass Index","http://loinc.org"

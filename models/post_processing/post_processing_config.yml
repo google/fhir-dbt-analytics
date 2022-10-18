@@ -1,0 +1,143 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: 2
+
+models:
+
+  - name: metric_latest_execution
+
+    description: |
+      Unions the output of all metrics executed in a given pipeline run, and writes to a single
+      database table.
+
+    columns:
+
+      - name: metric_name
+        tests:
+          - relationships:
+              to: ref('metric_definition')
+              field: metric_name
+
+      - name: denominator_cohort
+        tests:
+          - not_null
+
+      - name: measure
+        tests:
+          - not_null
+
+
+  - name: metric
+
+    description: |
+      Generates a table with the latest values for each metric.
+
+      It reads from `metric_latest_execution` and performs two transformations:
+
+      1. Filters output to the time period specified by the `earliest_date` and `latest_date`
+      variables (static datasets) or `months_history` variable (dynamic datasets).
+
+      2. Imputes missing daily values for all metric segmentation combinations with data in the time
+      period.
+
+      This model includes a post-hook that drops all individual metric output tables after
+      execution.
+
+    columns:
+
+      - name: execution_id
+        description: Unique Id for each pipeline execution generated from GENERATE_UUID() BigQuery
+          function.
+
+      - name: execution_date
+        description: Date of the pipeline execution.
+
+      - name: execution_datetime
+        description: Datetime of the pipeline execution.
+
+      - name: metric_name
+        description: Unique name for the metric (e.g. patient_count)
+
+      - name: fhir_mapping
+        description: The FHIR mapping from which the FHIR data queried originates.
+
+      - name: source_system
+        description: Data source from which the FHIR data queried originates.
+
+      - name: data_transfer_type
+        description: Mechanism of data transfer from which the FHIR data queried originates.
+
+      - name: metric_date
+        description: Clinically-relevant local calendar date for which this metric value is
+          calculated. This field will be NULL for metrics that are not segmented by date (e.g.
+          organization_count).
+
+      - name: site
+        description: Provider code from which the FHIR data queried originates.
+
+      - name: slice_a
+        description: First metric segmentation group. A relevant variable that this metric is
+          grouped by to enable drill-down analysis.
+
+      - name: slice_b
+        description: Second metric segmentation group. A relevant variable that this metric is
+          grouped by to enable drill-down analysis.
+
+      - name: slice_c
+        description: Third metric segmentation group. A relevant variable that this metric is
+          grouped by to enable drill-down analysis.
+
+      - name: numerator
+        description: Numerator value for proportion or ratio calculation. This will be NULL for
+          count metrics.
+
+      - name: denominator_cohort
+        description: Count of patients in the cohort for which this metric is calculated. For
+          proportion and ratio calculations this will be the denominator.
+
+      - name: measure
+        description: Value of the metric calculation for a given segmentation group.
+
+
+  - name: metric_all_executions
+
+    description: |
+      Incrementally inserts all rows from `metric_latest_execution` with each execution, to maintain
+      a history of all metric execution results.
+
+      This model is disabled by default, but can be enables by setting the
+      `persist_all_metric_executions` project variable to TRUE.
+
+
+  - name: metric_execution_log
+
+    description: |
+      Creates a table logging metadata for each execution of the pipeline.
+
+    columns:
+
+      - name: execution_id
+        description: Unique Id for each pipeline execution generated from GENERATE_UUID() BigQuery
+          function.
+
+      - name: execution_date
+        description: Date of the pipeline execution.
+
+      - name: cohort
+        description: The cohort over which metrics were calculated for this pipeline execution. 
+
+      - name: metric
+        description: Array of fields with metadata for each metric that was included in this
+          pipeline execution.

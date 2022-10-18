@@ -1,0 +1,133 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: 2
+
+models:
+
+  - name: fhir_table_list
+
+    description: |
+      Creates a table that lists all FHIR resource tables that are located in the `database` and
+      `schema` specified within `dbt_project.yml`.
+
+    columns:
+
+      - name: bq_project
+        description: BigQuery project name (equivalent of dbt database).
+
+      - name: bq_dataset
+        description: BigQuery dataset name (equivalent of dbt schema).
+
+      - name: bq_table
+        description: BigQuery table name.
+
+      - name: fully_qualified_bq_table
+        description: Full BigQuery table name including project, dataset and table.
+
+      - name: fhir_resource
+        description: FHIR resource name.
+
+      - name: map_name
+        description: Name of mapping that generated FHIR resource.
+
+      - name: latest_version
+        description: Flag for whether this is the latest table for a given FHIR mapping.
+
+      - name: creation_time
+        description: Timestamp for creation of table.
+
+
+  - name: metric_definition
+
+    description: |
+      Loops through all metadata recorded for models within the `metrics/` folder, writing this
+      information to a database table.
+
+    columns:
+
+      - name: metric_path
+        description: Location of this model within the dbt project.
+
+      - name: metric_name
+        description: Unique name for the metric (e.g. *patient_count*).
+
+      - name: description
+        description: Plain English description of the metric.
+
+      - name: short_description
+        description: Shortened version of the metric description for display in tables. Aim to limit
+          to 32 characters.
+
+      - name: primary_resource
+        description: FHIR resource that this metric is calculated over. In some cases a metric may
+          join across multiple FHIR resources. This field should represent the main resource from
+          which the cohort for the metric is calculated.
+
+      - name: primary_fields
+        description: Primary FHIR fields that this metric is calculated over.
+
+      - name: secondary_resources
+        description: List of all FHIR resources that this metric is calculated over other than the
+          *primary_resource*.
+
+      - name: category
+        description: Category to associate this metric with, enabling grouping/viewing metrics
+          withiin specific categories (e.g. *Referential integrity*).
+
+      - name: calculation
+        description: Type of calculation performed on the metric measure value. This defines how
+          downstream systems should aggregate the output.
+
+      - name: metric_date_field
+        description: FHIR field used to generate the metric_date in the output (e.g.
+          *Encounter.period.start*)
+
+      - name: metric_date_description
+        description: Plain english description of the metric date calculation used (e.g. *Encounter
+          start date*)
+
+      - name: dimension_a_name
+        description: Name of first metric segmentation group. This is a relevant variable that the
+          metric is grouped by to enable drill-down analysis.
+
+      - name: dimension_a_description
+        description: Description of first metric segmentation group.
+
+      - name: dimension_b_name
+        description: Name of second metric segmentation group. This is a relevant variable that the
+          metric is grouped by to enable drill-down analysis.
+
+      - name: dimension_b_description
+        description: Description of second metric segmentation group.
+
+      - name: dimension_c_name
+        description: Name of third metric segmentation group. This is a relevant variable that the
+          metric is grouped by to enable drill-down analysis.
+
+      - name: dimension_c_description
+        description: Description of third metric segmentation group.
+
+
+  - name: project_variables
+
+    description: |
+      Creates a single row table in the database containing values for all project variables.
+
+    columns:
+
+      - name: looker_studio_url
+        description: URL to create a Looker Studio dashboard displaying the metric outputs. The URL
+          contains your bigquery project and dataset (defined in profiles.yml) as parameters. Copy
+          this URL into a web browser to create a new dashboard.

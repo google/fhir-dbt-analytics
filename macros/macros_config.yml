@@ -1,0 +1,653 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: 2
+
+macros:
+
+# Cohort macros
+
+  - name: get_snapshot_date
+
+    description: |
+      Returns the snapshot date declared by the `cohort_snapshot_date` variable.
+
+      If cohort_snapshot_date = 'today', then CURRENT_DATE is returned.
+
+
+  - name: alive
+
+    description: |
+      Evaluates whether a patient was alive on a given date.
+
+
+  - name: age
+
+    description: |
+      Calculates a patient's age on a given date from their date of birth.
+
+      By default this macro will calculate the patient's age as of today's date. If a date is
+      specified by the `cohort_snapshot_date` project variable, then the macro will calculate the
+      patient's age on that date.
+
+    arguments:
+      - name: date_of_birth
+        type: string
+        description: |
+          Patient's date of birth. Default argument is the `birthDate` field from the Patient FHIR
+          resource.
+
+
+  - name: has_encounter
+
+    description: |
+      Evaluates whether a patient had an encounter in the past.
+
+      By default the evaluation will be based on today's date, looking back. If a date is specified
+      by the `cohort_snapshot_date` project variable, then the macro will only look for encounters
+      prior to that date.
+
+    arguments:
+      - name: class
+        type: list
+        description: |
+          Restrict the search to a list of specified encounter types as per HL7
+          [ActEncounterCode](http://terminology.hl7.org/ValueSet/v3-ActEncounterCode) value set,
+          noting case-sensitivity.
+      - name: lookback
+        type: string
+        description: |
+          Restrict the search for an encounter to this time interval back from the
+          `cohort_snapshot_date`. Value must be in the format "int64 date_part", using one of the
+          following supported date_part: DAY; WEEK; MONTH; QUARTER; YEAR (e.g. "3 MONTH)".
+
+
+  - name: has_condition
+
+    description: |
+      Evaluates whether a patient has a condition based on codes defined in
+      `clinical_code_groups.csv`.
+
+      By default the evaluation will be based on today's date and therefore include condition codes
+      recorded up to today. If a date is specified by the `cohort_snapshot_date` project variable,
+      then the macro will ignore codes recorded after this snapshot date to determine whether the
+      patient had the condition at that time.
+
+    arguments:
+      - name: condition
+        type: string
+        description: |
+          Name of the condition as defined in the `group` field within `clinical_code_groups.csv`.
+      - name: lookback
+        type: string
+        description: |
+          Restrict the search for a condition to this time interval back from the
+          `cohort_snapshot_date`. Value must be in the format "int64 date_part", using one of the
+          following supported date_part: DAY; WEEK; MONTH; QUARTER; YEAR (e.g. "3 MONTH)".
+      - name: code_system
+        type: string
+        description: |
+          Restrict the search for a condition to only codes from this `code_system` in
+          `clinical_code_groups.csv`.
+
+
+  - name: has_procedure
+
+    description: |
+      Evaluates whether a patient had a procedure based on codes defined in
+      `clinical_code_groups.csv`.
+
+      By default the evaluation will be based on today's date and therefore include procedure codes
+      recorded up to today. If a date is specified by the `cohort_snapshot_date` project variable,
+      then the macro will ignore codes recorded after this snapshot date to determine whether the
+      patient had the procedure prior to that time.
+
+    arguments:
+      - name: procedure
+        type: string
+        description: |
+          Name of the procedure as defined in the `group` field within `clinical_code_groups.csv`.
+      - name: lookback
+        type: string
+        description: |
+          Restrict the search for a procedure to this time interval back from the
+          `cohort_snapshot_date`. Value must be in the format "int64 date_part", using one of the
+          following supported date_part: DAY; WEEK; MONTH; QUARTER; YEAR (e.g. "3 MONTH)".
+      - name: code_system
+        type: string
+        description: |
+          Restrict the search for a procedure to only codes from this `code_system` in
+          `clinical_code_groups.csv`.
+
+
+  - name: has_observation
+
+    description: |
+      Evaluates whether a patient had an observation based on codes defined in
+      `clinical_code_groups.csv`.
+
+      This search can be further refined by evaluating whether the value for that observation was
+      above or below a specified value.
+
+      By default the evaluation will be based on today's date and therefore include observation
+      codes recorded up to today. If a date is specified by the `cohort_snapshot_date` project
+      variable, then the macro will ignore codes recorded after this snapshot date to determine
+      whether the patient had the observation prior to that time.
+
+    arguments:
+      - name: observation
+        type: string
+        description: |
+          Name of the observation as defined in the `group` field within `clinical_code_groups.csv`
+      - name: value_less_than
+        type: float
+        description: |
+          The observation value (`Observation.value.quantity.value`) must be less than this value.
+      - name: value_greater_than
+        type: float
+        description: |
+          The observation value (`Observation.value.quantity.value`) must be greater than this
+          value.
+      - name: lookback
+        type: string
+        description: |
+          Restrict the search for an observation to this time interval back from the
+          `cohort_snapshot_date`. Value must be in the format "int64 date_part", using one of the
+          following supported date_part: DAY; WEEK; MONTH; QUARTER; YEAR (e.g. "3 MONTH)".
+      - name: code_system
+        type: string
+        description: |
+          Restrict the search for a observation to only codes from this `code_system` in
+          `clinical_code_groups.csv`.
+
+
+  - name: has_medication_request
+
+    description: |
+      Evaluates whether a patient had a medication request based on codes defined in
+      `clinical_code_groups.csv`.
+
+      By default the evaluation will be based on today's date and therefore include medication
+      requests recorded up to today. If a date is specified by the `cohort_snapshot_date` project
+      variable, then the macro will ignore medication requests recorded after this snapshot date to
+      determine whether the patient had medication requested prior to that time.
+
+    arguments:
+      - name: medication
+        type: string
+        description: |
+          Name of the medication as defined in the `group` field within `clinical_code_groups.csv`.
+      - name: lookback
+        type: string
+        description: |
+          Restrict the search for a medication request to this time interval back from the
+          `cohort_snapshot_date`. Value must be in the format "int64 date_part", using one of the
+          following supported date_part: DAY; WEEK; MONTH; QUARTER; YEAR (e.g. "3 MONTH)".
+      - name: code_system
+        type: string
+        description: |
+          Restrict the search for a medication to only codes from this `code_system` in
+          `clinical_code_groups.csv`.
+
+
+# FHIR analysis macros
+
+  - name: get_column_or_default
+
+    description: |
+      Returns a specified column if it exists within a resource, defaulting to NULL if it does not
+      exist.
+
+    arguments:
+      - name: column_name
+        type: string
+        description: |
+          Fully qualified column name to evaluate (e.g. code.coding.display).
+      - name: fhir_resource
+        type: string
+        description: |
+          The FHIR resource to check whether the specified `column_name` exists.
+
+          If not specified, the macro will default to using the `primary_resource` for the metric.
+      - name: table_alias
+        type: string
+        description: |
+          Alias assigned to the table in which `column_name` is located. Only required if
+          disambiguation of colums is needed in the query join.
+
+
+  - name: code_from_codeableconcept
+
+    description: |
+      Extracts the code for a specified code system from a FHIR codeableConcept field.
+
+      If coding.code is not informative, then can return coding.display instead by setting the
+      return_display argument to TRUE.
+
+    arguments:
+      - name: field_name
+        type: string
+        description: |
+          FHIR field that is of type codeableConcept.
+      - name: code_system
+        type: string
+        description: |
+          Coding system to filter the search of the codeableConcept field.
+      - name: return_display
+        type: boolean
+        description: |
+          If set to TRUE, the macro will return the coding.display field from the codeableConcept.
+
+
+  - name: try_code_from_codeableconcept
+
+    description: |
+      Attempts to extract a code for a specified code system from a FHIR codeableConcept field.
+
+      If the field specified does not exist in the table, then "UNK" is returned.
+
+      If coding.code is not informative, then can return coding.display instead by setting the
+      return_display argument to TRUE.
+
+    arguments:
+      - name: field_name
+        type: string
+        description: |
+          FHIR field that is of type codeableConcept.
+      - name: code_system
+        type: string
+        description: |
+          Coding system to filter the search of the codeableConcept field.
+      - name: fhir_resource
+        type: string
+        description: |
+          The FHIR resource to check whether the specified `field_name` exists.
+
+          If not specified, the macro will default to using the `primary_resource` for the metric.
+      - name: index
+        type: int
+        description: |
+          For codeableConcept fields that are repeatable, return the field specified by this index
+          value
+      - name: return_display
+        type: boolean
+        description: |
+          If set to TRUE, the macro will return the coding.display field from the codeableConcept.
+
+
+  - name: has_code_from_code_system
+
+    description: |
+      Evaluates whether a non-null, non-empty code is present for a specified code system from a
+      FHIR codeableConcept field.
+
+      It returns integer flag of 1 if a code exists, and 0 if not.
+
+    arguments:
+      - name: field_name
+        type: string
+        description: |
+          FHIR field to evaluate that is of type codeableConcept.
+      - name: code_system
+        type: string
+        description: |
+          Coding system to filter the search of the codeableConcept field.
+
+
+  - name: try_has_code_from_code_system
+
+    description: |
+      This macro tries to evaluate whether a non-null, non-empty code is present for a specified
+      code system from a FHIR codeableConcept field.
+
+      it returns integer flag of 1 if a code exists, and 0 if not.
+
+      If the field specified does not exist in the table, then 0 is returned.
+
+    arguments:
+      - name: field_name
+        type: string
+        description: |
+          FHIR field to evaluate that is of type codeableConcept.
+      - name: code_system
+        type: string
+        description: |
+          Coding system to filter the search of the codeableConcept field.
+      - name: fhir_resource
+        type: string
+        description: |
+          The FHIR resource to check whether the specified `field_name` exists.
+
+          If not specified, the macro will default to using the `primary_resource` for the metric.
+      - name: index
+        type: int
+        description: |
+          For codeableConcept fields that are repeatable, return the field specified by this index
+          value
+
+
+  - name: sql_comparison_expression
+
+    description: |
+      Converts a string or list of codes into a format compatible with a SQL comparison expression.
+
+      If the input is a string then format as a sql equality expression. Example: column = 'string'
+
+      If the input is a list then format as a sql "IN" expression with comma-separated values
+      enclosed within parentheses. Example: column IN ('list_item_1', 'list_item_2')
+
+    arguments:
+      - name: code_string_or_list
+        type: string or list
+        description: |
+          String or list of strings to evaluate field against.
+
+
+  - name: source_system
+
+    description: |
+      Extracts the data source from which the FHIR data queried originates.
+
+
+  - name: site
+
+    description: |
+      Extracts the provider code from which the FHIR data queried originates.
+
+
+  - name: data_transfer_type
+
+    description: |
+      Extracts the mechanism of data transfer from which the FHIR data queried originates.
+
+
+  - name: data_timezone
+
+    description: |
+      Extracts the timezone code from which the FHIR data queried originates.
+
+
+  - name: local_date
+
+    description: |
+      Prints SQL for returning the local date from a specified date, datetime or timestamp column.
+
+      Local date is the date where the clinical event took place.
+
+      The macro uses the `timezone_default` project variable.
+
+    arguments:
+      - name: date_column
+        type: String, date, datetime or timestamp
+        description: |
+          String, date, datetime or timestamp column from which to derive the local date.
+      - name: date_column_data_type
+        type: string
+        description: |
+          The datatype of `date_column`.
+
+
+  - name: metric_date
+
+    description: |
+      Prints SQL for returining the local date from an ordered list of FHIR fields.
+
+      It is used for returning the most clinically-relevant local date for a given FHIR resource.
+
+    arguments:
+      - name: metric_date_columns
+        type: list
+        description: |
+          Ordered list of columns to use to derive the metric date.
+      - name: date_column_data_type
+        type: string
+        description: |
+          The datatype of `metric_date_columns`.
+
+
+  - name: active_encounters
+
+    description: |
+      Prints SQL for extracting active encounters from `Anchor` and `Enc` common table expressions
+      used in metrics.
+
+      For each date in the `Anchor` table, encounters that spanned (partially or fully) that date
+      are joined.
+
+      Ambulatory encounters are joined on matching period.start only.
+
+      Long stay encounters >90 days are excluded to reduce the impact of encounters that are
+      complete but period.end is missing or recorded incorrectly.
+
+
+  - name: encounter_class_group
+
+    description: |
+      Aggregates encounter class codes into two broader groups (Ambulatory and
+      Non-Ambulatory).
+
+    arguments:
+      - name: class_code
+        type: string
+        description: |
+          Encounter class code from
+          [ActEncounterCode](http://terminology.hl7.org/ValueSet/v3-ActEncounterCode)
+
+
+# FHIR view macros
+
+  - name: query_fhir_table
+
+    description: |
+      Prints SQL for selecting from a FHIR resource table with appended metadata columns.
+
+    arguments:
+      - name: fhir_resource
+        type: string
+        description: |
+          The FHIR resource to be queried.
+
+
+  - name: metadata_cols
+
+    description: |
+      Prints SQL for metadata columns to be appended to the FHIR resource views.
+
+
+  - name: create_dummy_table
+
+    description: |
+      Prints SQL to select dummy values when no tables exist for a FHIR resource.
+
+
+  - name: fhir_resource_view_expression
+
+    description: |
+      Prints SQL for views over a FHIR resource.
+
+      It is used by models within the `fhir_resources` folder to generate FHIR resource views
+      (e.g Patient_view.sql).
+
+
+  - name: fhir_resource_table_expression
+
+    description: |
+      Prints SQL for a common table expression for a FHIR resource.
+
+      It is used by models within the `fhir_resources` folder to generate FHIR resource common
+      table expressions (CTE) that incorporate patient cohorting.
+
+
+# Infrastructure macros
+
+  - name: fhir_resource_exists
+
+    description: |
+      Returns TRUE if a specified FHIR resource exists within the source schema defined by the
+      `database` and `schema` variables in dbt_project.yml.
+
+    arguments:
+      - name: test_fhir_resource
+        type: string
+        description: |
+          FHIR resource to evaluate in Pascal case (e.g AllergyIntolerance).
+
+
+  - name: column_exists
+
+    description: |
+      Returns TRUE if a specified column exists within a FHIR resource view.
+
+    arguments:
+      - name: column_name
+        type: string
+        description: |
+          Fully qualified column name to evaluate (e.g. code.coding.display).
+      - name: fhir_resource
+        type: string
+        description: |
+          The FHIR resource to check whether the specified `column_name` exists.
+
+          If not specified, the macro will default to using the `primary_resource` for the metric.
+
+
+  - name: column_data_type
+
+    description: |
+      Returns the data type of a specified column in a source table.
+
+    arguments:
+      - name: column_name
+        type: string
+        description: |
+          Fully qualified column name to evaluate (e.g. code.coding.display).
+      - name: source_table
+        type: string
+        description: |
+          The source table in which `column_name` exists.
+
+
+  - name: model_metadata
+
+    description: |
+      Returns the value for a specified key defined in a dbt model's metadata config.
+
+    arguments:
+      - name: meta_key
+        type: string
+        description: |
+          Meta key for which to return the value (e.g. category)
+      - name: model_name
+        type: string
+        description: |
+          The dbt model from which to extract the metadata value.
+
+          If not specified, the macro will default to using the model within which this macro is
+          called.
+
+
+  - name: is_public_synthea_dataset
+
+    description: |
+      Returns TRUE if project schema and database variables are pointing to the [Synthea public
+      BiqQuery dataset](https://console.cloud.google.com/marketplace/details/mitre/synthea-fhir)
+
+
+  - name: get_source_table_name
+
+    description: |
+      Returns FHIR resource name in the correct case depending on the source dataset.
+
+      If the source dataset is the Synthea public BiqQuery dataset, then FHIR resource table names
+      are converted to snake case (e.g. allergy_intolerance).
+
+    arguments:
+      - name: fhir_resource
+        type: string
+        description: |
+          FHIR resource name in Pascal case (e.g AllergyIntolerance).
+
+
+  - name: get_metric_date_columns
+
+    description: |
+      Returns the metric date columns from metric metadata, with corrected values for the Synthea
+      public BigQuery dataset.
+
+
+  - name: get_source_specific_category_index
+    description: |
+      Returns the index for category codes, with the correct value for the Synthea public BigQuery
+      dataset.
+
+
+# Metric processing macros
+
+  - name: get_metric_tables
+
+    description: |
+      Prints SQL for selecting metric output tables that have been materialized.
+
+ 
+  - name: union_metric_tables
+
+    description: |
+      Prints SQL that unions all metric output tables that have been materialized.
+
+      It is used for unioning all metric outputs and writing to the `metric` table during metric
+      post-processing.
+
+
+  - name: drop_metric_tables
+
+    description: |
+      Prints SQL which drops individual metric output tables.
+
+      It is used to drop these tables after the outputs have been written to the `metric` table
+      during metric post-processing.
+
+
+# String macros
+
+  - name: snake_case
+
+    description: |
+      Returns a snake_case version of a CamelCase string.
+
+    arguments:
+      - name: str
+        type: string
+        description: |
+          String in CamelCase to be converted to snake_case.
+
+
+# Data visualization macros
+
+  - name: linking_api_datasource
+
+    description: |
+      Returns a URL to create a Looker Studio dashboard from a template dashboard using the Looker
+      Studio [Linking API](https://developers.google.com/looker-studio/integrate/linking-api).
+
+      This URL contains the bigquery project and dataset, as defined in profiles.yml, as parameters.
+
+    arguments:
+      - name: report_id
+        type: string
+        description: |
+          Report ID of the Looker studio template dashboard to be cloned.
+      - name: datasource_list
+        type: list
+        description: |
+          List of Looker Studio datasources used by the template dashboard.

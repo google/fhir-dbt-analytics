@@ -1,0 +1,79 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: 2
+
+models:
+
+  - name: metric_by_slices_system_date
+
+    description: |
+      SQL view that joins the latest metric outputs (`metric`) with metric metadata
+      (`metric_definition`).
+
+      Each row is one metric calculation for a single source system, unique combination of slice
+      values, and local date.
+
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "SAFE_DIVIDE(numerator, denominator_cohort) = measure"
+          condition: "calculation IN ('PROPORTION', 'RATIO')"
+      - dbt_expectations.expect_column_pair_values_to_be_equal:
+          column_A: denominator_cohort
+          column_B: measure
+          row_condition: "calculation = 'COUNT'"
+
+    columns:
+
+      - name: calculation
+        tests:
+          - accepted_values:
+              values: ["COUNT", "PROPORTION", "RATIO", "DISTRIBUTION"]
+
+      - name: numerator
+        tests:
+          - dbt_expectations.expect_column_values_to_be_null:
+              row_condition: "calculation = 'COUNT'"
+          - dbt_expectations.expect_column_values_to_not_be_null:
+              row_condition: "calculation IN ('PROPORTION', 'RATIO')"
+
+      - name: denominator_cohort
+        tests:
+          - not_null
+
+      - name: measure
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1
+              row_condition: "calculation IN ('PROPORTION', 'RATIO')"
+
+
+  - name: metric_by_system_date
+
+    description: |
+      Creates a SQL view that joins the latest metric outputs (`metric`) with metric metadata
+      (`metric_definition`), and aggregates by source system and metric date.
+
+      Each row in this view is one metric calculation for a single source system and local date.
+
+
+  - name: metric_by_system
+
+    description: |
+      Creates a SQL view that joins the latest metric outputs (`metric`) with metric metadata
+      (`metric_definition`), and aggregates by metric date.
+
+      Each row in this view is one metric calculation for a single source system over the entire
+      analysis period.

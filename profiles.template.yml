@@ -1,0 +1,34 @@
+# 1) Rename this file to profiles.yml.
+# 2) Fill in your GCP project name and desired dataset name.
+# 3) These settings are meant for "oauth via gcloud" authentication. You need to follow these
+#    instructions:
+#    https://docs.getdbt.com/reference/warehouse-setups/bigquery-setup#local-oauth-gcloud-setup
+#    You can also check other options for BigQuery authentication in
+#    https://docs.getdbt.com/reference/warehouse-setups/bigquery-setup#authentication-methods.
+
+fhir_dbt_analytics:
+  target: dev
+  outputs:
+    dev:
+      # Name of your GCP project in which the dataset will be created and BigQuery jobs run.
+      # See here for creating a new GCP project:
+      # https://cloud.google.com/resource-manager/docs/creating-managing-projects
+      project: <TODO>
+
+      # Name of the dataset that dbt creates and writes to.
+      # Recommended: dbt_<username>. See here for more details:
+      # https://docs.getdbt.com/docs/get-started/connection-profiles#understanding-target-schemas
+      dataset: dbt_<your username>
+
+      # See https://docs.getdbt.com/docs/get-started/connection-profiles#understanding-threads.
+      threads: 4
+
+      # Consider configuring location, see
+      # https://docs.getdbt.com/reference/warehouse-setups/bigquery-setup#dataset-locations
+      # location: <TODO>
+
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      method: oauth
+      priority: interactive
+      type: bigquery

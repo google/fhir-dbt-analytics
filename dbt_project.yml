@@ -1,0 +1,50 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Project configurations
+
+name: 'fhir_dbt_analytics'
+version: '1.0.0'
+config-version: 2
+profile: 'fhir_dbt_analytics'
+
+# Project variables
+
+vars:
+  organization: "Synthea"  # Name of the organization or business unit which owns the FHIR data. Used for titles in the analytics reports. [string]
+  database: "bigquery-public-data"  # Name of the Google Cloud project that contains the BigQuery data. Used to connect to your FHIR data. [string]
+  schema: "fhir_synthea"  # Name of the BigQuery dataset storing the FHIR data. Used to connect to your FHIR data. [string]
+  source_system_default: "Synthea-EHR"  # Default to populate as the 'source_system' in metrics when this is not extracted from the FHIR data. [string]
+  site_default: "Synthea General Hospital"  # Default to populate as the 'site' in metrics when this is not extracted from the FHIR data. [string]
+  data_transfer_type_default: "BigQuery"  # Default to populate as the 'data_transfer_type' in metrics when this is not extracted from the FHIR data. [string]
+  timezone_default: "America/New_York"  # Default time zone for this dataset. The IANA time-zone name. For example, "Europe/London". [string]
+  static_dataset: TRUE  # TRUE if the dataset is static; FALSE if the dataset is being dynamically updated. [boolean]
+  earliest_date: "2009-10-01"  # If static_dataset = TRUE then input the earliest date for the data. This is used to restrict metric output date ranges. Use format: "YYYY-MM-DD". [string]
+  latest_date: "2019-09-23"  # If static_dataset = TRUE then input the latest date for the data. This is used to restrict metric output date ranges. Use format: "YYYY-MM-DD". [string]
+  months_history: 12  # For a dynamic dataset (static_dataset = FALSE) the number of months in the past from current_date to include in metric output. [integer]
+  persist_all_metric_executions: FALSE  # Whether to enable metric_all model which incrementally adds the output from every execution of the metrics pipeline. [boolean]
+  cohort: "all_patients"  # Run metrics for a specific group of patients defined in models/cohorts/. For example, “adults”. Use “all_patients” to disable cohort filtering. [string]
+  cohort_snapshot_date: "today"  # Date on which to evaluate patient membership of cohort. Default of "today" will evaluate membership as of today using CURRENT_DATE(). Use format: "YYYY-MM-DD". [string]
+
+
+# Model configurations
+
+models:
+  fhir_dbt_analytics:
+    metadata:
+      +materialized: table
+    metrics:
+      +materialized: table
+    metric_views:
+      +materialized: view
