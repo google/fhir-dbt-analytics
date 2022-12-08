@@ -30,14 +30,6 @@ models:
               to: ref('metric_definition')
               field: metric_name
 
-      - name: denominator_cohort
-        tests:
-          - not_null
-
-      - name: measure
-        tests:
-          - not_null
-
 
   - name: metric
 
@@ -106,6 +98,8 @@ models:
       - name: denominator_cohort
         description: Count of patients in the cohort for which this metric is calculated. For
           proportion and ratio calculations this will be the denominator.
+        tests:
+          - not_null
 
       - name: measure
         description: Value of the metric calculation for a given segmentation group.

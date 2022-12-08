@@ -30,6 +30,10 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Encounter') }}
+-- depends_on: {{ ref('Patient') }}
+{%- if fhir_resource_exists('Encounter') %}
+
 WITH
   A AS (
     SELECT
@@ -70,3 +74,7 @@ SELECT
   CAST(SAFE_DIVIDE(SUM(1 - reference_patient_resolved), COUNT(id)) AS FLOAT64) AS measure
 FROM A
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+{%- else %}
+{{- empty_metric_output() -}}
+{%- endif -%}

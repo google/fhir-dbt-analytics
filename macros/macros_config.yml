@@ -592,6 +592,14 @@ macros:
       dataset.
 
 
+  - name: empty_metric_output
+
+    description: |
+      Prints SQL select statement that writes a default row as the output of a metric. This is used
+      when a metric is not evaluated because the required FHIR resources do not exist in the
+      dataset.
+
+
 # Metric processing macros
 
   - name: get_metric_tables

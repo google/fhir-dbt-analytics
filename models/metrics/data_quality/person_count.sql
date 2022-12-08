@@ -30,6 +30,10 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Person') }}
+-- depends_on: {{ ref('Encounter') }}
+{%- if fhir_resource_exists('Person') %}
+
 WITH
   A AS (
     SELECT
@@ -73,3 +77,7 @@ SELECT
   CAST(COUNT(DISTINCT id) AS FLOAT64) AS measure
 FROM A
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+{%- else %}
+{{- empty_metric_output() -}}
+{%- endif -%}
