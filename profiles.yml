@@ -1,6 +1,5 @@
-# 1) Rename this file to profiles.yml.
-# 2) Fill in your GCP project name and desired dataset name.
-# 3) These settings are meant for "oauth via gcloud" authentication. You need to follow these
+# 1) Fill in your GCP project name and desired dataset name.
+# 2) These settings are meant for "oauth via gcloud" authentication. You need to follow these
 #    instructions:
 #    https://docs.getdbt.com/reference/warehouse-setups/bigquery-setup#local-oauth-gcloud-setup
 #    You can also check other options for BigQuery authentication in

@@ -33,7 +33,7 @@ cd fhir-dbt-analytics
 
 ## Setup dbt outputs
 
-Rename `profiles.template.yml` to `profiles.yml` and fill in the project and dataset as indicated in the file.
+Open `profiles.yml` and fill in the project and dataset as indicated in the file.
 
 
 ## Setup source data
