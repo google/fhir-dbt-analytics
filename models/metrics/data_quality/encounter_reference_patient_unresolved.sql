@@ -48,14 +48,14 @@ WITH
       (
         SELECT SIGN(COUNT(*))
         FROM {{ ref('Patient') }} AS P
-        {%- if column_exists('subject.patientId', 'Encounter') %}
+        {%- if column_exists('subject.patientId') %}
         WHERE E.subject.patientId = P.id
-        {%- elif column_exists('subject.reference', 'Encounter') %}
+        {%- elif column_exists('subject.reference') %}
         WHERE E.subject.reference = P.id AND E.subject.type = 'Patient'
         {%- else %}
         WHERE FALSE
         {%- endif %}
-      ) AS reference_patient_resolved    
+      ) AS reference_patient_resolved
     FROM {{ ref('Encounter') }} AS E
   )
 SELECT

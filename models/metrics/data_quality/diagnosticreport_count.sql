@@ -46,8 +46,10 @@ WITH
       data_transfer_type,
       {{ get_column_or_default('status') }} AS status,
       {{ try_code_from_codeableconcept(
-        'category', 'https://g.co/fhir/harmonized/diagnostic_report/category',
-        index = get_source_specific_category_index()) }} AS category
+        'category',
+        'https://g.co/fhir/harmonized/diagnostic_report/category',
+        index = get_source_specific_category_index()
+      ) }} AS category
     FROM {{ ref('DiagnosticReport') }}
   )
 SELECT
