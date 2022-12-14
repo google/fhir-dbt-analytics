@@ -1,6 +1,6 @@
 # Getting started
 
-#### **Getting Started** &nbsp; | &nbsp; [Project overview](docs/project_overview.md) &nbsp; | &nbsp; [Extending the project](docs/extending_the_project.md) &nbsp; | &nbsp; [Feedback](http://www.google.com/url?sa=D&q=https://docs.google.com/forms/d/e/1FAIpQLScU0WXCXA7xOX7kGr6QSW9BNMZwHswf5zq10MfRnnZJYQ6L8g/viewform)
+#### **Getting Started** &nbsp; | &nbsp; [Project overview](readme/project_overview.md) &nbsp; | &nbsp; [Extending the project](readme/extending_the_project.md) &nbsp; | &nbsp; [Feedback](http://www.google.com/url?sa=D&q=https://docs.google.com/forms/d/e/1FAIpQLScU0WXCXA7xOX7kGr6QSW9BNMZwHswf5zq10MfRnnZJYQ6L8g/viewform)
 
 ---
 
