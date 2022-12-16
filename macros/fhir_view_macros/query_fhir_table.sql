@@ -6,5 +6,5 @@ SELECT
     CAST(NULL AS STRING) AS fhir_mapping,
     {{- metric_date(metric_date_columns, date_column_data_type) }} AS metric_date,
     {{- metadata_cols() -}}
-FROM {{ var('database') }}.{{ var('schema') }}.{{get_source_table_name(fhir_resource)}}
+FROM {{ source('fhir', get_source_table_name(fhir_resource)) }}
 {% endmacro %}
