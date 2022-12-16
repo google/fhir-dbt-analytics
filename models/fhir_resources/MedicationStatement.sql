@@ -16,6 +16,7 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
+-- depends_on: {{ ref('MedicationStatement_view' )}}
 {{ config(
     name = "MedicationStatement",
     meta = {

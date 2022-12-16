@@ -3,8 +3,10 @@
       {%- set fhir_resource = model_metadata(meta_key='fhir_resource') -%}
       {%- set fhir_resource_view = fhir_resource~"_view" -%}
       {%- set patient_reference_column = model_metadata(meta_key='patient_reference_column', model_name=fhir_resource_view) -%}
+        SELECT * FROM {{ ref(fhir_resource_view) }}
+    {%- else %}
+        SELECT * FROM undefined
     {%- endif -%}
-        SELECT * FROM {{this.project}}.{{this.dataset}}.{{fhir_resource_view}}
         {%- if var('cohort') != 'all_patients' and patient_reference_column != None %}
         WHERE EXISTS (
           SELECT cohort.patient_id
