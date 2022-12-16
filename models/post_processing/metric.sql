@@ -27,7 +27,7 @@ WITH
   Breakdowns AS (
     SELECT DISTINCT
       M.execution_id, M.execution_date, M.execution_datetime,
-      M.metric_name, M.source_system, M.site, M.data_transfer_type, M.slice_a, M.slice_b, M.slice_c, M.fhir_mapping,
+      M.metric_name, M.source_system, M.site, M.data_transfer_type, M.dimension_a, M.dimension_b, M.dimension_c, M.fhir_mapping,
       D.calculation, D.metric_date_field
       FROM {{ ref('metric_latest_execution') }} AS M
       JOIN {{ ref('metric_definition') }} AS D ON M.metric_name = D.metric_name
@@ -60,13 +60,13 @@ SELECT
   B.data_transfer_type,
   CAST(metric_date AS DATE) AS metric_date,
   B.site,
-  B.slice_a,
-  B.slice_b,
-  B.slice_c,
+  B.dimension_a,
+  B.dimension_b,
+  B.dimension_c,
 
   -- Impute different values for rows without data for count metrics and non-count metrics:
   COALESCE(M.numerator, IF(B.calculation IN ('COUNT'), NULL, 0)) AS numerator,
-  COALESCE(M.denominator_cohort, 0) AS denominator_cohort,
+  COALESCE(M.denominator, IF(B.calculation IN ('COUNT'), NULL, 0)) AS denominator,
   COALESCE(M.measure, IF(B.calculation IN ('COUNT'), 0, NULL)) AS measure
 
 FROM Breakdowns AS B
@@ -78,9 +78,9 @@ LEFT JOIN {{ ref('metric_latest_execution') }} AS M
   AND (B.source_system = M.source_system OR (B.source_system IS NULL AND M.source_system IS NULL))
   AND (B.data_transfer_type = M.data_transfer_type OR (B.data_transfer_type IS NULL AND M.data_transfer_type IS NULL))
   AND (B.site = M.site OR (B.site IS NULL AND M.site IS NULL))
-  AND (B.slice_a = M.slice_a OR (B.slice_a IS NULL AND M.slice_a IS NULL))
-  AND (B.slice_b = M.slice_b OR (B.slice_b IS NULL AND M.slice_b IS NULL))
-  AND (B.slice_c = M.slice_c OR (B.slice_c IS NULL AND M.slice_c IS NULL))
+  AND (B.dimension_a = M.dimension_a OR (B.dimension_a IS NULL AND M.dimension_a IS NULL))
+  AND (B.dimension_b = M.dimension_b OR (B.dimension_b IS NULL AND M.dimension_b IS NULL))
+  AND (B.dimension_c = M.dimension_c OR (B.dimension_c IS NULL AND M.dimension_c IS NULL))
   AND (B.fhir_mapping = M.fhir_mapping OR (B.fhir_mapping IS NULL AND M.fhir_mapping IS NULL))
 
 {%- set this_relation = adapter.get_relation(this.database, this.schema, this.table) %}

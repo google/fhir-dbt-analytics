@@ -35,30 +35,14 @@ WITH
   A AS (
     SELECT
       id,
-      fhir_mapping,
-      metric_date,
-      source_system,
-      site,
-      data_transfer_type,
+      {{- metric_common_dimensions() }}
       IF({{ get_column_or_default('value.quantity.value') }} IS NOT NULL, 1, 0) AS has_value_quantity_value
     FROM {{ ref('Observation') }}
   )
-SELECT
-  CURRENT_DATETIME() as execution_datetime,
-  '{{this.name}}' AS metric_name,
-  fhir_mapping AS fhir_mapping,
-  source_system AS source_system,
-  data_transfer_type AS data_transfer_type,
-  metric_date AS metric_date,
-  site AS site,
-  CAST(NULL AS STRING) AS slice_a,
-  CAST(NULL AS STRING) AS slice_b,
-  CAST(NULL AS STRING) AS slice_c,
-  SUM(has_value_quantity_value) AS numerator,
-  COUNT(id) AS denominator_cohort,
-  CAST(SAFE_DIVIDE(SUM(has_value_quantity_value), COUNT(id)) AS FLOAT64) AS measure
-FROM A
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+{{ calculate_metric(
+    numerator = 'SUM(has_value_quantity_value)',
+    denominator = 'COUNT(id)'
+) }}
 
 {%- else %}
 {{- empty_metric_output() -}}

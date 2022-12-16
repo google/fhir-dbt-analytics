@@ -25,11 +25,11 @@ limitations under the License. */
       "category": "Resource count",
       "metric_date_field": "ServiceRequest.authoredOn",
       "metric_date_description": "Service request signed date",
-      "dimension_a_name": "Status",
+      "dimension_a": "status",
       "dimension_a_description": "The status of the service request (draft | active | on-hold | revoked | completed | entered-in-error | unknown)",
-      "dimension_b_name": "Intent",
+      "dimension_b": "intent",
       "dimension_b_description": "The intent of the service request (proposal | plan | directive | order | original-order | reflex-order | filler-order | instance-order | option)",
-      "dimension_c_name": "Category",
+      "dimension_c": "category",
       "dimension_c_description": "The category of the service request",
     }
 ) -}}
@@ -41,32 +41,13 @@ WITH
   A AS (
     SELECT
       id,
-      fhir_mapping,
-      metric_date,
-      source_system,
-      site,
-      data_transfer_type,
-      {{ get_column_or_default('status') }} AS status,
-      {{ get_column_or_default('intent') }} AS intent,
+      {{- metric_common_dimensions() }}
+      status,
+      intent,
       {{ try_code_from_codeableconcept('category', 'http://snomed.info/sct', index = 0, return_display = True) }} AS category
     FROM {{ ref('ServiceRequest') }}
   )
-SELECT
-  CURRENT_DATETIME() as execution_datetime,
-  '{{this.name}}' AS metric_name,
-  fhir_mapping AS fhir_mapping,
-  source_system AS source_system,
-  data_transfer_type AS data_transfer_type,
-  metric_date AS metric_date,
-  site AS site,
-  CAST(status AS STRING) AS slice_a,
-  CAST(intent AS STRING) AS slice_b,
-  CAST(category AS STRING) AS slice_c,
-  NULL AS numerator,
-  COUNT(DISTINCT id) AS denominator_cohort,
-  CAST(COUNT(DISTINCT id) AS FLOAT64) AS measure
-FROM A
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+{{ calculate_metric() }}
 
 {%- else %}
 {{- empty_metric_output() -}}

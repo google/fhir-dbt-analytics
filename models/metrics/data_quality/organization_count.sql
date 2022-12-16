@@ -23,7 +23,7 @@ limitations under the License. */
       "secondary_resources": [],
       "calculation": "COUNT",
       "category": "Resource count",
-      "dimension_a_name": "Active",
+      "dimension_a": "active",
       "dimension_a_description": "Whether this organization is active",
     }
 ) -}}
@@ -35,30 +35,11 @@ WITH
   A AS (
     SELECT
       id,
-      fhir_mapping,
-      metric_date,
-      source_system,
-      site,
-      data_transfer_type,
-      CAST({{ get_column_or_default('active') }} AS STRING) AS active
+      {{- metric_common_dimensions() }}
+      CAST(active AS STRING) AS active
     FROM {{ ref('Organization') }}
   )
-SELECT
-  CURRENT_DATETIME() as execution_datetime,
-  '{{this.name}}' AS metric_name,
-  fhir_mapping AS fhir_mapping,
-  source_system AS source_system,
-  data_transfer_type AS data_transfer_type,
-  metric_date AS metric_date,
-  site AS site,
-  CAST(active AS STRING) AS slice_a,
-  CAST(NULL AS STRING) AS slice_b,
-  CAST(NULL AS STRING) AS slice_c,
-  NULL AS numerator,
-  COUNT(DISTINCT id) AS denominator_cohort,
-  CAST(COUNT(DISTINCT id) AS FLOAT64) AS measure
-FROM A
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+{{ calculate_metric() }}
 
 {%- else %}
 {{- empty_metric_output() -}}

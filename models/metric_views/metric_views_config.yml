@@ -27,12 +27,8 @@ models:
 
     tests:
       - dbt_utils.expression_is_true:
-          expression: "SAFE_DIVIDE(numerator, denominator_cohort) = measure"
+          expression: "SAFE_DIVIDE(numerator, denominator) = measure"
           condition: "calculation IN ('PROPORTION', 'RATIO')"
-      - dbt_expectations.expect_column_pair_values_to_be_equal:
-          column_A: denominator_cohort
-          column_B: measure
-          row_condition: "calculation = 'COUNT'"
 
     columns:
 
@@ -48,9 +44,12 @@ models:
           - dbt_expectations.expect_column_values_to_not_be_null:
               row_condition: "calculation IN ('PROPORTION', 'RATIO')"
 
-      - name: denominator_cohort
+      - name: denominator
         tests:
-          - not_null
+          - dbt_expectations.expect_column_values_to_be_null:
+              row_condition: "calculation = 'COUNT'"
+          - dbt_expectations.expect_column_values_to_not_be_null:
+              row_condition: "calculation IN ('PROPORTION', 'RATIO')"
 
       - name: measure
         tests:

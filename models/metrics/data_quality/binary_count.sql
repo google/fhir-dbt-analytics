@@ -25,7 +25,7 @@ limitations under the License. */
       "category": "Resource count",
       "metric_date_field": "Composition.date",
       "metric_date_description": "Composition latest edit date",
-      "dimension_a_name": "Status",
+      "dimension_a": "status",
       "dimension_a_description": "The status of the composition (preliminary | final | amended | entered-in-error)",
     }
 ) -}}
@@ -38,11 +38,8 @@ WITH
   A AS (
     SELECT
       B.id,
-      B.fhir_mapping,
+      {{- metric_common_dimensions(table_alias='B', exclude_col='metric_date') }}
       C.metric_date,
-      B.source_system,
-      B.site,
-      B.data_transfer_type,
       {{ get_column_or_default('status', 'Composition', table_alias='C') }} AS status
     FROM {{ ref('Binary') }} AS B
     LEFT JOIN {{ ref('Composition') }} AS C
@@ -52,22 +49,7 @@ WITH
       ON FALSE
     {%- endif -%}
   )
-SELECT
-  CURRENT_DATETIME() as execution_datetime,
-  '{{this.name}}' AS metric_name,
-  fhir_mapping AS fhir_mapping,
-  source_system AS source_system,
-  data_transfer_type AS data_transfer_type,
-  metric_date AS metric_date,
-  site AS site,
-  CAST(status AS STRING) AS slice_a,
-  CAST(NULL AS STRING) AS slice_b,
-  CAST(NULL AS STRING) AS slice_c,
-  NULL AS numerator,
-  COUNT(DISTINCT id) AS denominator_cohort,
-  CAST(COUNT(DISTINCT id) AS FLOAT64) AS measure
-FROM A
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+{{ calculate_metric() }}
 
 {%- else %}
 {{- empty_metric_output() -}}

@@ -27,11 +27,11 @@ SELECT
     "{{ node.config.meta.calculation }}" AS calculation,
     "{{ node.config.meta.metric_date_field }}" AS metric_date_field,
     "{{ node.config.meta.metric_date_description }}" AS metric_date_description,
-    "{{ node.config.meta.dimension_a_name }}" AS dimension_a_name,
+    "{{ node.config.meta.dimension_a }}" AS dimension_a,
     "{{ node.config.meta.dimension_a_description }}" AS dimension_a_description,
-    "{{ node.config.meta.dimension_b_name }}" AS dimension_b_name,
+    "{{ node.config.meta.dimension_b }}" AS dimension_b,
     "{{ node.config.meta.dimension_b_description }}" AS dimension_b_description,
-    "{{ node.config.meta.dimension_c_name }}" AS dimension_c_name,
+    "{{ node.config.meta.dimension_c }}" AS dimension_c,
     "{{ node.config.meta.dimension_c_description }}" AS dimension_c_description
 {% if not loop.last -%} UNION ALL {%- endif %}
 {%- endfor -%}

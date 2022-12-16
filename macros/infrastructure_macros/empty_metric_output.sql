@@ -7,10 +7,10 @@ SELECT
   '{{var('data_transfer_type_default')}}' AS data_transfer_type,
   CAST(NULL AS DATE) AS metric_date,
   '{{var('site_default')}}' AS site,
-  CAST(NULL AS STRING) AS slice_a,
-  CAST(NULL AS STRING) AS slice_b,
-  CAST(NULL AS STRING) AS slice_c,
+  CAST(NULL AS STRING) AS dimension_a,
+  CAST(NULL AS STRING) AS dimension_b,
+  CAST(NULL AS STRING) AS dimension_c,
   CAST(NULL AS INT64) AS numerator,
-  CAST(NULL AS INT64) AS denominator_cohort,
+  CAST(NULL AS INT64) AS denominator,
   CAST(NULL AS FLOAT64) AS measure
 {%- endmacro -%}

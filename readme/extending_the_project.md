@@ -61,7 +61,7 @@ WITH
  A AS (
    SELECT
      id,
-     {{ metric_common_dimensions() }}
+     {{- metric_common_dimensions() }}
      <TODO: Derive fields for numerator, denominator and dimensions>
    FROM {{ ref('<TODO: FHIR resource (e.g. AllergyIntolerance)>') }}
  )

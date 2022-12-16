@@ -98,23 +98,29 @@ models:
         description: Plain english description of the metric date calculation used (e.g. *Encounter
           start date*)
 
-      - name: dimension_a_name
-        description: Name of first metric segmentation group. This is a relevant variable that the
-          metric is grouped by to enable drill-down analysis.
+      - name: dimension_a
+        description: The first metric segmentation group. This is a relevant variable that the
+          metric is grouped by to enable drill-down analysis. This can be a column name or SQL
+          expression that is used by the *calculate_metric* macro to derive dimension_a in the
+          metric output.
 
       - name: dimension_a_description
         description: Description of first metric segmentation group.
 
-      - name: dimension_b_name
-        description: Name of second metric segmentation group. This is a relevant variable that the
-          metric is grouped by to enable drill-down analysis.
+      - name: dimension_b
+        description: The second metric segmentation group. This is a relevant variable that the
+          metric is grouped by to enable drill-down analysis. This can be a column name or SQL
+          expression that is used by the *calculate_metric* macro to derive dimension_b in the
+          metric output.
 
       - name: dimension_b_description
         description: Description of second metric segmentation group.
 
-      - name: dimension_c_name
-        description: Name of third metric segmentation group. This is a relevant variable that the
-          metric is grouped by to enable drill-down analysis.
+      - name: dimension_c
+        description: The third metric segmentation group. This is a relevant variable that the
+          metric is grouped by to enable drill-down analysis. This can be a column name or SQL
+          expression that is used by the *calculate_metric* macro to derive dimension_a in the
+          metric output.
 
       - name: dimension_c_description
         description: Description of third metric segmentation group.

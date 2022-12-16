@@ -224,7 +224,7 @@ macros:
         type: string
         description: |
           Alias assigned to the table in which `column_name` is located. Only required if
-          disambiguation of colums is needed in the query join.
+          disambiguation of columns is needed in the query join.
 
 
   - name: code_from_codeableconcept
@@ -555,6 +555,10 @@ macros:
 
           If not specified, the macro will default to using the model within which this macro is
           called.
+      - name: value_if_missing
+        type: string
+        description: |
+          Default value to return when no value is returned for the specified key.
 
 
   - name: is_public_synthea_dataset
@@ -602,6 +606,48 @@ macros:
 
 # Metric processing macros
 
+  - name: metric_common_dimensions
+
+    description: |
+      Prints the field names of the common dimensions that all metrics are segmented by.
+
+      It is used when scripting metrics to save writing out these fields in each query.
+
+    arguments:
+      - name: table_alias
+        type: string
+        description: |
+          Alias assigned to the table in which the dimension columns are located. Only required if
+          disambiguation of columns is needed in the query join.
+      - name: exclude_cols
+        type: string
+        description: |
+          Columns to exclude from the returned SQL. Required if this column is to be calculated
+          within the query itself.
+
+
+  - name: calculate_metric
+
+    description: |
+      Prints a SQL query that calculates a metric over a structured input table ("A") to produce an
+      output consistent with the project's data model.
+
+      The macro extracts values from the metric metadata to populate the dimension fields and
+      calculate the measure field according to the metric calculation type.
+
+    arguments:
+      - name: numerator
+        type: string
+        description: |
+          SQL to calculate the numerator value for proportion or ratio metrics. Not required for
+          count metrics.
+      - name: denominator
+        type: string
+        description: |
+          SQL to calculate the denominator value for proportion or ratio calculations. Not required
+          for count metrics.
+
+
   - name: get_metric_tables
 
     description: |
@@ -638,6 +684,18 @@ macros:
         type: string
         description: |
           String in CamelCase to be converted to snake_case.
+
+
+  - name: snake_case_to_proper_case
+
+    description: |
+      Converts a snake_case column (e.g. encounter_class) to Proper Case (e.g Encounter Class).
+
+    arguments:
+      - name: snake_case_column
+        type: string
+        description: |
+          Column with snake_case value to be converted to Proper Case.
 
 
 # Data visualization macros

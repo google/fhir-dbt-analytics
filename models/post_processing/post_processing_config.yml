@@ -79,15 +79,15 @@ models:
       - name: site
         description: Provider code from which the FHIR data queried originates.
 
-      - name: slice_a
+      - name: dimension_a
         description: First metric segmentation group. A relevant variable that this metric is
           grouped by to enable drill-down analysis.
 
-      - name: slice_b
+      - name: dimension_b
         description: Second metric segmentation group. A relevant variable that this metric is
           grouped by to enable drill-down analysis.
 
-      - name: slice_c
+      - name: dimension_c
         description: Third metric segmentation group. A relevant variable that this metric is
           grouped by to enable drill-down analysis.
 
@@ -95,11 +95,9 @@ models:
         description: Numerator value for proportion or ratio calculation. This will be NULL for
           count metrics.
 
-      - name: denominator_cohort
-        description: Count of patients in the cohort for which this metric is calculated. For
-          proportion and ratio calculations this will be the denominator.
-        tests:
-          - not_null
+      - name: denominator
+        description: Denominator value for proportion or ratio calculation. This will be NULL for
+          count metrics.
 
       - name: measure
         description: Value of the metric calculation for a given segmentation group.
