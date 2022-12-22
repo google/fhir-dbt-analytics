@@ -1,6 +1,6 @@
 # Getting started
 
-#### **Getting Started** &nbsp; | &nbsp; [Project overview](readme/project_overview.md) &nbsp; | &nbsp; [Extending the project](readme/extending_the_project.md) &nbsp; | &nbsp; [Feedback](http://www.google.com/url?sa=D&q=https://docs.google.com/forms/d/e/1FAIpQLScU0WXCXA7xOX7kGr6QSW9BNMZwHswf5zq10MfRnnZJYQ6L8g/viewform)
+#### **Getting Started** &nbsp; | &nbsp; [Project overview](g3doc/project_overview.md) &nbsp; | &nbsp; [Extending the project](g3doc/extending_the_project.md) &nbsp; | &nbsp; [Feedback](http://www.google.com/url?sa=D&q=https://docs.google.com/forms/d/e/1FAIpQLScU0WXCXA7xOX7kGr6QSW9BNMZwHswf5zq10MfRnnZJYQ6L8g/viewform)
 
 ---
 
@@ -57,9 +57,10 @@ To analyze your own data, export them to BigQuery from a Google Cloud FHIR store
 
 ### First time
 
-The first time that you run the project, you need to [seed static data](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/docs/build/seeds) which includes the clinical codes and time zones. Run the following command in the project directory:
+The first time that you run the project, you need to [install dependent packages](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/docs/build/packages) and [seed static data](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/docs/build/seeds) by running the following commands in the project directory:
 
 ```
+dbt deps
 dbt seed
 ```
 
@@ -72,9 +73,18 @@ dbt run
 dbt run --selector post_processing
 ```
 
-The `dbt run` command runs all the data quality metrics in the project. To save time, you can run a selection of metrics if you include a selector argument from [selectors.yml](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/node-selection/yaml-selectors). For example, to run only the Encounter metrics, use `dbt run --selector resource_encounter`.
+`dbt run` runs all the data quality metrics in the project. To save time, you can run a selection of metrics if you include a selector argument from [selectors.yml](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/node-selection/yaml-selectors). For example, to run only the Encounter metrics, use `dbt run --selector resource_encounter`.
 
 `dbt run --selector post_processing` runs models that consolidate the metric outputs.
+
+After both of these commands have successfully run, you can inspect the tables and views created in the BigQuery dataset that you specified within `profiles.yml`. Two key tables created are:
+
+- `metric`: union of all metric outputs at the most granular level
+- `metric_definition` metric definitions, one row per metric
+
+A good place to start is querying the `metric_by_system` view that joins these two tables together and calculates overall metric values. The output of this view is one row per metric.
+
+Once you have confirmed that metrics are being generated, you will find it helpful to read the [project overview](g3doc/project_overview.md) to further understand the project structure, and then [extending the project](g3doc/extending_the_project.md) to learn how to add metrics of your own.
 
 
 ## Support
