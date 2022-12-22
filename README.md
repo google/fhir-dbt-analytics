@@ -1,6 +1,6 @@
 # Getting started
 
-#### **Getting Started** &nbsp; | &nbsp; [Project overview](g3doc/project_overview.md) &nbsp; | &nbsp; [Extending the project](g3doc/extending_the_project.md) &nbsp; | &nbsp; [Feedback](http://www.google.com/url?sa=D&q=https://docs.google.com/forms/d/e/1FAIpQLScU0WXCXA7xOX7kGr6QSW9BNMZwHswf5zq10MfRnnZJYQ6L8g/viewform)
+#### **Getting Started** &nbsp; | &nbsp; [Project overview](readme/project_overview.md) &nbsp; | &nbsp; [Extending the project](readme/extending_the_project.md) &nbsp; | &nbsp; [Feedback](http://www.google.com/url?sa=D&q=https://docs.google.com/forms/d/e/1FAIpQLScU0WXCXA7xOX7kGr6QSW9BNMZwHswf5zq10MfRnnZJYQ6L8g/viewform)
 
 ---
 
@@ -84,7 +84,7 @@ After both of these commands have successfully run, you can inspect the tables a
 
 A good place to start is querying the `metric_by_system` view that joins these two tables together and calculates overall metric values. The output of this view is one row per metric.
 
-Once you have confirmed that metrics are being generated, you will find it helpful to read the [project overview](g3doc/project_overview.md) to further understand the project structure, and then [extending the project](g3doc/extending_the_project.md) to learn how to add metrics of your own.
+Once you have confirmed that metrics are being generated, you will find it helpful to read the [project overview](readme/project_overview.md) to further understand the project structure, and then [extending the project](readme/extending_the_project.md) to learn how to add metrics of your own.
 
 
 ## Support

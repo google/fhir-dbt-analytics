@@ -12,7 +12,7 @@ fhir_dbt_analytics:
       # Name of your GCP project in which the dataset will be created and BigQuery jobs run.
       # See here for creating a new GCP project:
       # https://cloud.google.com/resource-manager/docs/creating-managing-projects
-      project: <TODO>
+      project: <TODO: Fill in details in profiles.yml>
 
       # Name of the dataset that dbt creates and writes to.
       # Recommended: dbt_<username>. See here for more details:
@@ -22,9 +22,9 @@ fhir_dbt_analytics:
       # See https://docs.getdbt.com/docs/get-started/connection-profiles#understanding-threads.
       threads: 4
 
-      # Consider configuring location, see
-      # https://docs.getdbt.com/reference/warehouse-setups/bigquery-setup#dataset-locations
-      # location: <TODO>
+      # Location of your dbt outputs must be the same as the location of your FHIR sources.
+      # See https://docs.getdbt.com/reference/warehouse-setups/bigquery-setup#dataset-locations.
+      location: <TODO>
 
       job_execution_timeout_seconds: 300
       job_retries: 1
