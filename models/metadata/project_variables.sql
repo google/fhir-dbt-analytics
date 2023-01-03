@@ -29,6 +29,7 @@ SELECT
   {{ var('persist_all_metric_executions') }} AS `persist_all_metric_executions`,
   '{{ var('cohort') }}' AS `cohort`,
   '{{ var('cohort_snapshot_date') }}' AS `cohort_snapshot_date`,
+  '{{ var('drop_metric_tables') }}' AS `drop_metric_tables`,
   {{ linking_api_datasource(
     report_id='2de086de-b4ab-4431-8786-57ffa47e96b8',
     datasource_list=[

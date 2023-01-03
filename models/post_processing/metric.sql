@@ -19,7 +19,7 @@ limitations under the License. */
 {{ config(
     alias = 'metric',
     materialized = 'table',
-    post_hook = "{{ drop_metric_tables() }}"
+    post_hook = "{{ maybe_drop_metric_tables() }}"
 ) -}}
 
 WITH

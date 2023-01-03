@@ -682,10 +682,10 @@ macros:
       post-processing.
 
 
-  - name: drop_metric_tables
+  - name: maybe_drop_metric_tables
 
     description: |
-      Prints SQL which drops individual metric output tables.
+      Optionally prints SQL which drops individual metric output tables.
 
       It is used to drop these tables after the outputs have been written to the `metric` table
       during metric post-processing.

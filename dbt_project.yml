@@ -36,6 +36,7 @@ vars:
   persist_all_metric_executions: FALSE  # Whether to enable metric_all model which incrementally adds the output from every execution of the metrics pipeline. [boolean]
   cohort: "all_patients"  # Run metrics for a specific group of patients defined in models/cohorts/. For example, “adults”. Use “all_patients” to disable cohort filtering. [string]
   cohort_snapshot_date: "today"  # Date on which to evaluate patient membership of cohort. Default of "today" will evaluate membership as of today using CURRENT_DATE(). Use format: "YYYY-MM-DD". [string]
+  drop_metric_tables: TRUE  # TRUE to drop intermediate metric tables. Pro: Fewer tables in the dataset. Con: Takes quite a bit of time.
 
 
 # Model configurations
