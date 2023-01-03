@@ -30,7 +30,6 @@ selectors:
         - method: path
           value: models/metadata/
 
-
   # Pipeline transformations
   # Selectors for pipeline transformations outside of execution of metrics
 
