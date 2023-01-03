@@ -19,7 +19,7 @@ limitations under the License. */
       "description": "Proportion of DiagnosticReport resources that reference a non-existent practitioner",
       "short_description": "DiagRep ref. Prac - non-exist",
       "primary_resource": "DiagnosticReport",
-      "primary_fields": ['performer.PractitionerId'],
+      "primary_fields": ['performer.practitionerId'],
       "secondary_resources": ['Practitioner'],
       "calculation": "PROPORTION",
       "category": "Referential integrity",

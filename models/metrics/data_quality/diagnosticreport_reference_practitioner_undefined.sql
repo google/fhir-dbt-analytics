@@ -19,7 +19,7 @@ limitations under the License. */
       "description": "Proportion of DiagnosticReport resources that do not have a practitioner reference recorded",
       "short_description": "DiagRep ref. Prac - unrecorded",
       "primary_resource": "DiagnosticReport",
-      "primary_fields": ['performer.PractitionerId'],
+      "primary_fields": ['performer.practitionerId'],
       "secondary_resources": [],
       "calculation": "PROPORTION",
       "category": "Referential integrity",
