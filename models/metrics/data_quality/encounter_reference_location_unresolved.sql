@@ -19,7 +19,7 @@ limitations under the License. */
       "description": "Proportion of Encounter resources that reference a non-existent location",
       "short_description": "Enc ref. Loc - non-exist",
       "primary_resource": "Encounter",
-      "primary_fields": ['location.locationId'],
+      "primary_fields": ['location.location.locationId'],
       "calculation": "PROPORTION",
       "category": "Referential integrity",
       "secondary_resources": ['Location'],

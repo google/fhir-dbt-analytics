@@ -19,7 +19,7 @@ limitations under the License. */
       "description": "Proportion of Encounter resources that do not have a location reference recorded",
       "short_description": "Enc ref. Loc - unrecorded",
       "primary_resource": "Encounter",
-      "primary_fields": ['location.locationId'],
+      "primary_fields": ['location.location.locationId'],
       "secondary_resources": [],
       "calculation": "PROPORTION",
       "category": "Referential integrity",
