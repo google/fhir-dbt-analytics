@@ -34,11 +34,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Condition') }}
-{%- if fhir_resource_exists('Condition') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -46,9 +42,6 @@ WITH
       {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/condition-ver-status') }} AS verification_status,
       {{ try_code_from_codeableconcept('category', 'http://terminology.hl7.org/CodeSystem/condition-category', index = 0) }} AS category
     FROM {{ ref('Condition') }}
-  )
-{{ calculate_metric() }}
+{%- endset -%}
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{ calculate_metric(metric_sql) }}

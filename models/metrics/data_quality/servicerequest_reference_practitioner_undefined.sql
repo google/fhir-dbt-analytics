@@ -32,11 +32,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('ServiceRequest') }}
-{%- if fhir_resource_exists('ServiceRequest') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -49,12 +45,10 @@ WITH
       ) }} AS category,
       CASE WHEN requester.practitionerId IS NULL OR requester.practitionerId = '' THEN 1 ELSE 0 END AS reference_practitioner_undefined
     FROM {{ ref('ServiceRequest') }} AS S
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(reference_practitioner_undefined)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

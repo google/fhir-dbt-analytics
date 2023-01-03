@@ -32,20 +32,13 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Encounter') }}
-{%- if fhir_resource_exists('Encounter') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       status,
       class.code AS latest_encounter_class,
     FROM {{ ref('Encounter') }}
-  )
-{{ calculate_metric() }}
+{%- endset -%}
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{ calculate_metric(metric_sql) }}

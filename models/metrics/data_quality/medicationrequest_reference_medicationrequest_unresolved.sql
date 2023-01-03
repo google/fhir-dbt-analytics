@@ -34,11 +34,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('MedicationRequest') }}
-{%- if fhir_resource_exists('MedicationRequest') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -61,12 +57,10 @@ WITH
           ON MB.medicationRequestId = M2.id
       ) AS reference_medicationrequest_resolved
     FROM {{ ref('MedicationRequest') }} AS M
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(has_reference_medicationrequest - reference_medicationrequest_resolved)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

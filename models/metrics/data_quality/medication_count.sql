@@ -28,19 +28,12 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Medication') }}
-{%- if fhir_resource_exists('Medication') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       status
     FROM {{ ref('Medication') }}
-  )
-{{ calculate_metric() }}
+{%- endset -%}
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{ calculate_metric(metric_sql) }}

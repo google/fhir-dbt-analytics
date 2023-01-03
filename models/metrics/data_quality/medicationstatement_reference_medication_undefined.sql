@@ -30,23 +30,17 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('MedicationStatement') }}
-{%- if fhir_resource_exists('MedicationStatement') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       status,
       CASE WHEN medication.reference.medicationId IS NULL OR medication.reference.medicationId = '' THEN 1 ELSE 0 END AS reference_medication_undefined
     FROM {{ ref('MedicationStatement') }} AS M
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(reference_medication_undefined)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

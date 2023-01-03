@@ -30,13 +30,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Observation') }}
-{%- if fhir_resource_exists(model_metadata('primary_resource'))
-    and column_exists(model_metadata('primary_fields')[0])
-%}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -48,12 +42,10 @@ WITH
         AND serviceRequestId <> ''
       ) AS has_reference_servicerequest
     FROM {{ ref('Observation') }} AS O
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(1 - has_reference_servicerequest)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

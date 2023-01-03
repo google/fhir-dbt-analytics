@@ -32,20 +32,13 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('AllergyIntolerance') }}
-{%- if fhir_resource_exists('AllergyIntolerance') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       {{ try_code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical') }} AS clinical_status,
       {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification' ) }} AS verification_status
     FROM {{ ref('AllergyIntolerance') }}
-  )
-{{ calculate_metric() }}
+{%- endset -%}
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{ calculate_metric(metric_sql) }}

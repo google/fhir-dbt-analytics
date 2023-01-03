@@ -30,12 +30,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Composition') }}
--- depends_on: {{ ref('Binary') }}
-{%- if fhir_resource_exists('Composition') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -55,12 +50,10 @@ WITH
           ON CSE.binaryid = B.id
       ) AS reference_binary_resolved
     FROM {{ ref('Composition') }} AS C
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(has_reference_binary - reference_binary_resolved)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

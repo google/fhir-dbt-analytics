@@ -28,19 +28,12 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Practitioner') }}
-{%- if fhir_resource_exists('Practitioner') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       CAST(active AS STRING) AS active
     FROM {{ ref('Practitioner') }}
-  )
-{{ calculate_metric() }}
+{%- endset -%}
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{ calculate_metric(metric_sql) }}

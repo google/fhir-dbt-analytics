@@ -32,12 +32,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Encounter') }}
--- depends_on: {{ ref('Location') }}
-{%- if fhir_resource_exists('Encounter') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -56,12 +51,10 @@ WITH
           ON EL.location.locationId = L.id
       ) AS reference_location_resolved
     FROM {{ ref('Encounter') }} AS E
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(has_reference_location - reference_location_resolved)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

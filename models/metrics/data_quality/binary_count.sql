@@ -30,12 +30,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Binary') }}
--- depends_on: {{ ref('Composition') }}
-{%- if fhir_resource_exists('Binary') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       B.id,
       {{- metric_common_dimensions(table_alias='B', exclude_col='metric_date') }}
@@ -48,9 +43,6 @@ WITH
     {%- else %}
       ON FALSE
     {%- endif -%}
-  )
-{{ calculate_metric() }}
+{%- endset -%}
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{ calculate_metric(metric_sql) }}

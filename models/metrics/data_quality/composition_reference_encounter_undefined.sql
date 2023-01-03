@@ -30,23 +30,17 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Composition') }}
-{%- if fhir_resource_exists('Composition') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       status,
       CASE WHEN encounter.encounterId IS NULL OR encounter.encounterId = '' THEN 1 ELSE 0 END AS reference_encounter_undefined
     FROM {{ ref('Composition') }} AS C
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(reference_encounter_undefined)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

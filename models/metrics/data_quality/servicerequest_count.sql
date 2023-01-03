@@ -34,11 +34,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('ServiceRequest') }}
-{%- if fhir_resource_exists('ServiceRequest') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -46,9 +42,6 @@ WITH
       intent,
       {{ try_code_from_codeableconcept('category', 'http://snomed.info/sct', index = 0, return_display = True) }} AS category
     FROM {{ ref('ServiceRequest') }}
-  )
-{{ calculate_metric() }}
+{%- endset -%}
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{ calculate_metric(metric_sql) }}

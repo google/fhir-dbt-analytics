@@ -30,12 +30,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Composition') }}
--- depends_on: {{ ref('Patient') }}
-{%- if fhir_resource_exists('Composition') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -48,12 +43,10 @@ WITH
         )
         THEN 1 ELSE 0 END AS reference_patient_unresolved
     FROM {{ ref('Composition') }} AS C
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(reference_patient_unresolved)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

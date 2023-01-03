@@ -1,30 +1,22 @@
-{% macro calculate_metric(numerator=None, denominator=None) %}
+{%- macro calculate_metric(inner_sql, numerator=None, denominator=None) -%}
 
-  {%- set dimension_a = model_metadata('dimension_a', value_if_missing='NULL') -%}
-  {%- set dimension_b = model_metadata('dimension_b', value_if_missing='NULL') -%}
-  {%- set dimension_c = model_metadata('dimension_c', value_if_missing='NULL') -%}
+{# Check that all inputs are available. #}
+{# We need to use namespace to update the variable in the `for` cycle. #}
+{%- set ns = namespace(
+    inputs_available = fhir_resource_exists(model_metadata('primary_resource'))) -%}
+{%- if model_metadata('primary_fields') -%}
+    {%- for primary_field in model_metadata('primary_fields') -%}
+        {% set ns.inputs_available = ns.inputs_available and column_exists(primary_field) -%}
+    {%- endfor -%}
+{%- endif %}    
 
-  {%- if model_metadata(meta_key='calculation') == 'COUNT' -%}
-    {%- set numerator = 'CAST(NULL AS INT64)' -%}
-    {%- set denominator = 'CAST(NULL AS INT64)' -%}
-    {%- set measure = 'CAST(COUNT(DISTINCT id) AS FLOAT64)' -%}
-  {%- endif -%}
-
-  {%- if model_metadata(meta_key='calculation') in ['PROPORTION', 'RATIO'] -%}
-    {%- set measure = "CAST(SAFE_DIVIDE(" ~ numerator ~ ", " ~ denominator ~ ") AS FLOAT64)" -%}
-  {%- endif -%}
-
-SELECT
-  CURRENT_DATETIME() as execution_datetime,
-  '{{this.name}}' AS metric_name,
-  {{- metric_common_dimensions() }}
-  CAST({{ dimension_a }} AS STRING) AS dimension_a,
-  CAST({{ dimension_b }} AS STRING) AS dimension_b,
-  CAST({{ dimension_c }} AS STRING) AS dimension_c,
-  {{ numerator }} AS numerator,
-  {{ denominator }} AS denominator,
-  {{ measure }} AS measure
-FROM A
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-
+{%- if ns.inputs_available -%}
+WITH
+  A AS (
+    {{ inner_sql }}
+  )
+{{ metric_output(numerator, denominator) }}
+{%- else %}
+{{- empty_metric_output() -}}
+{%- endif -%}
 {%- endmacro -%}

@@ -32,12 +32,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('ServiceRequest') }}
--- depends_on: {{ ref('Encounter') }}
-{%- if fhir_resource_exists('ServiceRequest') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -58,12 +53,10 @@ WITH
         )
         THEN 1 ELSE 0 END AS reference_encounter_unresolved
     FROM {{ ref('ServiceRequest') }} AS S
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(reference_encounter_unresolved)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

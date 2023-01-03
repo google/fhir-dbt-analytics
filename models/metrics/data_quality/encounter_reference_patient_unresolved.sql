@@ -32,12 +32,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Encounter') }}
--- depends_on: {{ ref('Patient') }}
-{%- if fhir_resource_exists('Encounter') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -55,12 +50,10 @@ WITH
         {%- endif %}
       ) AS reference_patient_resolved
     FROM {{ ref('Encounter') }} AS E
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(1 - reference_patient_resolved)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

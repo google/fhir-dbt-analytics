@@ -28,22 +28,16 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Observation') }}
-{%- if fhir_resource_exists('Observation') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       IF({{ get_column_or_default('value.quantity.value') }} IS NOT NULL, 1, 0) AS has_value_quantity_value
     FROM {{ ref('Observation') }}
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(has_value_quantity_value)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

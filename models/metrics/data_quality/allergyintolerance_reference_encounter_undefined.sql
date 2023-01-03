@@ -32,13 +32,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('AllergyIntolerance') }}
-{%- if fhir_resource_exists(model_metadata('primary_resource'))
-    and column_exists(model_metadata('primary_fields')[0])
-%}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -46,12 +40,10 @@ WITH
       {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification' ) }} AS verification_status,
       CASE WHEN encounter.encounterId IS NULL OR encounter.encounterId = '' THEN 1 ELSE 0 END AS reference_encounter_undefined
     FROM {{ ref('AllergyIntolerance') }} AS A
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+      metric_sql,
       numerator = 'SUM(reference_encounter_undefined)',
       denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

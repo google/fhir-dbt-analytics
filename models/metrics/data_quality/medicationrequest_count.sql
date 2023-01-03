@@ -34,11 +34,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('MedicationRequest') }}
-{%- if fhir_resource_exists('MedicationRequest') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -49,9 +45,6 @@ WITH
         'http://terminology.hl7.org/CodeSystem/medicationrequest-category',
         index = get_source_specific_category_index()) }} AS category,
       FROM {{ ref('MedicationRequest') }}
-  )
-{{ calculate_metric() }}
+{%- endset -%}
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{ calculate_metric(metric_sql) }}

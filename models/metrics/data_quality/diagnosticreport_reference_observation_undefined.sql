@@ -32,11 +32,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('DiagnosticReport') }}
-{%- if fhir_resource_exists('DiagnosticReport') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -53,12 +49,10 @@ WITH
         AND observationId <> ''
       ) AS has_reference_observation
     FROM {{ ref('DiagnosticReport') }} AS D
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(1 - has_reference_observation)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

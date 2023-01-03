@@ -32,12 +32,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Patient') }}
--- depends_on: {{ ref('Encounter') }}
-{%- if fhir_resource_exists('Patient') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions(exclude_col='metric_date') }}
@@ -56,9 +51,6 @@ WITH
       CAST(active AS STRING) AS active,
       gender
     FROM {{ ref('Patient') }} AS P
-  )
-{{ calculate_metric() }}
+{%- endset -%}  
 
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
+{{- calculate_metric(metric_sql) -}}

@@ -629,6 +629,25 @@ macros:
   - name: calculate_metric
 
     description: |
+      Prints a SQL query that caculates a metric given the inner query which calls into
+      `metric_common_dimensions` and adds any specific columns.
+
+    arguments:
+      - name: numerator
+        type: string
+        description: |
+          SQL to calculate the numerator value for proportion or ratio metrics. Not required for
+          count metrics.
+      - name: denominator
+        type: string
+        description: |
+          SQL to calculate the denominator value for proportion or ratio calculations. Not required
+          for count metrics.
+
+
+  - name: metric_output
+
+    description: |
       Prints a SQL query that calculates a metric over a structured input table ("A") to produce an
       output consistent with the project's data model.
 

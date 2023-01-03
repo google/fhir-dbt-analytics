@@ -32,11 +32,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('ServiceRequest') }}
-{%- if fhir_resource_exists('ServiceRequest') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -53,12 +49,10 @@ WITH
         WHERE serviceRequestId IS NOT NULL AND serviceRequestId <> ''
       ) AS has_reference_servicerequest
     FROM {{ ref('ServiceRequest') }} AS S
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(1 - has_reference_servicerequest)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

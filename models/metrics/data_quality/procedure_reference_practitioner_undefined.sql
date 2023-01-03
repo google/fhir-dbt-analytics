@@ -30,11 +30,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Procedure') }}
-{%- if fhir_resource_exists('Procedure') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -46,12 +42,10 @@ WITH
         AND actor.practitionerId <> ''
       ) AS has_reference_practitioner
     FROM {{ ref('Procedure') }} AS P
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(1 - has_reference_practitioner)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}

@@ -30,12 +30,7 @@ limitations under the License. */
     }
 ) -}}
 
--- depends_on: {{ ref('Composition') }}
--- depends_on: {{ ref('Practitioner') }}
-{%- if fhir_resource_exists('Composition') %}
-
-WITH
-  A AS (
+{%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
@@ -53,12 +48,10 @@ WITH
           ON CA.practitionerId = P.id
       ) AS reference_practitioner_resolved
     FROM {{ ref('Composition') }} AS C
-  )
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = 'SUM(has_reference_practitioner - reference_practitioner_resolved)',
     denominator = 'COUNT(id)'
 ) }}
-
-{%- else %}
-{{- empty_metric_output() -}}
-{%- endif -%}
