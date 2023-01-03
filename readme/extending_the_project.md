@@ -14,7 +14,7 @@ Once you have a good understanding of the [project structure](https://github.com
 
 ### Instructions
 
-1. Create a new empty SQL file within the `models/metrics/` folder, assigning it the name of your new metric. For example, _my_new_metric.sql_
+1. Create a new empty SQL file within the `models/metrics/` folder, assigning it the name of your new metric. For example, *my_new_metric.sql*
 
 1. Copy the contents of the metric template below into this new file. Alternatively, you can copy the contents of an existing metric if you prefer to adapt a working example.
 
@@ -22,12 +22,20 @@ Once you have a good understanding of the [project structure](https://github.com
 
     a. Update the config block with metadata for your metric.
 
-      - Consult with the column descriptions for the _metric_definition_ table within `metadata_config.yml` to understand what should be recorded within metadata fields. This information can also be viewed in the [dbt docs](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/commands/cmd-docs) site.
+      - Consult with the column descriptions for the *metric_definition* table within `metadata_config.yml` to understand what should be recorded within metadata fields. This information can also be viewed in the [dbt docs](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/commands/cmd-docs) site.
 
-    b. Update the SQL query to calculate the metric over your [FHIR data](http://www.google.com/url?sa=D&q=https://hl7.org/FHIR/resourcelist.html) based on the [SQL-on-FHIR](http://www.google.com/url?sa=D&q=https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md) schema.
-
-      - The query can be flexible and join to any number of FHIR resources. However, the final common table expression should be aliased as “A” and contain the columns shown in the template.
-      - The `calculate_metric` macro takes table “A” as an input to produce the final metric output. For count metrics, no argument is required. For proportion and ratio metrics, you need to provide a SQL expression to calculate the numerator and denominator fields.
+    b. Update the SQL query within the `metric_sql` variable:
+      
+      - This query will be executed over your [FHIR data](http://www.google.com/url?sa=D&q=https://hl7.org/FHIR/resourcelist.html) based on the [SQL-on-FHIR](http://www.google.com/url?sa=D&q=https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md) schema.
+      - The query can be flexible, joining to any number of FHIR resources and including subqueries and common table expressions.
+      - The final output from this query must contain:
+        - An `id` field representing a FHIR resource id
+        - The `metric_common_dimensions()` macro to derive dimensions common to all metrics
+        - Any fields to be used for specific metric dimensions (as defined in the config block)
+        - Any fields to be used for numerator and denominator calculations
+      - The `calculate_metric` macro takes `metric_sql` as an input to produce the final metric output.
+        - For count metrics, only the *metric_sql* argument is required and a distinct count over the `id` field is performed.
+        - For proportion and ratio metrics, you need to provide a SQL expression to calculate the *numerator* and *denominator* fields.
 
 1. Test running your new metric by running the following command in the project directory:
 `dbt run --select my_new_metric`
@@ -57,15 +65,16 @@ Once you have a good understanding of the [project structure](https://github.com
    }
 ) -}}
 
-WITH
- A AS (
-   SELECT
-     id,
-     {{- metric_common_dimensions() }}
-     <TODO: Derive fields for numerator, denominator and dimensions>
-   FROM {{ ref('<TODO: FHIR resource (e.g. AllergyIntolerance)>') }}
- )
+{%- set metric_sql -%}
+    SELECT
+      id,
+      {{- metric_common_dimensions() }}
+      <TODO: Derive fields for numerator, denominator and dimensions>
+    FROM {{ ref('<TODO: FHIR resource (e.g. AllergyIntolerance)>') }}
+{%- endset -%}
+
 {{ calculate_metric(
+    metric_sql,
     numerator = '<TODO: Only required if proportion or ratio calculation>',
     denominator = '<TODO: Only required if proportion or ratio calculation>''
 ) }}
@@ -78,7 +87,7 @@ WITH
 
 - Once a metric has been added to your project it will be automatically integrated into the data pipeline. When running the post_processing dbt models (`dbt run --selector post_processing`) the new metric will be incorporated into the `metric` table and therefore appear within _metric_views_ and any downstream data visualizations that take these views as inputs.
 
-- Metrics can be segmented by up to three dimensions to enable drill-down analysis. To add a dimension, derive the column in table “A” and assign an alias matching the expression provided in one of the dimension fields in the config block. If you have fewer than three dimensions, omit the unused dimensions from the config block.
+- Metrics can be segmented by up to three dimensions to enable drill-down analysis. To add a dimension, derive the column in the output table produced by `metric_sql` and assign an alias matching the expression provided in one of the dimension fields in the config block. If you have fewer than three dimensions, omit the unused dimensions from the config block.
 
 - To enable time-series analysis, metrics are segmented by date where possible. This date should be the most clinically-relevant local calendar date extracted from the FHIR data. The `metric_date` field is added to FHIR resources in the FHIR resource views defined within the `models/fhir_resource/` folder. You therefore do not need to derive this date yourself within the metric SQL.
 
