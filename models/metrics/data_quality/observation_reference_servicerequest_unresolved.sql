@@ -19,7 +19,9 @@ limitations under the License. */
       "description": "Proportion of Observation resources that reference a non-existent service request",
       "short_description": "Obs ref. SerReq - non-exist",
       "primary_resource": "Observation",
-      "primary_fields": ['encounter.encounterId'],
+      "primary_fields": [
+          'encounter.encounterId', 
+          'basedOn.serviceRequestId'],
       "secondary_resources": ['ServiceRequest'],
       "calculation": "PROPORTION",
       "category": "Referential integrity",

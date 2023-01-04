@@ -19,7 +19,9 @@ limitations under the License. */
       "description": "Proportion of MedicationAdministration resources that reference a non-existent medication request",
       "short_description": "MedAdmin ref. MedReq - non-exist",
       "primary_resource": "MedicationAdministration",
-      "primary_fields": ['context.encounterId'],
+      "primary_fields": [
+          'context.encounterId', 
+          'request.medicationRequestId'],
       "secondary_resources": ['MedicationRequest'],
       "calculation": "PROPORTION",
       "category": "Referential integrity",

@@ -19,7 +19,9 @@ limitations under the License. */
       "description": "Proportion of MedicationRequest resources that do not have an medication reference recorded",
       "short_description": "MedReq ref. Med - unrecorded",
       "primary_resource": "MedicationRequest",
-      "primary_fields": ['requester.practitionerId'],
+      "primary_fields": [
+          'requester.practitionerId', 
+          'medication.reference.medicationId'],
       "secondary_resources": [],
       "calculation": "PROPORTION",
       "category": "Referential integrity",

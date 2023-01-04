@@ -19,7 +19,9 @@ limitations under the License. */
       "description": "Proportion of MedicationRequest resources that reference a non-existent medication",
       "short_description": "MedReq ref. Med - non-exist",
       "primary_resource": "MedicationRequest",
-      "primary_fields": ['requester.practitionerId'],
+      "primary_fields": [
+          'requester.practitionerId', 
+          'medication.reference.medicationId'],
       "secondary_resources": ['Medication'],
       "calculation": "PROPORTION",
       "category": "Referential integrity",

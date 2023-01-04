@@ -48,7 +48,7 @@ limitations under the License. */
           'HIST'
         )
       ) AS metric_date,
-      CAST(active AS STRING) AS active,
+      CAST({{ get_column_or_default('active') }} AS STRING) AS active,
       gender
     FROM {{ ref('Patient') }} AS P
 {%- endset -%}  

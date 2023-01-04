@@ -5,10 +5,5 @@
     {% set meta_value = graph["nodes"][model_id]["meta"][meta_key] %}
   {%- endif -%}
 
-  {%- if meta_value -%}
-    {% do return(meta_value) %}
-  {%- else -%}
-    {% do return(value_if_missing) %}
-  {%- endif -%}
-
+  {% do return(meta_value if meta_value else value_if_missing) %}
 {% endmacro %}

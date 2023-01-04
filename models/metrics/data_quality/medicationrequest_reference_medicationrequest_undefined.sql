@@ -19,7 +19,9 @@ limitations under the License. */
       "description": "Proportion of MedicationRequest resources that do not have a parent medication request reference recorded",
       "short_description": "MedReq ref. MedReq - unrecorded",
       "primary_resource": "MedicationRequest",
-      "primary_fields": ['requester.practitionerId'],
+      "primary_fields": [
+          'requester.practitionerId', 
+          'basedOn.medicationRequestId'],
       "secondary_resources": [],
       "calculation": "PROPORTION",
       "category": "Referential integrity",

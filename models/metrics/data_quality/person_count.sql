@@ -34,7 +34,7 @@ limitations under the License. */
     SELECT
       id,
       {{- metric_common_dimensions(exclude_col='metric_date') }}
-      CAST(active AS STRING) AS active,
+      CAST({{ get_column_or_default('active') }} AS STRING) AS active,
       MIN(
         (
           SELECT MIN(metric_date)

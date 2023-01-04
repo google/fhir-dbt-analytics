@@ -1,6 +1,13 @@
 {% macro column_exists(column_name, fhir_resource=None) %}
 
-    {%- if execute and fhir_resource == None -%}
+    {%- if not execute -%}
+        {% do return(True) %}
+    {% endif %}
+
+    {%- if fhir_resource == None -%}
+        {%- set fhir_resource = model_metadata(meta_key='fhir_resource') -%}
+    {%- endif -%}
+    {%- if fhir_resource == None -%}
         {%- set fhir_resource = model_metadata(meta_key='primary_resource') -%}
     {%- endif -%}
 
