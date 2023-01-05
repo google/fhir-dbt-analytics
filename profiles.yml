@@ -17,7 +17,7 @@ fhir_dbt_analytics:
       # Name of the dataset that dbt creates and writes to.
       # Recommended: dbt_<username>. See here for more details:
       # https://docs.getdbt.com/docs/get-started/connection-profiles#understanding-target-schemas
-      dataset: dbt_<your username>
+      dataset: dbt_{​{​ env_var('USER', 'unknown_user') }}
 
       # See https://docs.getdbt.com/docs/get-started/connection-profiles#understanding-threads.
       threads: 4
