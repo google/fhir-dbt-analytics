@@ -43,7 +43,7 @@ limitations under the License. */
         index = get_source_specific_category_index(),
         return_display=True
       ) }} AS category,
-      CASE WHEN encounter.encounterId IS NULL OR encounter.encounterId <> '' THEN 1 ELSE 0 END AS reference_encounter_undefined
+      CASE WHEN encounter.encounterId IS NULL OR encounter.encounterId = '' THEN 1 ELSE 0 END AS reference_encounter_undefined
     FROM {{ ref('ServiceRequest') }} AS S
 {%- endset -%}
 
