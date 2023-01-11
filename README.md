@@ -15,7 +15,7 @@ Many of the metrics also break down results into different dimensions. For examp
 - built-in metrics (parameterized so you can easily extend them) to measure clinical data quality
 - views which aggregate the results ready for your data-visualization tools
 
-You need to run these analytics tools using [dbt Core](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/docs/introduction) — an open-source data-transformation application. If you’re already analyzing FHIR data with dbt, you can take advantage of the macros from this project. The dbt macros can help you build patient cohorts, navigate and extract values from FHIR resources, or inspect BigQuery datasets. The dbt selectors gather metrics into themes so that you can run just the metrics you’re interested in.
+You need to run these analytics tools using [dbt](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/docs/introduction) — an open-source data-transformation tool. If you’re already analyzing FHIR data with dbt, you can take advantage of the macros from this project. The dbt macros can help you build patient cohorts, navigate and extract values from FHIR resources, or inspect BigQuery datasets. The dbt selectors gather metrics into themes so that you can run just the metrics you’re interested in.
 
 
 ## What you'll need
