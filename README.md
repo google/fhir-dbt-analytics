@@ -89,4 +89,6 @@ Once you have confirmed that metrics are being generated, you will find it helpf
 
 ## Support
 
-fhir-dbt-analytics is not an officially supported Google product. If you believe that something’s not working, please [create a GitHub issue](http://www.google.com/url?sa=D&q=https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue).
+fhir-dbt-analytics is not an officially supported Google product. The project is work-in-progress so expect additional metrics and other content to be added as well as potentially breaking changes as we refine the project structure.
+
+If you believe that something’s not working, please [create a GitHub issue](http://www.google.com/url?sa=D&q=https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue).
