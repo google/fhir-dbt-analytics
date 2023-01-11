@@ -691,6 +691,24 @@ macros:
       during metric post-processing.
 
 
+  - name: calculate_measure
+
+    description: |
+      Prints SQL which formats the measure metric correctly.
+
+      It is used to aggregate metric measures depending on calculation type.
+
+    arguments:
+      - name: metric_definition_alias
+        type: string
+        description: |
+          Alias of the table that contains metric definitions, defaults to "D".
+      - name: metric_alias
+        type: string
+        description: |
+          Alias of the table that contains metric values, defaults to "M".
+
+
 # String macros
 
   - name: snake_case

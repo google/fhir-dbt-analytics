@@ -30,10 +30,7 @@ SELECT
   M.site,
   SUM(M.numerator) AS numerator,
   SUM(M.denominator) AS denominator,
-  CASE
-    WHEN D.calculation = 'COUNT' THEN SUM(M.measure)
-    WHEN D.calculation IN ('PROPORTION', 'RATIO') THEN SUM(M.numerator)/NULLIF(SUM(M.denominator),0)
-    ELSE NULL END AS measure
+  {{ calculate_measure() }} AS measure
 FROM {{ ref('metric_definition') }} AS D
 JOIN {{ ref('metric') }} AS M USING(metric_name)
 GROUP BY 1,2,3,6,7,8,9
