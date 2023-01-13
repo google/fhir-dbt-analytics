@@ -18,23 +18,4 @@ limitations under the License. */
     materialized='view'
 ) -}}
 
-SELECT
-  D.metric_name,
-  D.description,
-  D.primary_resource,
-  ANY_VALUE(D.primary_fields) AS primary_fields,
-  ANY_VALUE(D.secondary_resources) AS secondary_resources,
-  D.calculation,
-  D.category,
-  D.metric_date_field,
-  D.metric_date_description,
-  M.source_system,
-  M.site,
-  M.metric_date,
-  EXTRACT(YEAR FROM M.metric_date) AS metric_year,
-  SUM(M.numerator) AS numerator,
-  SUM(M.denominator) AS denominator,
-  {{ calculate_measure() }} AS measure
-FROM {{ ref('metric_definition') }} AS D
-JOIN {{ ref('metric') }} AS M USING(metric_name)
-GROUP BY 1,2,3,6,7,8,9,10,11,12,13
+{{ create_metric_view(include_date=True, include_slices=False) }}

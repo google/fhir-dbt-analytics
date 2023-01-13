@@ -709,6 +709,25 @@ macros:
           Alias of the table that contains metric values, defaults to "M".
 
 
+  - name: create_metric_view
+
+    description: |
+      Prints SQL which creates a table joining the metric and metric definition tables. 
+
+      Used for views, configurable to include or exclude slices & date aggregation.
+
+    arguments:
+      - name: include_date
+        type: boolean
+        description: |
+          True if date fields should be included and data aggregated by date as well as system
+          as well as system.
+      - name: include_slices
+        type: boolean
+        description: |
+          True if dimension slices should be included. If include_date is also true, there will
+          effectively be no aggregation, simply joining the two tables.
+
 # String macros
 
   - name: snake_case

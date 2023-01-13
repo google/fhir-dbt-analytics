@@ -18,33 +18,4 @@ limitations under the License. */
     materialized='view'
 ) -}}
 
-SELECT
-  D.metric_name,
-  D.description,
-  D.short_description,
-  D.primary_resource,
-  D.primary_fields,
-  D.secondary_resources,
-  D.category,
-  D.calculation,
-  D.metric_date_field,
-  D.metric_date_description,
-  {{ snake_case_to_proper_case('D.dimension_a') }} AS dimension_a_name,
-  D.dimension_a_description,
-  {{ snake_case_to_proper_case('D.dimension_b') }} AS dimension_b_name,
-  D.dimension_b_description,
-  {{ snake_case_to_proper_case('D.dimension_c') }} AS dimension_c_name,
-  D.dimension_c_description,
-  M.source_system,
-  M.site,
-  M.dimension_a,
-  M.dimension_b,
-  M.dimension_c,
-  M.fhir_mapping,
-  M.metric_date,
-  EXTRACT(YEAR FROM M.metric_date) AS metric_year,
-  M.numerator,
-  M.denominator,
-  M.measure
-FROM {{ ref('metric_definition') }} AS D
-JOIN {{ ref('metric') }} AS M USING(metric_name)
+{{ create_metric_view(include_date=True, include_slices=True) }}
