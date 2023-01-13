@@ -262,6 +262,16 @@ selectors:
         - method: path
           value: models/metadata/
 
+  - name: resource_medicationdispense
+    description: "Metrics for which the primary resource evaluated is MedicationDispense"
+    definition:
+      union:
+        - method: config.meta.primary_resource
+          value: MedicationDispense
+          parents: true
+        - method: path
+          value: models/metadata/
+
   - name: resource_medicationrequest
     description: "Metrics for which the primary resource evaluated is MedicationRequest"
     definition:

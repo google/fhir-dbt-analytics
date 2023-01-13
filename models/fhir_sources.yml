@@ -36,6 +36,7 @@ sources:
       - name: Immunization
       - name: Location
       - name: Medication
+      - name: MedicationDispense
       - name: MedicationAdministration
       - name: MedicationRequest
       - name: Observation
@@ -62,6 +63,7 @@ sources:
       - name: location
       - name: medication
       - name: medication_administration
+      - name: medication_dispense
       - name: medication_request
       - name: observation
       - name: organization
