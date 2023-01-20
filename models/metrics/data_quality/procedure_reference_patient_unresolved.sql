@@ -35,13 +35,7 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      CASE WHEN
-        NOT EXISTS(
-          SELECT Pat.id
-          FROM {{ ref('Patient') }} AS Pat
-          WHERE P.subject.patientId = Pat.id
-        )
-        THEN 1 ELSE 0 END AS reference_patient_unresolved
+      CAST(subject.patientId NOT IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_unresolved
     FROM {{ ref('Procedure') }} AS P
 {%- endset -%}
 

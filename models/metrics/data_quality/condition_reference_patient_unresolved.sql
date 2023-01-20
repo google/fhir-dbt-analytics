@@ -41,13 +41,7 @@ limitations under the License. */
       {{ try_code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/condition-clinical') }} AS clinical_status,
       {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/condition-ver-status') }} AS verification_status,
       {{ try_code_from_codeableconcept('category', 'http://terminology.hl7.org/CodeSystem/condition-category', index = 0) }} AS category,
-      CASE WHEN
-        NOT EXISTS(
-          SELECT P.id
-          FROM {{ ref('Patient') }} AS P
-          WHERE C.subject.patientId = P.id
-        )
-        THEN 1 ELSE 0 END AS reference_patient_unresolved
+      CAST(subject.patientId NOT IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_unresolved
     FROM {{ ref('Condition') }} AS C
 {%- endset -%}
 

@@ -38,17 +38,13 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       status,
       class.code AS latest_encounter_class,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM {{ ref('Patient') }} AS P
-        {%- if column_exists('subject.patientId') %}
-        WHERE E.subject.patientId = P.id
-        {%- elif column_exists('subject.reference') %}
-        WHERE E.subject.reference = P.id AND E.subject.type = 'Patient'
-        {%- else %}
-        WHERE FALSE
-        {%- endif %}
-      ) AS reference_patient_resolved
+      {%- if column_exists('subject.patientId') %}
+      CAST(subject.patientId IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_resolved
+      {%- elif column_exists('subject.reference') %}
+      CAST(subject.type = 'Patient' AND subject.reference IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_resolved,
+      {%- else %}
+      0 AS reference_patient_resolved,
+      {%- endif %}
     FROM {{ ref('Encounter') }} AS E
 {%- endset -%}
 

@@ -38,13 +38,7 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       {{ try_code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical') }} AS clinical_status,
       {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification') }} AS verification_status,
-      CASE WHEN
-        NOT EXISTS(
-          SELECT P.id
-          FROM {{ ref('Patient') }} AS P
-          WHERE A.patient.patientId = P.id
-        )
-        THEN 1 ELSE 0 END AS reference_patient_unresolved
+      CAST(patient.patientId NOT IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_unresolved
     FROM {{ ref('AllergyIntolerance') }} AS A
 {%- endset -%}
 
