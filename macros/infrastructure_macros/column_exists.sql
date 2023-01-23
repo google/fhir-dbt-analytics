@@ -13,9 +13,13 @@
 
     {# Initialise object for table based on names rather than ref() #}
     {%- set relation = adapter.get_relation(
-        database = this.project,
-        schema = this.dataset,
-        identifier = fhir_resource ~ "_view") -%}
+        database = var('database'),
+        schema = var('schema'),
+        identifier = get_source_table_name(fhir_resource)) -%}
+
+    {% if not relation %}
+        {% do return (False) %}
+    {% endif %}
 
     {# Get columns in this table #}
     {%- set columns = adapter.get_columns_in_relation(relation) -%}
