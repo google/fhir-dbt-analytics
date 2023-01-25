@@ -416,19 +416,78 @@ macros:
           The datatype of `metric_date_columns`.
 
 
+  - name: date_array
+
+    description: |
+      Prints SQL for generating an array of dates based on the FHIR dataset.
+
+      If the static_dataset project variable is TRUE then this array includes all dates between
+      earliest_date and latest_date inclusive.
+
+      If the static_dataset project variable is FALSE then this array includes dates up to and
+      including the current date, going back the number of months defined by the months_history
+      project variable.
+
+
   - name: active_encounters
 
     description: |
-      Prints SQL for extracting active encounters from `Anchor` and `Enc` common table expressions
-      used in metrics.
+      Prints SQL for extracting active encounters per day over a set period of time.
 
-      For each date in the `Anchor` table, encounters that spanned (partially or fully) that date
-      are joined.
+      The output is one row per date per patient with an active encounter that spans (at least
+      partially) that date.
 
       Ambulatory encounters are joined on matching period.start only.
 
-      Long stay encounters >90 days are excluded to reduce the impact of encounters that are
+      Non-ambulatory encounters are capped at 90 days to reduce the impact of encounters that are
       complete but period.end is missing or recorded incorrectly.
+
+    arguments:
+      - name: encounter_classes
+        type: list
+        description: |
+          List of encounter class code from
+          [ActEncounterCode](http://terminology.hl7.org/ValueSet/v3-ActEncounterCode) to restrict
+          the list of active encounters to.
+
+          If not specified, the macro will default to including encounters with the following codes:
+          'IMP', 'ACUTE', 'NONAC', 'SS', 'OBSENC', 'EMER', 'AMB'.
+
+
+  - name: cap_encounter_end_date
+
+    description: |
+      Prints SQL for returning a capped encounter end date.
+
+      It is used to limit the effect of long stay encounters on metrics, which may be due to missing
+      or incorrect recording of the encounter end date.
+
+      It takes the provided encounter end date (`period_end`) and converts this date to an earlier
+      date if criteria are met.
+
+      For ambulatory encounters, the encounter end date is set to the encounter start date.
+
+      For non-ambulatory encounters, the encounter end date is set to n days after the encounter
+      start date if this is earlier than the recorded encounter end date. The value for n is
+      determined by the `cap_length_of_stay` argument.
+
+    arguments:
+      - name: period_start
+        type: string
+        description: |
+          The column name containing the encounter start date. Default: `period_start`.
+      - name: period_end
+        type: string
+        description: |
+          The column name containing the encounter end date. Default: `period_end`.
+      - name: encounter_class
+        type: string
+        description: |
+          The column name containing the encounter class. Default: `encounter_class`.
+      - name: length_of_stay_cap
+        type: int
+        description: |
+          The number of days to cap non-ambulatory encounter length of stay. Default: 90.
 
 
   - name: encounter_class_group

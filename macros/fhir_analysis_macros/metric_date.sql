@@ -1,4 +1,4 @@
-{% macro metric_date(metric_date_columns, date_column_data_type) %}
+{%- macro metric_date(metric_date_columns, date_column_data_type) -%}
 {%- if metric_date_columns == None %}
     CAST(NULL AS DATE)
 {%- else -%}

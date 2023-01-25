@@ -34,6 +34,7 @@ vars:
   earliest_date: "2009-10-01"  # If static_dataset = TRUE then input the earliest date for the data. This is used to restrict metric output date ranges. Use format: "YYYY-MM-DD". [string]
   latest_date: "2019-09-23"  # If static_dataset = TRUE then input the latest date for the data. This is used to restrict metric output date ranges. Use format: "YYYY-MM-DD". [string]
   months_history: 12  # For a dynamic dataset (static_dataset = FALSE) the number of months in the past from current_date to include in metric output. [integer]
+  length_of_stay_cap: 90  # Default argument to pass to cap_encounter_end_date macro which caps encounter length of stay at this number of days to limit the effect of long stay encounters on metrics. [integer]
   persist_all_metric_executions: FALSE  # Whether to enable metric_all model which incrementally adds the output from every execution of the metrics pipeline. [boolean]
   cohort: "all_patients"  # Run metrics for a specific group of patients defined in models/cohorts/. For example, “adults”. Use “all_patients” to disable cohort filtering. [string]
   cohort_snapshot_date: "today"  # Date on which to evaluate patient membership of cohort. Default of "today" will evaluate membership as of today using CURRENT_DATE(). Use format: "YYYY-MM-DD". [string]
