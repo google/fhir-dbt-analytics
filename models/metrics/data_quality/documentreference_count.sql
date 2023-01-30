@@ -27,7 +27,7 @@ limitations under the License. */
       "metric_date_description": "Document reference date",
       "dimension_a": "document_status",
       "dimension_a_description": "The document reference status  (current | superseded | entered-in-error)",
-      "dimension_b": "Format",
+      "dimension_b": "format",
       "dimension_b_description": "The format of the document referenced (scanned | NULL)",
     }
 ) -}}
