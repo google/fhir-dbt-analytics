@@ -17,6 +17,10 @@ WITH
     {% if not fhir_resource_exists(model_metadata('primary_resource')) %}
         {% do return(False) %}
     {% endif %}
+    {% for secondary_resource in model_metadata('secondary_resources', value_if_missing=[])
+        if not fhir_resource_exists(secondary_resource) %}
+        {% do return(False) %}
+    {% endfor %}
     {% for primary_field in model_metadata('primary_fields', value_if_missing=[])
         if not column_exists(primary_field) %}
         {% do return(False) %}

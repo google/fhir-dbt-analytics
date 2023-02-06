@@ -563,6 +563,25 @@ macros:
           FHIR resource to evaluate in Pascal case (e.g AllergyIntolerance).
 
 
+  - name: get_column_datatype_dict
+
+    description: |
+      Returns a dictionary object containing all columns (keys) in a FHIR resource view and their
+      data types (values).
+
+      Included in the dictionary are both top-level columns (e.g. code) and nested columns (e.g
+      code.coding.display).
+
+    arguments:
+      - name: fhir_resource
+        type: string
+        description: |
+          The FHIR resource from which to return a dictionary of columns contained in the FHIR
+          resource view.
+
+          If not specified, the macro will default to using the `primary_resource` for the metric.
+
+
   - name: column_exists
 
     description: |
@@ -572,7 +591,8 @@ macros:
       - name: column_name
         type: string
         description: |
-          Fully qualified column name to evaluate (e.g. code.coding.display).
+          Column name to evaluate. Can be a top-level column (e.g. code) or nested column (e.g.
+          code.coding.display).
       - name: fhir_resource
         type: string
         description: |

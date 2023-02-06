@@ -4,33 +4,8 @@
         {% do return(True) %}
     {% endif %}
 
-    {%- if fhir_resource == None -%}
-        {%- set fhir_resource = model_metadata(meta_key='fhir_resource') -%}
-    {%- endif -%}
-    {%- if fhir_resource == None -%}
-        {%- set fhir_resource = model_metadata(meta_key='primary_resource') -%}
-    {%- endif -%}
+    {% set column_dict = get_column_datatype_dict(fhir_resource) %}
 
-    {# Initialise object for table based on names rather than ref() #}
-    {%- set relation = adapter.get_relation(
-        database = this.project,
-        schema = this.dataset,
-        identifier = fhir_resource ~ "_view") -%}
-
-    {% if not relation %}
-        {% do return (False) %}
-    {% endif %}
-
-    {# Get columns in this table #}
-    {%- set columns = adapter.get_columns_in_relation(relation) -%}
-    {% for top_level_column in columns %}
-        {% for column in top_level_column.flatten() %}
-          {% if column_name == column.name %}
-            {% do return (True) %}
-          {% endif %}
-        {% endfor %}
-    {% endfor %}
-
-    {% do return (False) %}
+    {% do return(column_name in column_dict) %}
 
 {% endmacro %}
