@@ -16,14 +16,14 @@ version: 2
 
 models:
 
-  - name: metric_by_slices_system_date
+  - name: metric_by_day_dimensions
 
     description: |
-      SQL view that joins the latest metric outputs (`metric`) with metric metadata
-      (`metric_definition`).
+      Creates a SQL view that joins the latest metric outputs (`metric`) with metric metadata
+      (`metric_definition`) and groups by source system, metric date and all slices.
 
       Each row is one metric calculation for a single source system, unique combination of slice
-      values, and local date.
+      values, and date.
 
     tests:
       - dbt_utils.expression_is_true:
@@ -59,20 +59,39 @@ models:
               row_condition: "calculation IN ('PROPORTION', 'RATIO')"
 
 
-  - name: metric_by_system_date
+  - name: metric_by_day
 
     description: |
       Creates a SQL view that joins the latest metric outputs (`metric`) with metric metadata
-      (`metric_definition`), and aggregates by source system and metric date.
+      (`metric_definition`), and groups by source system and metric date.
 
-      Each row in this view is one metric calculation for a single source system and local date.
+      Each row in this view is one metric calculation for a single source system and date.
 
 
-  - name: metric_by_system
+  - name: metric_by_year_dimensions
 
     description: |
       Creates a SQL view that joins the latest metric outputs (`metric`) with metric metadata
-      (`metric_definition`), and aggregates by metric date.
+      (`metric_definition`), and groups by source system, metric year and all slices.
+
+      Each row in this view is one metric calculation for a single source system, unique combination
+      of slice values and year.
+
+
+  - name: metric_by_year
+
+    description: |
+      Creates a SQL view that joins the latest metric outputs (`metric`) with metric metadata
+      (`metric_definition`), and groups by by source system and metric year.
+
+      Each row in this view is one metric calculation for a single source system and year.
+
+
+  - name: metric_overall
+
+    description: |
+      Creates a SQL view that joins the latest metric outputs (`metric`) with metric metadata
+      (`metric_definition`), and groups by source system only.
 
       Each row in this view is one metric calculation for a single source system over the entire
       analysis period.

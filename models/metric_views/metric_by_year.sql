@@ -18,4 +18,7 @@ limitations under the License. */
     materialized='view'
 ) -}}
 
-{{ create_metric_view(include_date=True, include_slices=True) }}
+{{ create_metric_view(
+  segment_by_date = 'YEAR',
+  segment_by_dimensions = None
+) }}

@@ -793,19 +793,27 @@ macros:
     description: |
       Prints SQL which creates a table joining the metric and metric definition tables. 
 
-      Used for views, configurable to include or exclude slices & date aggregation.
+      Used for views, configurable to include or exclude dimensions & date aggregation.
 
     arguments:
-      - name: include_date
-        type: boolean
+      - name: segment_by_date
+        type: string
         description: |
-          True if date fields should be included and data aggregated by date as well as system
-          as well as system.
-      - name: include_slices
-        type: boolean
+          Specify the time-period granularity to segement the metrics by.
+
+          Supported values: 'DAY', 'YEAR'.
+
+          If no value is provided then the view will not segment by any time-period.
+
+      - name: segment_by_dimensions
+        type: list
         description: |
-          True if dimension slices should be included. If include_date is also true, there will
-          effectively be no aggregation, simply joining the two tables.
+          Specify the metric-specific dimensions to segment the metrics by.
+
+          Supported values: 'dimension_a', 'dimension_b', 'dimension_c'.
+
+          If no value is provided then the view will not segment by any metric-specific dimensions.
+
 
 # String macros
 
