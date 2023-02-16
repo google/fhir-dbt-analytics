@@ -45,20 +45,13 @@ limitations under the License. */
         'http://terminology.hl7.org/CodeSystem/medicationrequest-category',
         index = get_source_specific_category_index()
       ) }} AS category,
-      CASE WHEN
-        encounter.encounterId IS NOT NULL
-        AND encounter.encounterId <> ''
-        AND NOT EXISTS(
-          SELECT E.id
-          FROM {{ ref('Encounter') }} AS E
-          WHERE M.encounter.encounterId = E.id
-        )
-        THEN 1 ELSE 0 END AS reference_encounter_unresolved
+      {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value,
+      {{ reference_resolves('encounter', 'Encounter') }} AS reference_resolves
     FROM {{ ref('MedicationRequest') }} AS M
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_encounter_unresolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

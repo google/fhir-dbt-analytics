@@ -16,7 +16,7 @@ limitations under the License. */
 
 {{ config(
     meta = {
-      "description": "Proportion of Encounter resources that do not reference an existing patient",
+      "description": "Proportion of Encounter resources that reference a non-existent patient",
       "short_description": "Enc ref. Patient - non-exist",
       "primary_resource": "Encounter",
       "primary_fields": ['subject.patientId'],
@@ -38,18 +38,13 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       status,
       class.code AS latest_encounter_class,
-      {%- if column_exists('subject.patientId') %}
-      CAST(subject.patientId IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_resolved
-      {%- elif column_exists('subject.reference') %}
-      CAST(subject.type = 'Patient' AND subject.reference IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_resolved,
-      {%- else %}
-      0 AS reference_patient_resolved,
-      {%- endif %}
+      {{ has_reference_value('subject', 'Patient') }} AS has_reference_value,
+      {{ reference_resolves('subject', 'Patient') }} AS reference_resolves
     FROM {{ ref('Encounter') }} AS E
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(1 - reference_patient_resolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

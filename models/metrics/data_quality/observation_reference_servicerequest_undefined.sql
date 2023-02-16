@@ -37,17 +37,12 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(O.basedOn) AS OB
-        WHERE serviceRequestId IS NOT NULL
-        AND serviceRequestId <> ''
-      ) AS has_reference_servicerequest
+      {{ has_reference_value('basedOn', 'ServiceRequest') }} AS has_reference_value
     FROM {{ ref('Observation') }} AS O
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(1 - has_reference_servicerequest)',
+    numerator = 'SUM(1 - has_reference_value)',
     denominator = 'COUNT(id)'
 ) }}

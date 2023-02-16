@@ -41,19 +41,19 @@ limitations under the License. */
         JOIN UNNEST(CS.entry) AS CSE
         WHERE CSE.binaryid IS NOT NULL
         AND CSE.binaryid <> ''
-      ) AS has_reference_binary,
+      ) AS has_reference_value,
       (
         SELECT SIGN(COUNT(*))
         FROM UNNEST(C.section) AS CS
         JOIN UNNEST(CS.entry) AS CSE
         JOIN {{ ref('Binary') }} AS B
           ON CSE.binaryid = B.id
-      ) AS reference_binary_resolved
+      ) AS reference_resolves
     FROM {{ ref('Composition') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(has_reference_binary - reference_binary_resolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

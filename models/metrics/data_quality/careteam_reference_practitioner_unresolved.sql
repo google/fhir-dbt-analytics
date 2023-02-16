@@ -40,18 +40,18 @@ limitations under the License. */
         FROM UNNEST(C.participant) AS CP
         WHERE member.practitionerId IS NOT NULL
         AND member.practitionerId <> ''
-      ) AS has_reference_practitioner,
+      ) AS has_reference_value,
       (
         SELECT SIGN(COUNT(*))
         FROM UNNEST(C.participant) AS CP
         JOIN {{ ref('Practitioner') }} AS P
           ON CP.member.practitionerId = P.id
-      ) AS reference_practitioner_resolved
+      ) AS reference_resolves
     FROM {{ ref('CareTeam') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(has_reference_practitioner - reference_practitioner_resolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

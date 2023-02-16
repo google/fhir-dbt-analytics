@@ -42,23 +42,13 @@ limitations under the License. */
         'https://g.co/fhir/harmonized/diagnostic_report/category',
         index = get_source_specific_category_index()
       ) }} AS category,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(D.basedOn) AS DB
-        WHERE serviceRequestId IS NOT NULL
-        AND serviceRequestId <> ''
-      ) AS has_reference_servicerequest,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(D.basedOn) AS DB
-        JOIN {{ ref('ServiceRequest') }} AS S
-          ON DB.serviceRequestId = S.id
-      ) AS reference_servicerequest_resolved
+      {{ has_reference_value('basedOn', 'ServiceRequest') }} AS has_reference_value,
+      {{ reference_resolves('basedOn', 'ServiceRequest') }} AS reference_resolves
     FROM {{ ref('DiagnosticReport') }} AS D
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(has_reference_servicerequest - reference_servicerequest_resolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

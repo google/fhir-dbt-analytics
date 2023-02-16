@@ -41,20 +41,13 @@ limitations under the License. */
       {{ try_code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/condition-clinical') }} AS clinical_status,
       {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/condition-ver-status') }} AS verification_status,
       {{ try_code_from_codeableconcept('category', 'http://terminology.hl7.org/CodeSystem/condition-category', index = 0) }} AS category,
-      CASE WHEN
-        encounter.encounterId IS NOT NULL
-        AND encounter.encounterId <> ''
-        AND NOT EXISTS(
-          SELECT E.id
-          FROM {{ ref('Encounter') }} AS E
-          WHERE C.encounter.encounterId = E.id
-        )
-        THEN 1 ELSE 0 END AS reference_encounter_unresolved
+      {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value,
+      {{ reference_resolves('encounter', 'Encounter') }} AS reference_resolves
     FROM {{ ref('Condition') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_encounter_unresolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

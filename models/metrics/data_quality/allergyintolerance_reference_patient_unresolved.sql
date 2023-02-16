@@ -16,7 +16,7 @@ limitations under the License. */
 
 {{ config(
     meta = {
-      "description": "Proportion of AllergyIntolerance resources that do not reference an existing patient",
+      "description": "Proportion of AllergyIntolerance resources that reference a non-existent patient",
       "short_description": "Allergy ref. Patient - non-exist",
       "primary_resource": "AllergyIntolerance",
       "primary_fields": ['patient.patientId'],
@@ -38,12 +38,13 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       {{ try_code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical') }} AS clinical_status,
       {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification') }} AS verification_status,
-      CAST(patient.patientId NOT IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_unresolved
+      {{ has_reference_value('patient', 'Patient') }} AS has_reference_value,
+      {{ reference_resolves('patient', 'Patient') }} AS reference_resolves
     FROM {{ ref('AllergyIntolerance') }} AS A
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_patient_unresolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

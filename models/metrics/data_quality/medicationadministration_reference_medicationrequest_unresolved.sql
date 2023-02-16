@@ -37,20 +37,13 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      CASE WHEN
-        request.medicationRequestId IS NOT NULL
-        AND request.medicationRequestId <> ''
-        AND NOT EXISTS(
-          SELECT MR.id
-          FROM {{ ref('MedicationRequest') }} AS MR
-          WHERE M.request.medicationRequestId = MR.id
-        )
-        THEN 1 ELSE 0 END AS reference_medicationrequest_unresolved    
+      {{ has_reference_value('request', 'MedicationRequest') }} AS has_reference_value,
+      {{ reference_resolves('request', 'MedicationRequest') }} AS reference_resolves  
     FROM {{ ref('MedicationAdministration') }} AS M
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_medicationrequest_unresolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

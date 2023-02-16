@@ -42,12 +42,12 @@ limitations under the License. */
         'https://g.co/fhir/harmonized/diagnostic_report/category',
         index = get_source_specific_category_index()
       ) }} AS category,
-      CASE WHEN encounter.encounterId IS NULL OR encounter.encounterId = '' THEN 1 ELSE 0 END AS reference_encounter_undefined
+      {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value
     FROM {{ ref('DiagnosticReport') }} AS D
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_encounter_undefined)',
+    numerator = 'SUM(1 - has_reference_value)',
     denominator = 'COUNT(id)'
 ) }}

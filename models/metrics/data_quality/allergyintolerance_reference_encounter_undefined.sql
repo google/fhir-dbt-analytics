@@ -38,12 +38,12 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       {{ try_code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical') }} AS clinical_status,
       {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification' ) }} AS verification_status,
-      CASE WHEN encounter.encounterId IS NULL OR encounter.encounterId = '' THEN 1 ELSE 0 END AS reference_encounter_undefined
+      {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value
     FROM {{ ref('AllergyIntolerance') }} AS A
 {%- endset -%}
 
 {{ calculate_metric(
-      metric_sql,
-      numerator = 'SUM(reference_encounter_undefined)',
-      denominator = 'COUNT(id)'
+    metric_sql,
+    numerator = 'SUM(1 - has_reference_value)',
+    denominator = 'COUNT(id)'
 ) }}

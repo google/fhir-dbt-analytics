@@ -35,12 +35,12 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      CASE WHEN medication.reference.medicationId IS NULL OR medication.reference.medicationId = '' THEN 1 ELSE 0 END AS reference_medication_undefined
+      {{ has_reference_value('medication.reference', 'Medication') }} AS has_reference_value
     FROM {{ ref('MedicationStatement') }} AS M
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_medication_undefined)',
+    numerator = 'SUM(1 - has_reference_value)',
     denominator = 'COUNT(id)'
 ) }}

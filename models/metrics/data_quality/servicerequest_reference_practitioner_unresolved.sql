@@ -43,20 +43,13 @@ limitations under the License. */
         index = get_source_specific_category_index(),
         return_display=True
       ) }} AS category,
-      CASE WHEN
-        requester.practitionerId IS NOT NULL
-        AND requester.practitionerId <> ''
-        AND NOT EXISTS(
-          SELECT P.id
-          FROM {{ ref('Practitioner') }} AS P
-          WHERE S.requester.practitionerId = P.id
-        )
-        THEN 1 ELSE 0 END AS reference_practitioner_unresolved
+      {{ has_reference_value('requester', 'Practitioner') }} AS has_reference_value,
+      {{ reference_resolves('requester', 'Practitioner') }} AS reference_resolves
     FROM {{ ref('ServiceRequest') }} AS S
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_practitioner_unresolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

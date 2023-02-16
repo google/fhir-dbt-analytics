@@ -41,12 +41,12 @@ limitations under the License. */
         JOIN UNNEST(CS.entry) AS CSE
         WHERE CSE.binaryid IS NOT NULL
         AND CSE.binaryid <> ''
-      ) AS has_reference_binary
+      ) AS has_reference_value
     FROM {{ ref('Composition') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(1 - has_reference_binary)',
+    numerator = 'SUM(1 - has_reference_value)',
     denominator = 'COUNT(id)'
 ) }}

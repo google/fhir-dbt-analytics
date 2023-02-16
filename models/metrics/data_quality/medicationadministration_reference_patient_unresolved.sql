@@ -16,7 +16,7 @@ limitations under the License. */
 
 {{ config(
     meta = {
-      "description": "Proportion of MedicationAdministration resources that do not reference an existing patient",
+      "description": "Proportion of MedicationAdministration resources that reference a non-existent patient",
       "short_description": "MedAdmin ref. Patient - non-exist",
       "primary_resource": "MedicationAdministration",
       "primary_fields": ['subject.patientId'],
@@ -35,12 +35,13 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      CAST(subject.patientId NOT IN (SELECT id FROM {{ ref('Patient') }}) AS INT64) AS reference_patient_unresolved
+      {{ has_reference_value('subject', 'Patient') }} AS has_reference_value,
+      {{ reference_resolves('subject', 'Patient') }} AS reference_resolves
     FROM {{ ref('MedicationAdministration') }} AS M
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_patient_unresolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

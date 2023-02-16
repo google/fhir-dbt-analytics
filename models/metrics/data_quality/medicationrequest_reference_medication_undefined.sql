@@ -47,12 +47,12 @@ limitations under the License. */
         'http://terminology.hl7.org/CodeSystem/medicationrequest-category',
         index = get_source_specific_category_index()
       ) }} AS category,
-      CASE WHEN medication.reference.medicationId IS NULL OR medication.reference.medicationId = '' THEN 1 ELSE 0 END AS reference_medication_undefined
+      {{ has_reference_value('medication.reference', 'Medication') }} AS has_reference_value
     FROM {{ ref('MedicationRequest') }} AS M
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_medication_undefined)',
+    numerator = 'SUM(1 - has_reference_value)',
     denominator = 'COUNT(id)'
 ) }}

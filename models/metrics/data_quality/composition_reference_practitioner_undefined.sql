@@ -35,17 +35,12 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(C.author) AS CA
-        WHERE practitionerId IS NOT NULL
-        AND practitionerId <> ''
-      ) AS has_reference_practitioner
+      {{ has_reference_value('author', 'Practitioner') }} AS has_reference_value
     FROM {{ ref('Composition') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(1 - has_reference_practitioner)',
+    numerator = 'SUM(1 - has_reference_value)',
     denominator = 'COUNT(id)'
 ) }}

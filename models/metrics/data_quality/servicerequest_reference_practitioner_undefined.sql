@@ -43,12 +43,12 @@ limitations under the License. */
         index = get_source_specific_category_index(),
         return_display=True
       ) }} AS category,
-      CASE WHEN requester.practitionerId IS NULL OR requester.practitionerId = '' THEN 1 ELSE 0 END AS reference_practitioner_undefined
+      {{ has_reference_value('requester', 'Practitioner') }} AS has_reference_value
     FROM {{ ref('ServiceRequest') }} AS S
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_practitioner_undefined)',
+    numerator = 'SUM(1 - has_reference_value)',
     denominator = 'COUNT(id)'
 ) }}

@@ -35,20 +35,13 @@ limitations under the License. */
       C.id,
       {{- metric_common_dimensions() }}
       status,
-      CASE WHEN
-        encounter.encounterId IS NOT NULL
-        AND encounter.encounterId <> ''
-        AND NOT EXISTS(
-          SELECT E.id
-          FROM {{ ref('Encounter') }} AS E
-          WHERE C.encounter.encounterId = E.id
-        )
-        THEN 1 ELSE 0 END AS reference_encounter_unresolved
+      {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value,
+      {{ reference_resolves('encounter', 'Encounter') }} AS reference_resolves
     FROM {{ ref('CareTeam') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(reference_encounter_unresolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

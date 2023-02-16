@@ -42,23 +42,13 @@ limitations under the License. */
         'https://g.co/fhir/harmonized/diagnostic_report/category',
         index = get_source_specific_category_index()
       ) }} AS category,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(D.result) AS DB
-        WHERE observationId IS NOT NULL
-        AND observationId <> ''
-      ) AS has_reference_observation,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(D.result) AS DB
-        JOIN {{ ref('Observation') }} AS O
-          ON DB.observationId = O.id
-      ) AS reference_observation_resolved
+      {{ has_reference_value('result', 'Observation') }} AS has_reference_value,
+      {{ reference_resolves('result', 'Observation') }} AS reference_resolves
     FROM {{ ref('DiagnosticReport') }} AS D
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(has_reference_observation - reference_observation_resolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

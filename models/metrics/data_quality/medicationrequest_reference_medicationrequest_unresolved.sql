@@ -47,22 +47,13 @@ limitations under the License. */
         'http://terminology.hl7.org/CodeSystem/medicationrequest-category',
         index = get_source_specific_category_index()
       ) }} AS category,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(M.basedOn) AS MB
-        WHERE medicationRequestId IS NOT NULL AND medicationRequestId <> ''
-      ) AS has_reference_medicationrequest,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(M.basedOn) AS MB
-        JOIN {{ ref('MedicationRequest') }} AS M2
-          ON MB.medicationRequestId = M2.id
-      ) AS reference_medicationrequest_resolved
+      {{ has_reference_value('basedOn', 'MedicationRequest') }} AS has_reference_value,
+      {{ reference_resolves('basedOn', 'MedicationRequest') }} AS reference_resolves
     FROM {{ ref('MedicationRequest') }} AS M
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(has_reference_medicationrequest - reference_medicationrequest_resolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

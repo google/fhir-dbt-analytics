@@ -43,22 +43,13 @@ limitations under the License. */
         index = get_source_specific_category_index(),
         return_display=True
       ) }} AS category,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(S.basedOn) AS SB
-        WHERE serviceRequestId IS NOT NULL AND serviceRequestId <> ''
-      ) AS has_reference_servicerequest,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(S.basedOn) AS SB
-        JOIN {{ ref('ServiceRequest') }} AS S2
-          ON SB.serviceRequestId = S2.id
-      ) AS reference_servicerequest_resolved
+      {{ has_reference_value('basedOn', 'ServiceRequest') }} AS has_reference_value,
+      {{ reference_resolves('basedOn', 'ServiceRequest') }} AS reference_resolves
     FROM {{ ref('ServiceRequest') }} AS S
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(has_reference_servicerequest - reference_servicerequest_resolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

@@ -35,23 +35,13 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(C.author) AS CA
-        WHERE practitionerId IS NOT NULL
-        AND practitionerId <> ''
-      ) AS has_reference_practitioner,
-      (
-        SELECT SIGN(COUNT(*))
-        FROM UNNEST(C.author) AS CA
-        JOIN {{ ref('Practitioner') }} AS P
-          ON CA.practitionerId = P.id
-      ) AS reference_practitioner_resolved
+      {{ has_reference_value('author', 'Practitioner') }} AS has_reference_value,
+      {{ reference_resolves('author', 'Practitioner') }} AS reference_resolves
     FROM {{ ref('Composition') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(has_reference_practitioner - reference_practitioner_resolved)',
+    numerator = 'SUM(has_reference_value - reference_resolves)',
     denominator = 'COUNT(id)'
 ) }}

@@ -289,8 +289,11 @@ macros:
   - name: has_code_from_code_system
 
     description: |
-      Evaluates whether a non-null, non-empty code is present for a specified code system from a
-      FHIR codeableConcept field.
+      Evaluates whether a code is recorded for a specified code system from a FHIR codeableConcept
+      field.
+
+      A code is evaluated as not recorded if it is NULL or contains a value matching any value
+      within the `null_values` list argument.
 
       It returns integer flag of 1 if a code exists, and 0 if not.
 
@@ -303,15 +306,23 @@ macros:
         type: string
         description: |
           Coding system to filter the search of the codeableConcept field.
+      - name: null_values
+        type: list
+        description: |
+          List of string values considered as NULL. If the extracted code matches any of these
+          values, the macro will return a 0. Default: `null_values` project variable.
 
 
   - name: try_has_code_from_code_system
 
     description: |
-      This macro tries to evaluate whether a non-null, non-empty code is present for a specified
-      code system from a FHIR codeableConcept field.
+      Evaluates whether a code is recorded for a specified code system from a FHIR codeableConcept
+      field.
 
-      it returns integer flag of 1 if a code exists, and 0 if not.
+      A code is evaluated as not recorded if it is NULL or contains a value matching any value
+      within the `null_values` list argument.
+
+      It returns integer flag of 1 if a code exists, and 0 if not.
 
       If the field specified does not exist in the table, then 0 is returned.
 
@@ -335,6 +346,76 @@ macros:
         description: |
           For codeableConcept fields that are repeatable, return the field specified by this index
           value
+
+
+  - name: has_value
+
+    description: |
+      Prints SQL for evaluating whether a field has a value recorded, returning TRUE if so and
+      FALSE if not.
+
+      A field is evaluated as not recorded if it is NULL or contains a value matching any value
+      within the `null_values` list argument.
+
+    arguments:
+      - name: field_name
+        type: string
+        description: |
+          FHIR field to evaluate.
+      - name: null_values
+        type: list
+        description: |
+          List of string values considered as NULL. If `field_name` matches any of these values, the
+          SQL will return FALSE. Default: `null_values` project variable.
+
+
+  - name: has_reference_value
+
+    description: |
+      Prints SQL for evaluating whether a reference field has a value recorded, returning TRUE if so
+      and FALSE if not.
+
+      A field is evaluated as not recorded if it is NULL or contains a value matching any value
+      within the `null_values` list argument.
+
+      Macro will preferentially use direct resource references (e.g. 'subject.patientId') defined by
+      the [SQL-on-FHIR](https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md#references)
+      projections. If this field does not exist in the FHIR resource, then the standard FHIR
+      resource references are used (e.g. 'subject.reference' and 'subject.type').
+
+    arguments:
+      - name: reference_column
+        type: string
+        description: |
+           FHIR reference field to evaluate. Only include the top-level reference field.
+           For example,'subject' rather than 'subject.patientId'
+      - name: reference_resource
+        type: string
+        description: |
+          FHIR resource for which this reference value refers to (e.g. 'Patient).
+
+
+  - name: reference_resolves
+
+    description: |
+      Prints SQL for evaluating whether a reference field value exists within the refererred FHIR
+      resource, returning an integer flag of 1 if so and 0 if not.
+
+      Macro will preferentially use direct resource references (e.g. 'subject.patientId') defined by
+      the [SQL-on-FHIR](https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md#references)
+      projections. If this field does not exist in the FHIR resource, then the standard FHIR
+      resource references are used (e.g. 'subject.reference' and 'subject.type').
+
+    arguments:
+      - name: reference_column
+        type: string
+        description: |
+           FHIR reference field to evaluate. Only include the top-level reference field.
+           For example,'subject' rather than 'subject.patientId'
+      - name: reference_resource
+        type: string
+        description: |
+          FHIR resource to to check for the presence of the reference field value (e.g. 'Patient).
 
 
   - name: sql_comparison_expression
@@ -487,7 +568,8 @@ macros:
       - name: length_of_stay_cap
         type: int
         description: |
-          The number of days to cap non-ambulatory encounter length of stay. Default: 90.
+          The number of days to cap non-ambulatory encounter length of stay. Default:
+          `length_of_stay_cap` project variable.
 
 
   - name: encounter_class_group
@@ -615,6 +697,33 @@ macros:
         type: string
         description: |
           The source table in which `column_name` exists.
+
+
+  - name: get_reference_paths
+
+    description: |
+      Get a dictionary containing direct and indirect FHIR references based in an input reference
+      column and reference resource.
+
+      For example, the Encounter resource contains the column "subject" for references to the
+      Patient resource. In this example the reference_column argument would be "subject" and the
+      reference_resource argument would be "Patient". The macro will return the following
+      dictionary:
+
+      direct_reference_path: "subject.patientId"
+      indirect_reference_path: "subject.reference"
+      reference_column_is_array: False
+
+    arguments:
+      - name: reference_column
+        type: string
+        description: |
+           FHIR reference field. Only include the top-level reference field.
+           For example,'subject' rather than 'subject.patientId'
+      - name: reference_resource
+        type: string
+        description: |
+          FHIR resource for which this reference value refers to (e.g. 'Patient).
 
 
   - name: model_metadata

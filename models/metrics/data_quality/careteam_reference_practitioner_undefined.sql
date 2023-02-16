@@ -40,12 +40,12 @@ limitations under the License. */
         FROM UNNEST(C.participant) AS CP
         WHERE member.practitionerId IS NOT NULL
         AND member.practitionerId <> ''
-      ) AS has_reference_practitioner
+      ) AS has_reference_value
     FROM {{ ref('CareTeam') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(1 - has_reference_practitioner)',
+    numerator = 'SUM(1 - has_reference_value)',
     denominator = 'COUNT(id)'
 ) }}
