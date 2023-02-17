@@ -230,41 +230,22 @@ macros:
   - name: code_from_codeableconcept
 
     description: |
-      Extracts the code for a specified code system from a FHIR codeableConcept field.
-
-      If coding.code is not informative, then can return coding.display instead by setting the
-      return_display argument to TRUE.
-
-    arguments:
-      - name: field_name
-        type: string
-        description: |
-          FHIR field that is of type codeableConcept.
-      - name: code_system
-        type: string
-        description: |
-          Coding system to filter the search of the codeableConcept field.
-      - name: return_display
-        type: boolean
-        description: |
-          If set to TRUE, the macro will return the coding.display field from the codeableConcept.
-
-
-  - name: try_code_from_codeableconcept
-
-    description: |
       Attempts to extract a code for a specified code system from a FHIR codeableConcept field.
 
-      If the field specified does not exist in the table, then "UNK" is returned.
-
       If coding.code is not informative, then can return coding.display instead by setting the
-      return_display argument to TRUE.
+      return_field argument to 'display'.
+
+      To return an integer flag for whether a code exists, set return_int to True.
+
+      If the field specified does not exist in the table, then "missing_field" or 0 is returned,
+      depending on the return_int agument.
 
     arguments:
       - name: field_name
         type: string
         description: |
-          FHIR field that is of type codeableConcept.
+          FHIR field that is of type codeableConcept. If this field in an array, then the macro will
+          unnest this field.
       - name: code_system
         type: string
         description: |
@@ -272,80 +253,28 @@ macros:
       - name: fhir_resource
         type: string
         description: |
-          The FHIR resource to check whether the specified `field_name` exists.
-
-          If not specified, the macro will default to using the `primary_resource` for the metric.
+          The FHIR resource to check whether the specified `field_name` exists. If not specified,
+          the macro will default to using the `primary_resource` for the metric.
       - name: index
         type: int
         description: |
           For codeableConcept fields that are repeatable, return the field specified by this index
-          value
-      - name: return_display
-        type: boolean
-        description: |
-          If set to TRUE, the macro will return the coding.display field from the codeableConcept.
-
-
-  - name: has_code_from_code_system
-
-    description: |
-      Evaluates whether a code is recorded for a specified code system from a FHIR codeableConcept
-      field.
-
-      A code is evaluated as not recorded if it is NULL or contains a value matching any value
-      within the `null_values` list argument.
-
-      It returns integer flag of 1 if a code exists, and 0 if not.
-
-    arguments:
-      - name: field_name
-        type: string
-        description: |
-          FHIR field to evaluate that is of type codeableConcept.
-      - name: code_system
-        type: string
-        description: |
-          Coding system to filter the search of the codeableConcept field.
+          value.
       - name: null_values
         type: list
         description: |
           List of string values considered as NULL. If the extracted code matches any of these
           values, the macro will return a 0. Default: `null_values` project variable.
-
-
-  - name: try_has_code_from_code_system
-
-    description: |
-      Evaluates whether a code is recorded for a specified code system from a FHIR codeableConcept
-      field.
-
-      A code is evaluated as not recorded if it is NULL or contains a value matching any value
-      within the `null_values` list argument.
-
-      It returns integer flag of 1 if a code exists, and 0 if not.
-
-      If the field specified does not exist in the table, then 0 is returned.
-
-    arguments:
-      - name: field_name
+      - name: return_field
         type: string
         description: |
-          FHIR field to evaluate that is of type codeableConcept.
-      - name: code_system
-        type: string
+          If set to 'display', the macro will return the coding.display field from the
+          codeableConcept. By default, coding.code will be returned.
+      - name: return_int
+        type: boolean
         description: |
-          Coding system to filter the search of the codeableConcept field.
-      - name: fhir_resource
-        type: string
-        description: |
-          The FHIR resource to check whether the specified `field_name` exists.
-
-          If not specified, the macro will default to using the `primary_resource` for the metric.
-      - name: index
-        type: int
-        description: |
-          For codeableConcept fields that are repeatable, return the field specified by this index
-          value
+          If set to True, the macro will return an integer flag for whether a code exists, rather
+          than the code or display value itself.
 
 
   - name: has_value

@@ -36,8 +36,8 @@ limitations under the License. */
     SELECT
       id,
       {{- metric_common_dimensions() }}
-      {{ try_code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical') }} AS clinical_status,
-      {{ try_code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification') }} AS verification_status,
+      {{ code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical') }} AS clinical_status,
+      {{ code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification') }} AS verification_status,
       {{ has_reference_value('patient', 'Patient') }} AS has_reference_value,
       {{ reference_resolves('patient', 'Patient') }} AS reference_resolves
     FROM {{ ref('AllergyIntolerance') }} AS A

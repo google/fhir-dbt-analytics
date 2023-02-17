@@ -91,7 +91,7 @@ Once you have a good understanding of the [project structure](https://github.com
 
 - To enable time-series analysis, metrics are segmented by date where possible. This date should be the most clinically-relevant local calendar date extracted from the FHIR data. The `metric_date` field is added to FHIR resources in the FHIR resource views defined within the `models/fhir_resource/` folder. You therefore do not need to derive this date yourself within the metric SQL.
 
-- You can use the macros in the `macros/fhir_analysis_macros/` folder to help analyze your FHIR data. For example, you can extract clinical codes from FHIR codeable concept fields using  `{{ try_code_from_codeableconcept(field_name, code_system) }}`.
+- You can use the macros in the `macros/fhir_analysis_macros/` folder to help analyze your FHIR data. For example, you can extract clinical codes from FHIR codeable concept fields using  `{{ code_from_codeableconcept(field_name, code_system) }}`.
 
 
 ## Add a new patient cohort

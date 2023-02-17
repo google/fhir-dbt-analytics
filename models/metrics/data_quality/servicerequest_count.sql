@@ -40,7 +40,7 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       status,
       intent,
-      {{ try_code_from_codeableconcept('category', 'http://snomed.info/sct', index = 0, return_display = True) }} AS category
+      {{ code_from_codeableconcept('category', 'http://snomed.info/sct', index = 0, return_field='display') }} AS category
     FROM {{ ref('ServiceRequest') }}
 {%- endset -%}
 

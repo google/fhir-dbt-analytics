@@ -37,11 +37,11 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      {{ try_code_from_codeableconcept(
+      {{ code_from_codeableconcept(
         'category',
         'http://snomed.info/sct',
         index = get_source_specific_category_index(),
-        return_display=True
+        return_field='display'
       ) }} AS category,
       {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value,
       {{ reference_resolves('encounter', 'Encounter') }} AS reference_resolves

@@ -37,7 +37,7 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       id,
       status,
-      {{ try_code_from_codeableconcept(
+      {{ code_from_codeableconcept(
         'category',
         'https://g.co/fhir/harmonized/diagnostic_report/category',
         index = get_source_specific_category_index()
