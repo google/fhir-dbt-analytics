@@ -5,6 +5,7 @@ SELECT
     *,
     CAST(NULL AS STRING) AS fhir_mapping,
     {{- metric_date(metric_date_columns, date_column_data_type) }} AS metric_date,
+    {{- metric_hour(metric_date_columns, date_column_data_type) }} AS metric_hour,
     {{- metadata_cols() -}}
 FROM {{ source('fhir', get_source_table_name(fhir_resource)) }}
 {% endmacro %}

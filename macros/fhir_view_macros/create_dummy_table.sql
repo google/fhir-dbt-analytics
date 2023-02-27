@@ -13,6 +13,7 @@ SELECT
 {%- endif %}
   CAST(NULL AS STRING) AS fhir_mapping,
   CAST(NULL AS DATE) AS metric_date,
+  CAST(NULL AS TIMESTAMP) AS metric_hour,
   '{{ var('source_system_default') }}' AS source_system,
   '{{ var('site_default') }}' AS site,
   '{{ var('data_transfer_type_default') }}' AS data_transfer_type
