@@ -35,11 +35,11 @@ SELECT
   {{ linking_api_datasource(
     report_id='2de086de-b4ab-4431-8786-57ffa47e96b8',
     datasource_list=[
-      'metric_by_slices_system_date',
-      'metric_by_system_date',
-      'metric_by_system',
-      'metric_definition',
-      'fhir_table_list',
-      'project_variables',
-      'metric_execution_log'
+      ['mbdd', 'metric_by_day_dimensions'],
+      ['mbd', 'metric_by_day'],
+      ['mo', 'metric_overall'],
+      ['md', 'metric_definition'],
+      ['ftl', 'fhir_table_list'],
+      ['pv', 'project_variables'],
+      ['mel', 'metric_execution_log'],
     ]) }} AS looker_studio_url
