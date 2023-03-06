@@ -1,11 +1,11 @@
-{%- macro calculate_metric(inner_sql, numerator=None, denominator=None) -%}
+{%- macro calculate_metric(inner_sql, numerator=None, denominator=None, measure=None) -%}
 
 {% if _are_inputs_available() %}
 WITH
   A AS (
     {{ inner_sql }}
   )
-{{ metric_output(numerator, denominator) }}
+{{ metric_output(numerator, denominator, measure) }}
 {%- else %}
 {{- empty_metric_output() -}}
 {%- endif -%}

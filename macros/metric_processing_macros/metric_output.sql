@@ -1,4 +1,4 @@
-{% macro metric_output(numerator=None, denominator=None) %}
+{% macro metric_output(numerator=None, denominator=None, measure=None) %}
 
   {%- set dimension_a = model_metadata('dimension_a', value_if_missing='NULL') -%}
   {%- set dimension_b = model_metadata('dimension_b', value_if_missing='NULL') -%}
@@ -7,13 +7,15 @@
   {%- if model_metadata(meta_key='calculation') == 'COUNT' -%}
     {%- set numerator = 'CAST(NULL AS INT64)' -%}
     {%- set denominator = 'CAST(NULL AS INT64)' -%}
-    {%- set measure = 'CAST(COUNT(DISTINCT id) AS FLOAT64)' -%}
+    {%- if measure == None -%}
+      {%- set measure = 'CAST(COUNT(DISTINCT id) AS FLOAT64)' -%}
+    {%- endif -%}
   {%- endif -%}
-
   {%- if model_metadata(meta_key='calculation') in ['PROPORTION', 'RATIO'] -%}
-    {%- set measure = "CAST(SAFE_DIVIDE(" ~ numerator ~ ", " ~ denominator ~ ") AS FLOAT64)" -%}
+    {%- if measure == None -%}
+      {%- set measure = "CAST(SAFE_DIVIDE(" ~ numerator ~ ", " ~ denominator ~ ") AS FLOAT64)" -%}
+    {%- endif -%}
   {%- endif -%}
-
 SELECT
   CURRENT_DATETIME() as execution_datetime,
   '{{this.name}}' AS metric_name,

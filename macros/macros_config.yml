@@ -426,6 +426,23 @@ macros:
           The datatype of `metric_date_columns`.
 
 
+  - name: metric_hour
+
+    description: |
+      Prints SQL for returining the local hour from an ordered list of FHIR fields.
+
+      It is used for returning the most clinically-relevant local hour for a given FHIR resource.
+
+    arguments:
+      - name: metric_date_columns
+        type: list
+        description: |
+          Ordered list of columns to use to derive the metric date.
+      - name: date_column_data_type
+        type: string
+        description: |
+          The datatype of `metric_date_columns`.
+
   - name: date_array
 
     description: |
