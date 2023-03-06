@@ -371,3 +371,16 @@ selectors:
           parents: true
         - method: path
           value: models/metadata/
+
+  - name: resource_patient_encounter_observation
+    description: "Metrics for which the primary resource evaluated is one of Patient, Encounter or Observation"
+    definition:
+      union:
+        - method: selector
+          value: resource_patient
+        - method: selector
+          value: resource_encounter
+        - method: selector
+          value: resource_observation
+        - method: path
+          value: models/metadata/
