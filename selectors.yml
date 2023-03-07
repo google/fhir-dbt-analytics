@@ -29,6 +29,8 @@ selectors:
           value: models/fhir_resources/
         - method: path
           value: models/metadata/
+        - method: path
+          value: seeds/
 
   # Pipeline transformations
   # Selectors for pipeline transformations outside of execution of metrics

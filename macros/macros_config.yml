@@ -610,6 +610,23 @@ macros:
           If not specified, the macro will default to using the `primary_resource` for the metric.
 
 
+  - name: get_dbt_objects
+
+    description: |
+      Returns a dictionary containing all objects in the dbt project as documented in the dbt graph.
+      The dictionary keys are the object names (e.g "metric") and the values are the paths for the
+      object in the project (e.g. "post_processing/metric.sql")
+
+    arguments:
+      - name: resource_type
+        type: string
+        description: |
+          Filter the dbt objects returned in the dictionary to a specific type (e.g. "model",
+          "macro", "seed").
+
+          If not specified, the macro will return all object types.
+
+
   - name: column_exists
 
     description: |
@@ -807,6 +824,23 @@ macros:
       Prints SQL for selecting metric output tables that have been materialized.
 
  
+  - name: get_tables
+
+    description: |
+      Prints SQL for selecting the table_name and fully qualified table name from
+      BigQuery INFORMATION_SCHEMA.TABLES. By default, all tables from the target
+      project and dataset are returned. These can be filtered using the
+      table_name_wildcard argument.
+
+    arguments:
+      - name: table_name_wildcard
+        type: string
+        description: |
+          Filter the tables returned using SQL wilcards e.g. 'A%' returns all tables
+          where table_name LIKE 'A%'.
+          Default value '%' returns all tables.
+
+
   - name: union_metric_tables
 
     description: |

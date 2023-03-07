@@ -47,3 +47,35 @@ seeds:
         display: string,
         system: string
       }
+
+  - name: thresholds
+    description: Metric thresholds.
+    columns:
+      - name: metric_name
+        description: Name of metric
+      - name: threshold_low
+        description: The lowest value that the measure can take and pass this validation test
+      - name: threshold_high
+        description: The highest value that the measure can take and pass this validation test
+      - name: time_grain
+        description: Optional date grain (YEAR, MONTH, WEEK, QUARTER, DAY). Blank => Whole time period
+      - name: dimension
+        description: Metric dimension (a, b or c). Leave blank to set thresholds for the metric calculated at the overall level without segmenting by dimensions.
+      - name: validation_feature
+        description: E.g Care Studio Notes
+      - name: severity
+        description: Error, Warn
+    # TODO: add tests here to make sure that users format this file correctly.
+    # - Make sure no duplicate rows
+    # - Make sure grain, dimension, severity fields only contain allowed values
+    #- Make sure metric_name all exist in metric_definitions.
+    config:
+      column_types: {
+        metric_name: string,
+        threshold_low: decimal,
+        threshold_high: decimal,
+        time_grain: string,
+        dimension: string,
+        validation_feature: string,
+        severity: string
+      }
