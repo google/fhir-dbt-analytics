@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 #}
 
--- depends_on: {{ ref('metric_definition') }}
+-- depends_on: {{ ref('metric_all_definitions') }}
 
 {{ config(
     alias = 'metric',
@@ -30,7 +30,7 @@ WITH
       M.metric_name, M.source_system, M.site, M.data_transfer_type, M.dimension_a, M.dimension_b, M.dimension_c, M.fhir_mapping,
       D.calculation, D.metric_date_field
       FROM {{ ref('metric_latest_execution') }} AS M
-      JOIN {{ ref('metric_definition') }} AS D ON M.metric_name = D.metric_name
+      JOIN {{ ref('metric_all_definitions') }} AS D ON M.metric_name = D.metric_name
   ),
 
   DateRange AS (

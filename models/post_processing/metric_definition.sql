@@ -22,6 +22,6 @@ SELECT *
 FROM {{ ref('metric_all_definitions') }}
 WHERE metric_name IN (
   SELECT DISTINCT metric_name
-  FROM {{ ref('metric_latest_execution') }}
+  FROM {{ ref('metric') }}
 )
 ORDER BY metric_name
