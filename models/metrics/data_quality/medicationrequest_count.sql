@@ -43,7 +43,7 @@ limitations under the License. */
       {{ code_from_codeableconcept(
         'category',
         'http://terminology.hl7.org/CodeSystem/medicationrequest-category',
-        index = get_source_specific_category_index()) }} AS category,
+        index = get_source_specific_category_index()) }} AS category
       FROM {{ ref('MedicationRequest') }}
 {%- endset -%}
 

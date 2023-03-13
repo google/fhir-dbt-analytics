@@ -7,7 +7,7 @@
 SELECT
   CAST(NULL AS STRING) AS id,
 {%- if patient_reference_column == "link[].target" %}
-  [STRUCT(STRUCT('no_data' AS patientId) AS target)] AS link,
+  {{ dbt.array_construct(["STRUCT(STRUCT('no_data' AS patientId) AS target)"]) }} AS link,
 {%- elif patient_reference_column != None %}
   STRUCT('no_data' AS patientId) AS {{patient_reference_column}},
 {%- endif %}

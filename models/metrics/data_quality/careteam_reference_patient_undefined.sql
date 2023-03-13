@@ -35,7 +35,7 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      {{ has_reference_value('subject', 'Patient') }} AS has_reference_value,
+      {{ has_reference_value('subject', 'Patient') }} AS has_reference_value
     FROM {{ ref('CareTeam') }} AS C
 {%- endset -%}
 

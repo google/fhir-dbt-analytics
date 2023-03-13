@@ -14,15 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 #}
 
-{% for node_id, node in graph.nodes.items() if node.resource_type == 'model' and node.path.startswith('metrics/') %}
+{% for node in graph.nodes.values() if node.resource_type == 'model' and node.path.startswith('metrics/') %}
 SELECT
     "{{ node.path }}" AS metric_path,
     "{{ node.name }}" AS metric_name,
     "{{ node.config.meta.description }}" AS description,
     "{{ node.config.meta.short_description }}" AS short_description,
     "{{ node.config.meta.primary_resource }}" AS primary_resource,
-    {{ node.config.meta.primary_fields }} AS primary_fields,
-    {{ node.config.meta.secondary_resources }} AS secondary_resources,
+    {{ dbt.array_construct(quote_array(node.config.meta.primary_fields)) }} AS primary_fields,
+    {{ dbt.array_construct(quote_array(node.config.meta.secondary_resources))
+       if node.config.meta.secondary_resources else 'NULL' }} AS secondary_resources,
     "{{ node.config.meta.category }}" AS category,
     "{{ node.config.meta.calculation }}" AS calculation,
     "{{ node.config.meta.metric_date_field }}" AS metric_date_field,

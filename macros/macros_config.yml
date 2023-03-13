@@ -905,6 +905,18 @@ macros:
 
 # String macros
 
+  - name: quote_array
+
+    description: |
+      Returns an array with each string wrapped in single quotes.
+
+    arguments:
+      - name: x
+        type: list of strings
+        description: |
+          List of strings to be quoted.
+
+
   - name: snake_case
 
     description: |

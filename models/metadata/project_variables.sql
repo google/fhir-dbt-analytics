@@ -27,7 +27,7 @@ SELECT
   '{{ var('latest_date') }}' AS `latest_date`,
   {{ var('months_history') }} AS `months_history`,
   {{ var('length_of_stay_cap') }} AS `length_of_stay_cap`,
-  {{ var('null_values') }} AS `null_values`,
+  {{ dbt.array_construct(quote_array(var('null_values'))) }} AS `null_values`,
   {{ var('persist_all_metric_executions') }} AS `persist_all_metric_executions`,
   '{{ var('cohort') }}' AS `cohort`,
   '{{ var('cohort_snapshot_date') }}' AS `cohort_snapshot_date`,

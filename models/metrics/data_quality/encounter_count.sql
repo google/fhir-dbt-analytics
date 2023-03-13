@@ -37,7 +37,7 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      class.code AS latest_encounter_class,
+      class.code AS latest_encounter_class
     FROM {{ ref('Encounter') }}
 {%- endset -%}
 
