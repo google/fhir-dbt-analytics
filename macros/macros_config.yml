@@ -443,17 +443,16 @@ macros:
         description: |
           The datatype of `metric_date_columns`.
 
-  - name: date_array
+  - name: date_spine
 
     description: |
-      Prints SQL for generating an array of dates based on the FHIR dataset.
+      Prints SQL for generating a list of consecutive dates.
 
-      If the static_dataset project variable is TRUE then this array includes all dates between
-      earliest_date and latest_date inclusive.
+      If the `static_dataset` project variable is `TRUE` then it generates all dates between
+      `earliest_date` and `latest_date` inclusive.
 
-      If the static_dataset project variable is FALSE then this array includes dates up to and
-      including the current date, going back the number of months defined by the months_history
-      project variable.
+      Otherwise it generates dates up to and including the current date, going back the
+      number of months defined by the `months_history` project variable.
 
 
   - name: active_encounters
@@ -823,7 +822,7 @@ macros:
     description: |
       Prints SQL for selecting metric output tables that have been materialized.
 
- 
+
   - name: get_tables
 
     description: |
@@ -880,7 +879,7 @@ macros:
   - name: create_metric_view
 
     description: |
-      Prints SQL which creates a table joining the metric and metric definition tables. 
+      Prints SQL which creates a table joining the metric and metric definition tables.
 
       Used for views, configurable to include or exclude dimensions & date aggregation.
 

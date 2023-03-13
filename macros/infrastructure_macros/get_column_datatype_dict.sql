@@ -1,7 +1,7 @@
 {% macro get_column_datatype_dict(fhir_resource=None) %}
 
     {%- if not execute -%}
-        {% do return(True) %}
+        {% do return({}) %}
     {% endif %}
 
     {%- if fhir_resource == None -%}
@@ -17,7 +17,7 @@
         identifier = fhir_resource ~ "_view") -%}
 
     {% if not relation %}
-        {% do return (False) %}
+        {% do return ({}) %}
     {% endif %}
 
     {%- set column_dict = {} -%}

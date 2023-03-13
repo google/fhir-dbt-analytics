@@ -32,22 +32,8 @@ WITH
       FROM {{ ref('metric_latest_execution') }} AS M
       JOIN {{ ref('metric_all_definitions') }} AS D ON M.metric_name = D.metric_name
   ),
-
-  DateRange AS (
-    SELECT
-
-      {%- if var('static_dataset') %}
-      GENERATE_DATE_ARRAY(
-        PARSE_DATE("%F", "{{ var('earliest_date') }}"),
-        PARSE_DATE("%F", "{{ var('latest_date') }}")
-      ) AS date_array
-
-      {%- else %}
-      GENERATE_DATE_ARRAY(
-        DATE_SUB(CURRENT_DATE(), INTERVAL {{ var('months_history') }} MONTH),
-        CURRENT_DATE()
-      ) AS date_array
-      {%- endif %}
+  DS AS (
+    {{ date_spine() }}
   )
 
 SELECT
@@ -70,11 +56,10 @@ SELECT
   COALESCE(M.measure, IF(B.calculation IN ('COUNT'), 0, NULL)) AS measure
 
 FROM Breakdowns AS B
-LEFT JOIN DateRange AS DR ON B.metric_date_field != ''
-LEFT JOIN UNNEST(DR.date_array) AS metric_date
+LEFT JOIN DS ON B.metric_date_field != ''
 LEFT JOIN {{ ref('metric_latest_execution') }} AS M
   ON B.metric_name = M.metric_name
-  AND (metric_date = M.metric_date OR (metric_date IS NULL AND M.metric_date IS NULL))
+  AND (DS.date_day = M.metric_date OR (DS.date_day IS NULL AND M.metric_date IS NULL))
   AND (B.source_system = M.source_system OR (B.source_system IS NULL AND M.source_system IS NULL))
   AND (B.data_transfer_type = M.data_transfer_type OR (B.data_transfer_type IS NULL AND M.data_transfer_type IS NULL))
   AND (B.site = M.site OR (B.site IS NULL AND M.site IS NULL))
