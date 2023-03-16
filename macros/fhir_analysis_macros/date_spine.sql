@@ -1,9 +1,9 @@
 {% macro date_spine() -%}
-  {{ return(adapter.dispatch('date_spine', 'fhir_dbt_analytics') ()) }}
+  {{ return(adapter.dispatch('date_spine2', 'fhir_dbt_analytics') ()) }}
 {%- endmacro %}
 
 
-{% macro default__date_spine() -%}
+{% macro default__date_spine2() -%}
 
 {%- if var('static_dataset') -%}
   {% set start_date="cast('" ~ var('earliest_date') ~ "' as date)" %}
@@ -23,13 +23,13 @@ select cast(date_day as date) as date_day from date_spine
 {% endmacro %}
 
 
-{% macro bigquery__date_spine() -%}
-(SELECT * FROM UNNEST(GENERATE_DATE_ARRAY(
+{% macro bigquery__date_spine2() -%}
+SELECT * FROM UNNEST(GENERATE_DATE_ARRAY(
 {%- if var('static_dataset') %}
   "{{ var('earliest_date') }}", "{{ var('latest_date') }}"
 {%- else %}
   DATE_SUB(CURRENT_DATE(), INTERVAL {{ var('months_history') }} MONTH),
   CURRENT_DATE()
 {%- endif %}
-)) AS date_day)
+)) AS date_day
 {%- endmacro %}
