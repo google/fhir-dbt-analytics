@@ -905,6 +905,22 @@ macros:
 
 # String macros
 
+  - name: find_first_of
+
+    description: |
+      Finds first of a given list of letters in a string.
+
+    arguments:
+      - name: haystack
+        type: string
+        description: String to search through.
+
+      - name: letters
+        type: string
+        description: Letters to search for.
+
+
+
   - name: quote_array
 
     description: |
@@ -960,3 +976,91 @@ macros:
         type: list
         description: |
           List of Looker Studio datasources used by the template dashboard.
+
+
+# Cross DB macros
+
+  - name: flatten_column
+
+    description: |
+      Parses the data type and returns a list of sub-columns as structs with `name` and `data_type`
+      fields. Recursively finds all sub-columns in a nested data type.
+
+    arguments:
+      - name: column
+        type: struct with `name` and `data_type` fields
+        description: |
+          Column definition, including a structured `data_type`.
+
+
+  - name: is_spark
+
+    description: Returns `true` if the target database is Apache Spark SQL. No arguments.
+
+
+  - name: safe_cast_as_date
+
+    description: Convenience function to safe_cast as date.
+
+    arguments:
+      - name: x
+        type: string
+        description: Expression to be cast as date.
+
+
+  - name: safe_cast_as_timestamp
+
+    description: Convenience function to safe_cast as timestamp.
+
+    arguments:
+      - name: x
+        type: string
+        description: Expression to be cast as timestamp.
+
+
+  - name: safe_divide
+
+    description: Return NULL if dividing by zero.
+
+    arguments:
+      - name: x
+        type: string
+        description: The numerator.
+
+      - name: y
+        type: string
+        description: The denominator.
+
+
+  - name: type_double
+
+    description: Database specific type name for 64-bit rational number. No arguments.
+
+
+  - name: type_long
+
+    description: Database specific type name for 64-bit integer. No arguments.
+
+
+  - name: timestamp_trunc
+
+    description: Re-implement dbt.date_trunc for BigQuery, in order to allow entering timezone.
+
+    arguments:
+      - name: datepart
+        type: string
+        description: E.g. "hour".
+
+      - name: date
+        type: string
+        description: The date expression.
+
+      - name: timezone
+        type: string
+        description: The timezone.
+
+
+  - name: current_datetime
+
+    description: Returns the current date and time. No arguments.
+

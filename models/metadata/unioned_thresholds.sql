@@ -30,8 +30,8 @@ limitations under the License. */
     source_column_name = "thresholds_source",
     column_override = {
       "metric_name": "STRING",
-      "threshold_low": "FLOAT64",
-      "threshold_high": "FLOAT64",
+      "threshold_low": type_double(),
+      "threshold_high": type_double(),
       "time_grain": "STRING",
       "dimension": "STRING",
       "validation_feature": "STRING",

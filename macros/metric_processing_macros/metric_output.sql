@@ -5,19 +5,19 @@
   {%- set dimension_c = model_metadata('dimension_c', value_if_missing='NULL') -%}
 
   {%- if model_metadata(meta_key='calculation') == 'COUNT' -%}
-    {%- set numerator = 'CAST(NULL AS INT64)' -%}
-    {%- set denominator = 'CAST(NULL AS INT64)' -%}
+    {%- set numerator = 'CAST(NULL AS ' ~ type_long() ~ ')' -%}
+    {%- set denominator = 'CAST(NULL AS ' ~ type_long() ~ ')' -%}
     {%- if measure == None -%}
-      {%- set measure = 'CAST(COUNT(DISTINCT id) AS FLOAT64)' -%}
+      {%- set measure = 'CAST(COUNT(DISTINCT id) AS ' ~ type_double() ~ ')' -%}
     {%- endif -%}
   {%- endif -%}
   {%- if model_metadata(meta_key='calculation') in ['PROPORTION', 'RATIO'] -%}
     {%- if measure == None -%}
-      {%- set measure = "CAST(SAFE_DIVIDE(" ~ numerator ~ ", " ~ denominator ~ ") AS FLOAT64)" -%}
+      {%- set measure = 'CAST(' ~ safe_divide(numerator, denominator) ~ ' AS ' ~ type_double() ~ ')' -%}
     {%- endif -%}
   {%- endif -%}
 SELECT
-  CURRENT_DATETIME() as execution_datetime,
+  {{ current_datetime() }} as execution_datetime,
   '{{this.name}}' AS metric_name,
   {{- metric_common_dimensions() }}
   CAST({{ dimension_a }} AS STRING) AS dimension_a,

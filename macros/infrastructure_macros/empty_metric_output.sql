@@ -1,6 +1,6 @@
 {%- macro empty_metric_output() %}
 SELECT
-  CURRENT_DATETIME() as execution_datetime,
+  {{ current_datetime() }} as execution_datetime,
   '{{this.name}}' AS metric_name,
   CAST(NULL AS STRING) AS fhir_mapping,
   '{{var('source_system_default')}}' AS source_system,
@@ -10,7 +10,7 @@ SELECT
   CAST(NULL AS STRING) AS dimension_a,
   CAST(NULL AS STRING) AS dimension_b,
   CAST(NULL AS STRING) AS dimension_c,
-  CAST(NULL AS INT64) AS numerator,
-  CAST(NULL AS INT64) AS denominator,
-  CAST(NULL AS FLOAT64) AS measure
+  CAST(NULL AS {{ type_long() }}) AS numerator,
+  CAST(NULL AS {{ type_long() }}) AS denominator,
+  CAST(NULL AS {{ type_double() }}) AS measure
 {%- endmacro -%}
