@@ -34,23 +34,22 @@ limitations under the License. */
 
 {%- set metric_sql -%}
     SELECT
-      id,
-      {{- metric_common_dimensions(exclude_col='metric_date') }}
-      (
-        SELECT MIN(metric_date)
-        FROM {{ ref('Encounter') }} AS E
-        WHERE P.id = E.subject.patientId
-        AND E.class.code NOT IN (
-          'OTHER',
-          'PRENC',
-          'LAB',
-          'UNKNOWN',
-          'HIST'
-        )
-      ) AS metric_date,
+      P.id,
+      {{- metric_common_dimensions(table_alias='P', exclude_col='metric_date') }}
       CAST({{ get_column_or_default('active') }} AS STRING) AS active,
-      gender
+      gender,
+      MIN(E.metric_date) AS metric_date
     FROM {{ ref('Patient') }} AS P
-{%- endset -%}  
+    LEFT JOIN {{ ref('Encounter') }} AS E
+      ON P.id = E.subject.patientId
+      AND E.class.code NOT IN (
+        'OTHER',
+        'PRENC',
+        'LAB',
+        'UNKNOWN',
+        'HIST'
+      )
+    GROUP BY 1,2,3,4,5,6,7
+{%- endset -%}
 
 {{- calculate_metric(metric_sql) -}}
