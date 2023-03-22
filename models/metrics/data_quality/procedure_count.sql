@@ -23,7 +23,7 @@ limitations under the License. */
       "secondary_resources": [],
       "calculation": "COUNT",
       "category": "Resource count",
-      "metric_date_field": "performed.period.start",
+      "metric_date_field": "COALESCE(Procedure.performed.period.start, Procedure.performed.dateTime)",
       "metric_date_description": "Procedure performed period start date",
       "dimension_a": "status",
       "dimension_a_description": "The status of the procedure (preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown)",
