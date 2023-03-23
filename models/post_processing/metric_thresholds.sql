@@ -16,6 +16,9 @@ limitations under the License. */
 -- depends_on: {{ ref('unioned_thresholds') }}
 -- depends_on: {{ ref('metric') }}
 -- depends_on: {{ ref('metric_definition') }}
+
+WITH A AS (
+
 {%- set time_grains = dbt_utils.get_column_values(table=ref('unioned_thresholds'), column='time_grain') -%}
 {%- for grain in time_grains %}
   {%- if grain != None %}
@@ -30,30 +33,16 @@ SELECT
   D.description,
   D.primary_resource,
   D.calculation,
+  D.category,
   T.time_grain,
   T.dimension,
   T.validation_feature,
   T.severity,
-  T.threshold_high,
   T.threshold_low,
-  {% if grain == None or grain == ""  %} CAST(NULL AS DATE) {% else -%} DATE_TRUNC(M.metric_date, {{ grain }}) {% endif -%} as metric_date,
+  T.threshold_high,
+  {% if grain == None or grain == ""  %} '' {% else -%} {{ date_to_period('M.metric_date', grain) }} {% endif -%} as metric_date,
   {% if dimension == None or dimension == "" %} '' {% else -%} D.dimension_{{dimension}} {% endif -%} as dimension_name,
   {% if dimension == None or dimension == "" %} '' {% else -%} M.dimension_{{dimension}} {% endif -%} as dimension_value,
-  CASE D.calculation
-    WHEN 'COUNT' THEN
-      IF(
-        SUM(M.measure) < T.threshold_low OR SUM(M.measure) > T.threshold_high,
-        T.severity,
-        'Pass'
-      )
-    WHEN 'PROPORTION' THEN
-      IF(
-        SAFE_DIVIDE(SUM(M.numerator), SUM(M.denominator)) < T.threshold_low
-          OR SAFE_DIVIDE(SUM(M.numerator), SUM(M.denominator)) > T.threshold_high,
-        T.severity,
-        'Pass'
-      )
-    ELSE '' END AS status,
   SUM(M.numerator) AS numerator,
   SUM(M.denominator) AS denominator,
   {{ calculate_measure() }} measure,
@@ -63,8 +52,20 @@ INNER JOIN {{ ref('metric_definition') }} D ON T.metric_name = D.metric_name
 WHERE D.calculation IN ('COUNT','PROPORTION')
   AND T.time_grain {% if grain == None -%} IS NULL {% else -%} = '{{ grain }}' {% endif %}
   AND T.dimension {% if dimension == None -%} IS NULL {% else -%} = '{{ dimension }}' {% endif %}
-{{ dbt_utils.group_by(13)|upper }}
+{{ dbt_utils.group_by(14)|upper }}
     {% if not loop.last -%}  UNION ALL {%- endif -%}
   {%- endfor -%}
   {% if not loop.last -%}  UNION ALL {%- endif -%}
 {%- endfor -%}
+
+)
+
+SELECT
+  *,
+  CASE
+    WHEN measure IS NULL THEN 'N/A'
+    WHEN measure < threshold_low THEN severity
+    WHEN measure > threshold_high THEN severity
+    ELSE 'Pass'
+    END AS status
+FROM A

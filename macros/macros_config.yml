@@ -455,6 +455,26 @@ macros:
       number of months defined by the `months_history` project variable.
 
 
+  - name: date_to_period
+
+    description: |
+      Returns a string representation of a date truncated to a specified date period.
+
+      For example, when `date_period` is set to 'QUARTER', a date of '2023-04-15' is truncated to
+      '2023 Q2'.
+
+    arguments:
+      - name: date_column
+        type: string
+        description: |
+          Column containing a date to be truncated.
+      - name: date_period
+        type: string
+        description: |
+          Date granularity to truncate the date in date_column to. Available options: YEAR, QUARTER,
+          MONTH.
+
+
   - name: active_encounters
 
     description: |

@@ -42,4 +42,5 @@ SELECT
       ['ftl', 'fhir_table_list'],
       ['pv', 'project_variables'],
       ['mel', 'metric_execution_log'],
+      ['mt', 'metric_thresholds']
     ]) }} AS looker_studio_url
