@@ -57,6 +57,6 @@ SELECT
   NULL AS map_name,
   1 AS latest_version,
   creation_time
-FROM {{ var('database') }}.{{ var('schema') }}.INFORMATION_SCHEMA.TABLES
+FROM `{{ var('database') }}`.`{{ var('schema') }}`.INFORMATION_SCHEMA.TABLES
 
 {% endif %}
