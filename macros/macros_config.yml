@@ -933,11 +933,11 @@ macros:
     arguments:
       - name: haystack
         type: string
-        description: String to search through.
+        description: String to search through
 
       - name: letters
         type: string
-        description: Letters to search for.
+        description: Letters to search for
 
 
 

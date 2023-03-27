@@ -20,7 +20,7 @@ limitations under the License. */
 -%}
   {%- set relation = adapter.get_relation(
     database = target.project,
-    schema = target.dataset,
+    schema = target.schema,
     identifier = name
   ) %}
   {%- do threshold_relations.append(relation) %}

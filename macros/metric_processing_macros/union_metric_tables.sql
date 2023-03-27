@@ -9,7 +9,7 @@
         {%- for metric in metrics -%}
             {%- set relation = adapter.get_relation(
                   database = target.project,
-                  schema = target.dataset,
+                  schema = target.schema,
                   identifier = metric
             ) %}
             UNION ALL
