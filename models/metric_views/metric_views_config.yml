@@ -27,7 +27,7 @@ models:
 
     tests:
       - dbt_utils.expression_is_true:
-          expression: "SAFE_DIVIDE(numerator, denominator) = measure"
+          expression: "{{ safe_divide('numerator', 'denominator') }} = measure"
           condition: "calculation IN ('PROPORTION', 'RATIO')"
 
     columns:

@@ -14,10 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 #}
 
--- depends_on: {{ ref('metric_all_definitions') }}
-
 {{ config(
-    alias = 'metric',
     materialized = 'table',
     post_hook = "{{ maybe_drop_metric_tables() }}"
 ) -}}
@@ -68,8 +65,14 @@ LEFT JOIN {{ ref('metric_latest_execution') }} AS M
   AND (B.dimension_c = M.dimension_c OR (B.dimension_c IS NULL AND M.dimension_c IS NULL))
   AND (B.fhir_mapping = M.fhir_mapping OR (B.fhir_mapping IS NULL AND M.fhir_mapping IS NULL))
 
-{%- set this_relation = adapter.get_relation(this.database, this.schema, this.table) %}
-{% if this_relation != None %}
+{# Use a variable to allow dbt to discover the `ref`s. And use `metric_copy` because Spark first
+   drops the table before running the model. #}
+{% set union_metric_copy %}
 UNION ALL
-SELECT * FROM {{ this }} WHERE metric_name NOT IN (SELECT DISTINCT metric_name FROM {{ ref('metric_latest_execution') }})
+SELECT * FROM {{ ref('metric_copy') }}
+WHERE metric_name NOT IN (SELECT DISTINCT metric_name FROM {{ ref('metric_latest_execution') }})
+{% endset %}
+
+{% if adapter.get_relation(this.database, this.schema, this.table) %}
+{{ union_metric_copy }}
 {% endif %}

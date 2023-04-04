@@ -14,26 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 #}
 
--- depends_on: {{ ref('metric_all_definitions') }}
-
+{# Copy the `metric` data to allow the `metric` model to backfill what wasn't run in the latest
+   execution. #}
 {{ config(
-    materialized='table'
-) -}}
+    materialized = 'table',
+) }}
 
-WITH
-
-UnionedMetrics AS (
-  {{ union_metric_tables() }}
-),
-
-Execution AS (
-  SELECT {{ uuid() }} AS execution_id,
-  CURRENT_DATE() AS execution_date
-)
-
-SELECT
-  Execution.execution_id,
-  Execution.execution_date,
-  UnionedMetrics.*
-FROM UnionedMetrics
-CROSS JOIN Execution
+{% if adapter.get_relation(this.database, this.schema, 'metric') %}
+{# Can't use `ref` because that would cause a cycle. #}
+SELECT * FROM {{ table_ref(this.database, this.schema, 'metric') }}
+{% else %}
+SELECT "not found" AS dummy
+{% endif %}

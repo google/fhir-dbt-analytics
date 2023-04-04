@@ -840,7 +840,8 @@ macros:
   - name: get_metric_tables
 
     description: |
-      Prints SQL for selecting metric output tables that have been materialized.
+      Returns dictionary of metric name -> fully specified metric table for metrics that have been
+      materialized.
 
 
   - name: get_tables
@@ -1084,3 +1085,35 @@ macros:
 
     description: Returns the current date and time. No arguments.
 
+
+  - name: uuid
+
+    description: Returns the SQL for UUID.
+
+
+  - name: error
+
+    description: Returns the SQL to fail the query with an error.
+
+    arguments:
+      - name: expression
+        description: Error message.
+
+
+  - name: array_join
+
+    description: Creates a string by joining the `array` values by the `delimiter`.
+
+    arguments:
+      - name: array
+      - name: delimiter
+
+
+  - name: table_ref
+
+    description: Constructs a table reference. Useful e.g. when `ref` macro can't be used.
+
+    arguments:
+      - name: database
+      - name: schema
+      - name: table

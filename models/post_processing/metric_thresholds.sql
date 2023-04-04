@@ -45,7 +45,7 @@ SELECT
   {% if dimension == None or dimension == "" %} '' {% else -%} M.dimension_{{dimension}} {% endif -%} as dimension_value,
   SUM(M.numerator) AS numerator,
   SUM(M.denominator) AS denominator,
-  {{ calculate_measure() }} measure,
+  {{ calculate_measure() }} measure
 FROM {{ ref('unioned_thresholds') }} T
 INNER JOIN {{ ref('metric') }} M ON T.metric_name = M.metric_name
 INNER JOIN {{ ref('metric_definition') }} D ON T.metric_name = D.metric_name

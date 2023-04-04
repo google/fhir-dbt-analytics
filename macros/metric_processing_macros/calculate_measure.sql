@@ -6,6 +6,6 @@
     THEN SUM({{metric_alias}}.numerator)/NULLIF(SUM({{metric_alias}}.denominator),0)
     WHEN {{metric_definition_alias}}.calculation = 'DISTRIBUTION'
     THEN NULL
-    ELSE ERROR(concat('Unknown calculation: ', {{metric_definition_alias}}.calculation))
+    ELSE {{ error(concat(["'Unknown calculation:'", metric_definition_alias~".calculation"])) }}
    END
 {%- endmacro %}
