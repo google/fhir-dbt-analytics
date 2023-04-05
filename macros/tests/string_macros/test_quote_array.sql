@@ -1,8 +1,17 @@
-{% macro test_quote_array() %}
+{% macro test_quote_array() -%}
+  {{ dbt_unittest.assert_equals(quote_array([]), []) }}
+  {{ dbt_unittest.assert_equals(quote_array(["foo"]), ["'foo'"]) }}
+  {{ dbt_unittest.assert_equals(quote_array(["foo", "bar"]), ["'foo'", "'bar'"]) }}
 
-    {{ dbt_unittest.assert_equals(quote_array([]), []) }}
-    {{ dbt_unittest.assert_equals(quote_array(["foo"]), ["'foo'"]) }}
-    {{ dbt_unittest.assert_equals(quote_array(["foo", "bar"]), ["'foo'", "'bar'"]) }}
-    {{ dbt_unittest.assert_equals(quote_array(["f'o'o"]), ["'f\\'o\\'o'"]) }}
+  {{ return(adapter.dispatch('test_quote_array', 'fhir_dbt_analytics') ()) }}
+{%- endmacro %}
 
-{% endmacro %}
+
+{% macro default__test_quote_array() -%}
+  {{ dbt_unittest.assert_equals(quote_array(["f'o'o"]), ["'f\\'o\\'o'"]) }}
+{%- endmacro %}
+
+
+{% macro spark__test_quote_array() -%}
+  {{ dbt_unittest.assert_equals(quote_array(["f'o'o"]), ["'f''o''o'"]) }}
+{%- endmacro %}

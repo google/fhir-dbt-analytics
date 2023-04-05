@@ -1123,3 +1123,87 @@ macros:
       - name: database
       - name: schema
       - name: table
+
+
+  - name: unnest
+
+    description: |
+      Prints SQL which unnests an array.
+
+    arguments:
+      - name: array
+        type: string
+        description: The array to unnest.
+
+      - name: alias
+        type: string
+        description: The alias for the unnested values.
+
+
+  - name: unnest_multiple
+
+    description: |
+      Prints SQL which unnests a nested array.
+
+    arguments:
+      - name: arrays
+        type: list
+        description: |
+          Configurations of the arrays to be unnested, each ideally created using the `array_config`
+          macro.
+
+
+  - name: array_config
+
+    description: Creates array config for the `unnest_config` macro.
+
+    arguments:
+      - name: field
+        type: string
+        description: The array field to unnest.
+
+      - name: unnested_alias
+        type: string
+        description: The alias for the unnested array values.
+
+
+  - name: select_from_unnest
+
+    description: |
+      Prints SQL which selects the first value from unnested arrays.
+
+    arguments:
+      - name: select
+        type: string
+        description: The field to select.
+
+      - name: unnested
+        type: number
+        description: |
+          The unnested arrays, perhaps a result of the `unnest` or `unnest_multiple` macros.
+
+      - name: where
+        type: string
+        description: |
+          The WHERE clause, can use the alias of the unnested array values.
+
+      - name: order_by
+        type: string
+        description: |
+          The ORDER BY clause, important because we select the first value.
+
+
+# Testing macros
+
+  - name: assert_string_equals
+
+    description: |
+      Compares two strings, throws exception and shows the first difference if any.
+
+    arguments:
+      - name: x
+        type: string
+
+      - name: y
+        type: string
+
