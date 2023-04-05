@@ -595,6 +595,12 @@ macros:
       table expressions (CTE) that incorporate patient cohorting.
 
 
+  - name: spark__init_sources
+
+    description: |
+      Initiates Spark sources by creating the source tables based on Parquet files stored locally.
+
+
 # Infrastructure macros
 
   - name: fhir_resource_exists

@@ -41,6 +41,8 @@ vars:
   cohort_snapshot_date: "today"  # Date on which to evaluate patient membership of cohort. Default of "today" will evaluate membership as of today using CURRENT_DATE(). Use format: "YYYY-MM-DD". [string]
   drop_metric_tables: TRUE  # TRUE to drop intermediate metric tables. Pro: Fewer tables in the dataset. Con: Takes quite a bit of time.
   print_why_metric_empty: FALSE  # Prints what inputs are missing for metrics.
+  init_sources_fhir_resource_list: "Encounter,Observation,Patient"  # List of FHIR resources to call init_sources on.
+  init_sources_parquet_location: ""  # File location with Parquet files for init_sources.
 
 
 # Model configurations
