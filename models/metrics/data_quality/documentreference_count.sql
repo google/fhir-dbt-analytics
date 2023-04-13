@@ -38,7 +38,7 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       status as document_status,
       {%- if column_exists('content.format.code') %}
-      content[SAFE_OFFSET(0)].format.code AS format
+      {{ safe_offset("content", 0) }}.format.code AS format
       {%- else %}
       NULL AS format
       {%- endif %}

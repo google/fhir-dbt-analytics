@@ -32,7 +32,7 @@ limitations under the License. */
     SELECT
       {{- metric_common_dimensions() }}
       M.id,
-      IF(dosageInstruction[SAFE_OFFSET(0)].route IS NOT NULL, 1, 0) AS has_dosage_route
+      IF({{ safe_offset("dosageInstruction", 0) }}.route IS NOT NULL, 1, 0) AS has_dosage_route
     FROM {{ ref('MedicationDispense') }} AS M
 {%- endset -%}
 

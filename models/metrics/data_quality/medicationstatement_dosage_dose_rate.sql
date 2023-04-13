@@ -32,7 +32,7 @@ limitations under the License. */
     SELECT
       {{- metric_common_dimensions() }}
       M.id,
-      IF(dosage[SAFE_OFFSET(0)].doseAndRate IS NOT NULL, 1, 0) AS has_dosage_dose_rate
+      IF({{ safe_offset("dosage", 0) }}.doseAndRate IS NOT NULL, 1, 0) AS has_dosage_dose_rate
     FROM {{ ref('MedicationStatement') }} AS M
 {%- endset -%}
 
