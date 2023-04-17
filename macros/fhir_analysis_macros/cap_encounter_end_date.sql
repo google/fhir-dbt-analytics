@@ -9,7 +9,7 @@
 {%- endif -%}
 LEAST(
   IFNULL({{period_end}}, CURRENT_DATE()),
-  DATE_ADD({{period_start}}, INTERVAL {{length_of_stay_cap}} DAY),
+  {{ date_add_days(period_start, length_of_stay_cap) }},
   IF({{encounter_class}} = 'AMB', {{period_start}}, CURRENT_DATE())
 )
 {%- endmacro -%}

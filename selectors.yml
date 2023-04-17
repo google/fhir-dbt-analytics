@@ -488,3 +488,20 @@ selectors:
           value: resource_observation
         - method: path
           value: models/metadata/
+
+  - name: succeed_on_spark
+    description: Metrics which were tested to work fine on Spark.
+    definition:
+      intersection:
+        - method: path
+          value: models/
+        - union:
+          - method: selector
+            value: all_metrics
+          - exclude:
+            - method: config.meta.category
+              value: Referential integrity
+            - method: tag
+              value: spark_todo
+          - method: path
+            value: models/metadata/

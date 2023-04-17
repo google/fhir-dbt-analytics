@@ -15,6 +15,7 @@ limitations under the License. */
 #}
 
 {{ config(
+    tags = ["spark_todo"],
     meta = {
       "description": "Count of encounters starting each day",
       "short_description": "Admitted encounters",

@@ -15,6 +15,7 @@ limitations under the License. */
 #}
 
 {{ config(
+    tags = ["spark_todo"],
     meta = {
       "description": "Count of patients that have an active inpatient encounter at midnight each day",
       "short_description": "Census",

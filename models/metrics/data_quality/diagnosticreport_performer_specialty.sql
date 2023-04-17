@@ -15,6 +15,7 @@ limitations under the License. */
 #}
 
 {{ config(
+    tags = ["spark_todo"],
     meta = {
       "description": "Proportion of diagnostic reports referencing a practioner role with specialty recorded",
       "short_description": "DiagRep prac. specialty recorded",
