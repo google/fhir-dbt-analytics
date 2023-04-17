@@ -77,6 +77,66 @@ selectors:
   # Use case
   # Selectors for executing batches of metrics suitable for different use-cases, such as data onboaring and monitoring
 
+  - name: testing
+    description: "Subset of metrics to include in tests"
+    definition:
+      union:
+        - method: path
+          value: models/fhir_resources/
+        - method: path
+          value: models/metadata/
+        - method: path
+          value: seeds/
+        - method: path
+          value: models/metrics/
+        - exclude:
+            - method: config.meta.category
+              value: Active patients with resource
+            - method: fqn
+              value: encounter_count_by_start_date
+              value: active_encounters_midnight_census
+              value: allergyintolerance_reference_encounter_undefined
+              value: allergyintolerance_reference_patient_undefined
+              value: careteam_reference_encounter_undefined
+              value: careteam_reference_patient_undefined
+              value: careteam_reference_practitioner_undefined
+              value: composition_reference_binary_undefined
+              value: composition_reference_encounter_undefined
+              value: composition_reference_patient_undefined
+              value: composition_reference_practitioner_undefined
+              value: condition_reference_encounter_undefined
+              value: condition_reference_patient_undefined
+              value: diagnosticreport_reference_encounter_undefined
+              value: diagnosticreport_reference_observation_undefined
+              value: diagnosticreport_reference_patient_undefined
+              value: diagnosticreport_reference_practitioner_undefined
+              value: diagnosticreport_reference_servicerequest_undefined
+              value: encounter_reference_location_undefined
+              value: encounter_reference_patient_undefined
+              value: medicationadministration_reference_encounter_undefined
+              value: medicationadministration_reference_medication_undefined
+              value: medicationadministration_reference_medicationrequest_undefined
+              value: medicationadministration_reference_patient_undefined
+              value: medicationrequest_reference_encounter_undefined
+              value: medicationrequest_reference_medication_undefined
+              value: medicationrequest_reference_medicationrequest_undefined
+              value: medicationrequest_reference_patient_undefined
+              value: medicationrequest_reference_practitioner_undefined
+              value: medicationstatement_reference_encounter_undefined
+              value: medicationstatement_reference_medication_undefined
+              value: medicationstatement_reference_patient_undefined
+              value: observation_reference_encounter_undefined
+              value: observation_reference_patient_undefined
+              value: observation_reference_servicerequest_undefined
+              value: procedure_reference_encounter_undefined
+              value: procedure_reference_patient_undefined
+              value: procedure_reference_practitioner_undefined
+              value: servicerequest_reference_encounter_undefined
+              value: servicerequest_reference_patient_undefined
+              value: servicerequest_reference_practitioner_undefined
+              value: servicerequest_reference_servicerequest_undefined
+          parents: true
+
   - name: onboarding
     description: "Metrics helpful for evaluating a new FHIR dataset"
     definition:
