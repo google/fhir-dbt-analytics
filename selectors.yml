@@ -32,6 +32,7 @@ selectors:
         - method: path
           value: seeds/
 
+
   # Pipeline transformations
   # Selectors for pipeline transformations outside of execution of metrics
 
@@ -50,11 +51,18 @@ selectors:
           value: models/metadata/
 
   - name: post_processing
-    description: "Metric post-processing transformations"
+    description: "Metric post-processing transformations including metric views"
     definition:
       union:
         - method: path
           value: models/post_processing/
+        - method: path
+          value: models/metric_views/
+
+  - name: metric_views
+    description: "Views that join the latest metric outputs with metric metadata and group by different levels of aggregation"
+    definition:
+      union:
         - method: path
           value: models/metric_views/
 
@@ -64,6 +72,30 @@ selectors:
       union:
         - method: path
           value: models/anomaly_detection/
+
+
+  # Use case
+  # Selectors for executing batches of metrics suitable for different use-cases, such as data onboaring and monitoring
+
+  - name: onboarding
+    description: "Metrics helpful for evaluating a new FHIR dataset"
+    definition:
+      union:
+        - method: config.meta.category
+          value: Resource count
+        - method: config.meta.category
+          value: Referential integrity
+        - method: config.meta.category
+          value: Data completeness
+        - method: config.meta.category
+          value: Data distribution
+        - method: config.meta.category
+          value: Code system
+          parents: true
+        - method: path
+          value: models/metadata/
+        - method: path
+          value: seeds/
 
 
   # Category
@@ -99,16 +131,6 @@ selectors:
         - method: path
           value: models/metadata/
 
-  - name: category_resource_count_per_patient_day
-    description: "Metrics calculating the average number of FHIR resources per patient per day"
-    definition:
-      union:
-        - method: config.meta.category
-          value: Resource count per patient-day
-          parents: true
-        - method: path
-          value: models/metadata/
-
   - name: category_active_patients_with_resource
     description: "Metrics calculating the proportion of active patients with at least one resource that day"
     definition:
@@ -135,6 +157,16 @@ selectors:
       union:
         - method: config.meta.category
           value: Data consistency
+          parents: true
+        - method: path
+          value: models/metadata/
+
+  - name: category_data_distribution
+    description: "Count metrics for which primary interest is the distribition of counts between dimension values"
+    definition:
+      union:
+        - method: config.meta.category
+          value: Data distribution
           parents: true
         - method: path
           value: models/metadata/
@@ -230,6 +262,16 @@ selectors:
       union:
         - method: config.meta.primary_resource
           value: Encounter
+          parents: true
+        - method: path
+          value: models/metadata/
+
+  - name: resource_imagingstudy
+    description: "Metrics for which the primary resource evaluated is ImagingStudy"
+    definition:
+      union:
+        - method: config.meta.primary_resource
+          value: ImagingStudy
           parents: true
         - method: path
           value: models/metadata/
