@@ -34,7 +34,7 @@ limitations under the License. */
     SELECT
       id,
       {{- metric_common_dimensions() }}
-      status
+      {{ get_column_or_default('status') }} AS status
     FROM {{ ref('CareTeam') }}
 {%- endset -%}
 

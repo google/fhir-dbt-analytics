@@ -34,7 +34,7 @@ limitations under the License. */
     SELECT
       C.id,
       {{- metric_common_dimensions() }}
-      status,
+      {{ get_column_or_default('status') }} AS status,
       {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value,
       {{ reference_resolves('encounter', 'Encounter') }} AS reference_resolves
     FROM {{ ref('CareTeam') }} AS C

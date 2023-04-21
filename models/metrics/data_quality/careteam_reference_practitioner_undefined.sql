@@ -34,7 +34,7 @@ limitations under the License. */
     SELECT
       id,
       {{- metric_common_dimensions() }}
-      status,
+      {{ get_column_or_default('status') }} AS status,
       (
         SELECT SIGN(COUNT(*))
         FROM UNNEST(C.participant) AS CP
