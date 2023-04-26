@@ -39,13 +39,16 @@ seeds:
         description: Display name for the clinical code.
       - name: system
         description: Coding system from which this clinical code is defined (e.g. http://snomed.info/sct).
+      - name: match_type
+        description: Type of string match needed to use the code string (e.g. 'exact' (exact match), start (starts with), end (ends with)).    
     config:
       column_types: {
         group_type: string,
         group: string,
         code: string,
         display: string,
-        system: string
+        system: string,
+        match_type: string
       }
 
   - name: thresholds

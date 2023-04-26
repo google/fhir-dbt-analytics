@@ -1,5 +1,5 @@
-{% macro has_observation(observation, code_system=None, value_greater_than=None, value_less_than=None, lookback=None) -%}
- EXISTS (
+{% macro has_observation(observation, code_system=None, value_greater_than=None, value_less_than=None, lookback=None, patient_join_key= None) -%}
+EXISTS (
   SELECT cc.code
   FROM {{ ref('Observation_view') }} AS O, UNNEST(code.coding) AS cc
   JOIN {{ ref('clinical_code_groups') }} AS L
@@ -18,6 +18,9 @@
     {%- if value_less_than != None %}
     AND O.value.quantity.value < {{ value_less_than }}
     {%- endif %}
-  WHERE P.id = O.subject.patientId
+  {%- if patient_join_key != None %}
+  WHERE 
+    patient_join_key = E.subject.patientId
+  {%- endif %}
 )
 {%- endmacro %}

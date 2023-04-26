@@ -1,4 +1,4 @@
-{% macro has_procedure(procedure, code_system=None, lookback=None) -%}
+{% macro has_procedure(procedure, code_system=None, lookback=None,  patient_join_key= None) -%}
  EXISTS (
   SELECT cc.code
   FROM {{ ref('Procedure_view') }} AS Pr, UNNEST(code.coding) AS cc
@@ -12,6 +12,9 @@
     {%- if lookback != None %}
     AND DATE(COALESCE(Pr.performed.dateTime, Pr.performed.period.start)) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
     {%- endif %}
-  WHERE P.id = Pr.subject.patientId
+  {%- if patient_join_key != None %}
+  WHERE 
+    patient_join_key = E.subject.patientId
+  {%- endif %}
 )
 {%- endmacro %}

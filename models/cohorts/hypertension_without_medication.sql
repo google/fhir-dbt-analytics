@@ -28,8 +28,8 @@ SELECT
 FROM {{ ref('Patient_view') }} AS P
 WHERE {{ alive() }}
 AND {{ age() }} >= 18
-AND {{ has_encounter(class=['AMB', 'EMER', 'IMP'], lookback='5 YEAR') }}
-AND {{ has_condition('Hypertension') }}
-AND {{ has_medication_request('Anti-hypertensive medication', lookback='12 MONTH') }}
-AND {{ has_observation('BMI', value_greater_than=25, lookback='12 MONTH') }}
-AND NOT {{ has_procedure('Medication Reconciliation', lookback='12 MONTH') }}
+AND {{ has_encounter(class=['AMB', 'EMER', 'IMP'], lookback='5 YEAR', patient_join_key= P.id) }}
+AND {{ has_condition('Hypertension', patient_join_key= P.id) }}
+AND {{ has_medication_request('Anti-hypertensive medication', lookback='12 MONTH', patient_join_key= P.id) }}
+AND {{ has_observation('BMI', value_greater_than=25, lookback='12 MONTH', patient_join_key= P.id) }}
+AND NOT{{ has_procedure('Medication Reconciliation', lookback='12 MONTH', patient_join_key= P.id) }}

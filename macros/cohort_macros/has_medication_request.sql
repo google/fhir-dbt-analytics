@@ -1,4 +1,4 @@
-{% macro has_medication_request(medication, code_system=None, lookback=None) -%}
+{% macro has_medication_request(medication, code_system=None, lookback=None, patient_join_key= None) -%}
 {%- set snapshot_date = get_snapshot_date() -%}
  EXISTS (
   SELECT cc.code
@@ -13,6 +13,12 @@
     {%- if lookback != None %}
     AND DATE(M.authoredOn) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
     {%- endif %}
-  WHERE P.id = M.subject.patientId
+  {%- if patient_join_key != None %}
+  WHERE 
+    patient_join_key = E.subject.patientId
+  {%- endif %}
+   
+  
+  P.id = M.subject.patientId
 )
 {%- endmacro %}

@@ -44,7 +44,6 @@ vars:
   init_sources_fhir_resource_list: "Encounter,Observation,Patient"  # List of FHIR resources to call init_sources on.
   init_sources_parquet_location: ""  # File location with Parquet files for init_sources.
 
-
 # Model configurations
 
 models:
