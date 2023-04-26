@@ -23,7 +23,7 @@ limitations under the License. */
     schema = target.schema,
     identifier = name
   ) %}
-  {%- do threshold_relations.append(relation) %}
+  {%- do threshold_relations.append(relation) if relation is not none %}
 {%- endfor -%}
 {{ dbt_utils.union_relations(
     relations = threshold_relations,
