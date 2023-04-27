@@ -82,7 +82,7 @@ After both of these commands have successfully run, you can inspect the tables a
 - `metric`: union of all metric outputs at the most granular level
 - `metric_definition` metric definitions, one row per metric
 
-A good place to start is querying the `metric_by_system` view that joins these two tables together and calculates overall metric values. The output of this view is one row per metric.
+A good place to start is querying the `metric_overall` view that joins these two tables together and calculates overall metric values. The output of this view is one row per metric.
 
 Once you have confirmed that metrics are being generated, you will find it helpful to read the [project overview](readme/project_overview.md) to further understand the project structure, and then [extending the project](readme/extending_the_project.md) to learn how to add metrics of your own.
 

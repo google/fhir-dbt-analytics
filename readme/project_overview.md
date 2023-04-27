@@ -138,6 +138,8 @@ Macros are organized into the following folders:
 -   `string_macros`: Transform and format string values
 -   `data_visualization_macros`: Connect metric outputs to data visualization
     tools
+-   `cross_db_macros`: Enable execution of macros across multiple data platforms
+-   `tests`: Unit tests for macros
 
 ## Selectors
 
