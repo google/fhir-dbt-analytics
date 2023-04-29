@@ -1,4 +1,5 @@
 {{ config(
+    tags = ["spark_todo"],
     meta = {
       "description": "Proportion of patients that are flagged as test patients",
       "short_description": "Test patients",

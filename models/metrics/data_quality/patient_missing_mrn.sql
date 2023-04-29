@@ -1,4 +1,5 @@
 {{ config(
+    tags = ["spark_todo"],
     meta = {
       "description": "Proportion of patients that have missing MRN",
       "short_description": "Patients missing MRN",

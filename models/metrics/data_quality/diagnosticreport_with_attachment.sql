@@ -65,6 +65,6 @@ limitations under the License. */
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(CAST(has_inlined_attachment AS INT64))',
+    numerator = 'SUM(CAST(has_inlined_attachment AS '~type_long()~'))',
     denominator = 'COUNT(id)'
 ) }}

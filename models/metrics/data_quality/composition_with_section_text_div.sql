@@ -46,6 +46,6 @@ limitations under the License. */
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(CAST(has_section_text_div AS INT64))',
+    numerator = 'SUM(CAST(has_section_text_div AS '~type_long()~'))',
     denominator = 'COUNT(id)'
 ) }}

@@ -64,6 +64,6 @@ limitations under the License. */
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(CAST(has_code_text AS INT64))',
+    numerator = 'SUM(CAST(has_code_text AS '~type_long()~'))',
     denominator = 'COUNT(id)'
 ) }}
