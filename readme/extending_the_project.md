@@ -4,7 +4,8 @@
 
 ---
 
-This project provides the groundwork for analytics over FHIR resources stored in BigQuery.
+This project provides the groundwork for analytics over FHIR resources stored in
+BigQuery or Spark.
 
 We provide out-of-the-box data quality metrics to enable users to quickly get up-and-running with assessing the quality of their FHIR data. You will most likely have your own requirements for data quality and other analytics that you wish to run over your data. The project is designed to enable such extensions, by making use of the common building blocks contained within foundational models and macros.
 
@@ -14,33 +15,51 @@ Once you have a good understanding of the [project structure](https://github.com
 
 ### Instructions
 
-1. Create a new empty SQL file within the `models/metrics/` folder, assigning it the name of your new metric. For example, *my_new_metric.sql*
+1.  Create a new empty SQL file within the `models/metrics/` folder, assigning
+    it the name of your new metric. For example, *my_new_metric.sql*
 
-1. Copy the contents of the metric template below into this new file. Alternatively, you can copy the contents of an existing metric if you prefer to adapt a working example.
+1.  Copy the contents of the metric template below into this new file.
+    Alternatively, you can copy the contents of an existing metric if you prefer
+    to adapt a working example.
 
-1. Edit the contents of the file to adapt it to your desired metric:
+1.  Edit the contents of the file to adapt it to your desired metric:
 
     a. Update the config block with metadata for your metric.
 
-      - Consult with the column descriptions for the *metric_definition* table within `metadata_config.yml` to understand what should be recorded within metadata fields. This information can also be viewed in the [dbt docs](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/commands/cmd-docs) site.
+    -   Consult with the column descriptions for the *metric_definition* table
+        within `metadata_config.yml` to understand what should be recorded
+        within metadata fields. This information can also be viewed in the
+        [dbt docs](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/commands/cmd-docs)
+        site.
 
     b. Update the SQL query within the `metric_sql` variable:
-      
-      - This query will be executed over your [FHIR data](http://www.google.com/url?sa=D&q=https://hl7.org/FHIR/resourcelist.html) based on the [SQL-on-FHIR](http://www.google.com/url?sa=D&q=https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md) schema.
-      - The query can be flexible, joining to any number of FHIR resources and including subqueries and common table expressions.
-      - The final output from this query must contain:
-        - An `id` field representing a FHIR resource id
-        - The `metric_common_dimensions()` macro to derive dimensions common to all metrics
-        - Any fields to be used for specific metric dimensions (as defined in the config block)
-        - Any fields to be used for numerator and denominator calculations
-      - The `calculate_metric` macro takes `metric_sql` as an input to produce the final metric output.
-        - For count metrics, only the *metric_sql* argument is required and a distinct count over the `id` field is performed.
-        - For proportion and ratio metrics, you need to provide a SQL expression to calculate the *numerator* and *denominator* fields.
 
-1. Test running your new metric by running the following command in the project directory:
-`dbt run --select my_new_metric`
+    -   This query will be executed over your
+        [FHIR data](http://www.google.com/url?sa=D&q=https://hl7.org/FHIR/resourcelist.html)
+        based on the
+        [SQL-on-FHIR](http://www.google.com/url?sa=D&q=https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md)
+        schema.
+    -   The query can be flexible, joining to any number of FHIR resources and
+        including subqueries and common table expressions.
+    -   The final output from this query must contain:
+        -   An `id` field representing a FHIR resource id
+        -   The `metric_common_dimensions()` macro to derive dimensions common
+            to all metrics
+        -   Any fields to be used for specific metric dimensions (as defined in
+            the config block)
+        -   Any fields to be used for numerator and denominator calculations
+    -   The `calculate_metric` macro takes `metric_sql` as an input to produce
+        the final metric output.
+        -   For count metrics, only the *metric_sql* argument is required and a
+            distinct count over the `id` field is performed.
+        -   For proportion and ratio metrics, you need to provide a SQL
+            expression to calculate the *numerator* and *denominator* fields.
 
-1. If the metric runs successfully, check the calculated outputs in your target BigQuery schema. A new table should be created named after your metric.
+1.  Test running your new metric by running the following command in the project
+    directory: `dbt run --select my_new_metric`
+
+1.  If the metric runs successfully, check the calculated outputs in your target
+    schema. A new table should be created named after your metric.
 
 ### Metric template
 
@@ -98,20 +117,26 @@ Once you have a good understanding of the [project structure](https://github.com
 
 ### Instructions
 
-1. Create a new empty SQL file within the `models/cohorts/` folder, assigning it the name of your new cohort. For example, _my_new_cohort.sql_.
+1.  Create a new empty SQL file within the `models/cohorts/` folder, assigning
+    it the name of your new cohort. For example, _my_new_cohort.sql_.
 
-1. Copy the contents of the cohort template below into this new file. Alternatively, you can copy the contents of an existing cohort if you prefer to adapt a working example.
+1.  Copy the contents of the cohort template below into this new file.
+    Alternatively, you can copy the contents of an existing cohort if you prefer
+    to adapt a working example.
 
-1. Edit the contents of the file to adapt it to your desired cohort:
+1.  Edit the contents of the file to adapt it to your desired cohort:
 
     a. Update the config block with a description for your cohort.
 
-    b. Update the SQL query WHERE clause with inclusion and exclusion criteria for your patient cohort
+    b. Update the SQL query WHERE clause with inclusion and exclusion criteria
+    for your patient cohort
 
-1. Test running the _patient_count_ metric over your new cohort by running the following command in the project directory:
-`dbt run --select patient_count --vars 'cohort: my_new_cohort'`
+1.  Test running the _patient_count_ metric over your new cohort by running the
+    following command in the project directory: `dbt run --select patient_count
+    --vars 'cohort: my_new_cohort'`
 
-1. If the metric runs successfully, check the calculated outputs in the `patient_count` table within your target BigQuery schema.
+1.  If the metric runs successfully, check the calculated outputs in the
+    `patient_count` table within your target BigQuery or Spark schema.
 
 ### Cohort template
 
@@ -122,7 +147,7 @@ Once you have a good understanding of the [project structure](https://github.com
      "cohort_description": "<TODO: Description of the patient cohort>"
      }
 ) -}}
- 
+
 SELECT
  '{{this.name}}' AS cohort_name,
  {{ get_snapshot_date() }} AS cohort_snapshot_date,

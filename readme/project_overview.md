@@ -70,7 +70,7 @@ For each FHIR resource, the project contains two dbt models:
 
 Logic performed within the *View*:
 
--   Identify whether the FHIR resource exists in the BigQuery dataset
+-   Identify whether the FHIR resource exists in the dataset
 -   Construct the view referencing the FHIR resource table
 -   Append metadata commonly used by the metrics such as `metric_date`,
     `source_system` and `site`
@@ -132,13 +132,14 @@ Macros are organized into the following folders:
     cohorts
 -   `fhir_analysis_macros`: Commonly used complex SQL to analyze FHIR data
 -   `fhir_view_macros`: Construct views and CTEs for FHIR resources
--   `infrastructure_macros`: Interact with BigQuery and dbt objects
+-   `infrastructure_macros`: Interact with database and dbt objects
 -   `metric_processing_macros`: Calculate metrics and process metric output
     tables
 -   `string_macros`: Transform and format string values
 -   `data_visualization_macros`: Connect metric outputs to data visualization
     tools
--   `cross_db_macros`: Enable execution of macros across multiple data platforms
+-   `cross_db_macros`: Enable execution of macros across multiple data
+    platforms, mainly BigQuery and Spark
 -   `tests`: Unit tests for macros
 
 ## Selectors
@@ -160,8 +161,8 @@ the structure defined by our data model and have required metadata recorded.
 
 ## Data visualization
 
-Running this dbt project writes outputs to BigQuery tables and views within your
-target *project* and *dataset*, as defined in
+Running this dbt project in BigQuery writes outputs to tables and views within
+your target *project* and *dataset*, as defined in
 [profiles.yml](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/profiles.yml).
 
 These tables and views can be connected to a data visualization tool to display
