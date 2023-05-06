@@ -24,7 +24,7 @@
       spark__unnest_multiple(
         arrays = [array_config( field = 'my_array', unnested_alias = 'c' )],
       ),
-  "SELECT EXPLODE(ac) AS c FROM (SELECT my_array AS ac)") }}
+  "SELECT * FROM (SELECT EXPLODE(ac) AS c FROM (SELECT my_array AS ac))") }}
 
   {{ assert_string_equals(
       spark__unnest_multiple(
@@ -32,7 +32,7 @@
           array_config( field = 'my_array_2', unnested_alias = 'm' ),
           array_config( field = 'm.foos', unnested_alias = 'd' )],
       ),
-  "SELECT EXPLODE(ac) AS m FROM (SELECT my_array_2 AS ac)
+  "SELECT * FROM (SELECT EXPLODE(ac) AS m FROM (SELECT my_array_2 AS ac))
     LATERAL VIEW OUTER explode (m.foos) AS d
   )") }}
 

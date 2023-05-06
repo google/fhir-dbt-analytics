@@ -1,5 +1,4 @@
 {{ config(
-    tags = ["spark_todo"],
     meta = {
       "description": "Proportion of patients that have missing MRN",
       "short_description": "Patients missing MRN",
@@ -18,12 +17,16 @@
       id,
       {{- metric_common_dimensions() }}
       CAST({{ get_column_or_default('active') }} AS STRING) AS active,
-      CASE WHEN 'http://terminology.hl7.org/CodeSystem/v2-0203' IN (
-        SELECT t.system
-        FROM UNNEST(identifier) i, UNNEST(i.type.coding) t
+      (
+        SELECT 1 - SIGN(COUNT(*))
+        FROM {{ spark_parenthesis(
+          unnest_multiple([array_config('identifier', 'i'), array_config('i.type.coding', 't')])
+        )}}
         WHERE i.value IS NOT NULL AND i.value <> ''
+          AND t.system = 'http://terminology.hl7.org/CodeSystem/v2-0203'
+          AND t.code='MR'
       )
-      THEN 0 ELSE 1 END AS patient_missing_mrn
+      AS patient_missing_mrn
     FROM {{ ref('Patient') }} AS P
 {%- endset -%}
 

@@ -20,7 +20,7 @@
   {# Select the field as `ac`: this "cheeky select" trick allows us to write the unnest as one
       statement. #}
   {%- set array0 = arrays[0] -%}
-    SELECT EXPLODE(ac) AS {{ array0.unnested_alias }} FROM (SELECT {{ array0.field }} AS ac)
+    SELECT * FROM (SELECT EXPLODE(ac) AS {{ array0.unnested_alias }} FROM (SELECT {{ array0.field }} AS ac))
   {%- for array in arrays[1:] %}
     LATERAL VIEW OUTER explode ({{ array.field }}) AS {{ array.unnested_alias }}
   {%- endfor -%}

@@ -1,5 +1,4 @@
 {{ config(
-    tags = ["spark_todo"],
     meta = {
       "description": "Proportion of patients that are flagged as test patients",
       "short_description": "Test patients",
@@ -15,10 +14,12 @@
     SELECT
       id,
       {{- metric_common_dimensions() }}
-      CASE WHEN 'HTEST' IN 
-              (SELECT code FROM UNNEST(P.meta.security) 
-               WHERE system = 'http://terminology.hl7.org/CodeSystem/v3-ActReason') 
-           THEN  1 ELSE 0 END AS test_patient
+      (
+        SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest('P.meta.security', 's')) }}
+        WHERE s.system = 'http://terminology.hl7.org/CodeSystem/v3-ActReason'
+          AND s.code = 'HTEST'
+      )
+      AS test_patient
     FROM {{ ref('Patient') }} AS P
 {%- endset -%}
 

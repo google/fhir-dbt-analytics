@@ -1193,6 +1193,15 @@ macros:
           The ORDER BY clause, important because we select the first value.
 
 
+  - name: spark_parenthesis
+
+    description: Surrounds `s` by parenthesis on Spark, leaves as is on BigQuery.
+
+    arguments:
+      - name: s
+        type: string
+
+
 # Testing macros
 
   - name: assert_string_equals
