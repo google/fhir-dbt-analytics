@@ -1,5 +1,8 @@
 group_type,group,code,display,system,match_type
-"Condition","Hypertension","59621000","Essential hypertension","http://snomed.info/sct","exact"
+"Condition","HYPERTENSION","59621000","Essential hypertension","http://snomed.info/sct","exact"
+"Condition","DIABETES","44054006","Diabetes","http://snomed.info/sct","exact"
+"Condition","COPD","185086009","Chronic obstructive bronchitis(disorder)","http://snomed.info/sct","exact"
+"Condition","COPD","87433001","Pulmonary emphysema(disorder)","http://snomed.info/sct","exact"
 "Procedure","Medication Reconciliation","430193006","Medication Reconciliation","http://snomed.info/sct","exact"
 "Medication","Anti-hypertensive medication","308136","amLODIPine 2.5 MG Oral Tablet","http://www.nlm.nih.gov/research/umls/rxnorm","exact"
 "Observation","Blood pressure","85354-9","Blood Pressure","http://loinc.org","exact"
