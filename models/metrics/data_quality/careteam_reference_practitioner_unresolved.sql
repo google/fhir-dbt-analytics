@@ -37,13 +37,13 @@ limitations under the License. */
       {{ get_column_or_default('status') }} AS status,
       (
         SELECT SIGN(COUNT(*))
-        FROM UNNEST(C.participant) AS CP
-        WHERE member.practitionerId IS NOT NULL
-        AND member.practitionerId <> ''
+        FROM {{ spark_parenthesis(unnest("C.participant", "CP")) }}
+        WHERE CP.member.practitionerId IS NOT NULL
+        AND CP.member.practitionerId <> ''
       ) AS has_reference_value,
       (
         SELECT SIGN(COUNT(*))
-        FROM UNNEST(C.participant) AS CP
+        FROM {{ spark_parenthesis(unnest("C.participant", "CP")) }}
         JOIN {{ ref('Practitioner') }} AS P
           ON CP.member.practitionerId = P.id
       ) AS reference_resolves

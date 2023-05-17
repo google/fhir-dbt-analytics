@@ -12,9 +12,9 @@
 {%- if reference_column_is_array -%}
 
   {%- if column_exists(direct_reference_path) -%}
-    (SELECT SIGN(COUNT(*)) FROM UNNEST({{reference_column}}) WHERE {{has_value(direct_reference)}})
+    (SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest(reference_column, "RC")) }} WHERE {{has_value("RC."~direct_reference)}})
   {%- elif column_exists(indirect_reference_path) -%}
-    (SELECT SIGN(COUNT(*)) FROM UNNEST({{reference_column}}) WHERE type = '{{reference_resource}}' AND {{has_value('reference')}})
+    (SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest(reference_column, "RC")) }} WHERE RC.type = '{{reference_resource}}' AND {{has_value('RC.reference')}})
   {%- else -%}
     0
   {%- endif -%}

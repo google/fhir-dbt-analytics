@@ -499,8 +499,6 @@ selectors:
           - method: selector
             value: all_metrics
           - exclude:
-            - method: config.meta.category
-              value: Referential integrity
             - method: tag
               value: spark_todo
           - method: path

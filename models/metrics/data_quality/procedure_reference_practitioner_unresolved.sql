@@ -37,13 +37,13 @@ limitations under the License. */
       status,
       (
         SELECT SIGN(COUNT(*))
-        FROM UNNEST(P.performer) AS PP
-        WHERE actor.practitionerId IS NOT NULL
-        AND actor.practitionerId <> ''
+        FROM {{ spark_parenthesis(unnest("P.performer", "PP")) }}
+        WHERE PP.actor.practitionerId IS NOT NULL
+        AND PP.actor.practitionerId <> ''
       ) AS has_reference_practitioner,
       (
         SELECT SIGN(COUNT(*))
-        FROM UNNEST(P.performer) AS PP
+        FROM {{ spark_parenthesis(unnest("P.performer", "PP")) }}
         JOIN {{ ref('Practitioner') }} AS P
           ON PP.actor.practitionerId = P.id
       ) AS reference_practitioner_resolved

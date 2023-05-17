@@ -37,15 +37,17 @@ limitations under the License. */
       status,
       (
         SELECT SIGN(COUNT(*))
-        FROM UNNEST(C.section) AS CS
-        JOIN UNNEST(CS.entry) AS CSE
+        FROM {{ spark_parenthesis(unnest_multiple([
+          array_config("C.section", "CS"),
+          array_config("CS.entry", "CSE")])) }}
         WHERE CSE.binaryid IS NOT NULL
         AND CSE.binaryid <> ''
       ) AS has_reference_value,
       (
         SELECT SIGN(COUNT(*))
-        FROM UNNEST(C.section) AS CS
-        JOIN UNNEST(CS.entry) AS CSE
+        FROM {{ spark_parenthesis(unnest_multiple([
+          array_config("C.section", "CS"),
+          array_config("CS.entry", "CSE")])) }}
         JOIN {{ ref('Binary') }} AS B
           ON CSE.binaryid = B.id
       ) AS reference_resolves

@@ -7,6 +7,10 @@
   {{ assert_string_equals(
       unnest('my_array', 'c' ),
       "UNNEST(my_array) c") }}
+
+  {{ assert_string_equals(
+      unnest('my_array' ),
+      "UNNEST(my_array)") }}
 {%- endmacro %}
 
 
@@ -14,4 +18,7 @@
   {{ assert_string_equals(
         spark__unnest('my_array', 'c' ),
         "SELECT EXPLODE(ac) AS c FROM (SELECT my_array AS ac)") }}
+  {{ assert_string_equals(
+        spark__unnest('my_array'),
+        "SELECT EXPLODE(ac) FROM (SELECT my_array AS ac)") }}
 {%- endmacro %}

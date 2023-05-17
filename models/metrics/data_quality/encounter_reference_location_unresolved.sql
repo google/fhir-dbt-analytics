@@ -40,13 +40,13 @@ limitations under the License. */
       class.code AS latest_encounter_class,
       (
         SELECT SIGN(COUNT(*))
-        FROM UNNEST(E.location) AS EL
+        FROM {{ spark_parenthesis(unnest("E.location", "EL")) }}
         WHERE EL.location.locationId IS NOT NULL
         AND EL.location.locationId <> ''
       ) AS has_reference_location,
       (
         SELECT SIGN(COUNT(*))
-        FROM UNNEST(E.location) AS EL
+        FROM {{ spark_parenthesis(unnest("E.location", "EL")) }}
         JOIN {{ ref('Location') }} AS L
           ON EL.location.locationId = L.id
       ) AS reference_location_resolved
