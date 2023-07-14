@@ -44,7 +44,7 @@ limitations under the License. */
             WHEN UPPER(COALESCE(C.class.code, E.class.code)) IN ('IMP', 'ACUTE', 'NONAC') THEN 'IMP/ACUTE/NONAC'
             ELSE COALESCE(C.class.code, E.class.code)
             END AS episode_class,
-          serviceProvider.organizationId AS encounter_service_provider
+          {{ get_column_or_default('serviceProvider.organizationId', 'Encounter') }} AS encounter_service_provider
         FROM {{ ref('Encounter') }} AS E
         LEFT JOIN UNNEST(E.classHistory) AS C
         WHERE

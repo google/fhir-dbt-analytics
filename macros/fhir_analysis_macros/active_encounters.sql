@@ -9,7 +9,7 @@
             {{- metric_common_dimensions(exclude_col='metric_date')|indent }}
             CASE WHEN UPPER(class.code) IN ('IMP', 'ACUTE', 'NONAC') THEN 'IMP/ACUTE/NONAC' ELSE class.code END AS encounter_class,
             {{ encounter_class_group('class.code')|indent(6) }} AS encounter_class_group,
-            serviceProvider.organizationId AS encounter_service_provider
+            {{ get_column_or_default('serviceProvider.organizationId', 'Encounter') }} AS encounter_service_provider
           FROM {{ ref('Encounter') }}
           WHERE
             UPPER(class.code) {{ sql_comparison_expression(encounter_classes) }}
