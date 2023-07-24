@@ -58,7 +58,7 @@ limitations under the License. */
       SELECT
         id,
         {{- metric_common_dimensions() }}
-        serviceProvider.organizationId as encounter_service_provider,
+        {{ get_column_or_default('serviceProvider.organizationId', 'Encounter') }} AS encounter_service_provider,
         CASE
           WHEN initial_encounter_class IN ('IMP', 'ACUTE', 'NONAC') THEN 'IMP/ACUTE/NONAC'
           WHEN initial_encounter_class IN ('IMPPS', 'IMPRE','OTHER') THEN 'IMPPS/IMPRE/OTHER'

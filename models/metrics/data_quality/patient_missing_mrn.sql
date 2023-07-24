@@ -17,6 +17,7 @@
       id,
       {{- metric_common_dimensions() }}
       CAST({{ get_column_or_default('active') }} AS STRING) AS active,
+      {%- if column_exists('identifier.type') %}
       (
         SELECT 1 - SIGN(COUNT(*))
         FROM {{ spark_parenthesis(
@@ -27,6 +28,9 @@
           AND t.code='MR'
       )
       AS patient_missing_mrn
+      {%- else %}
+      1 AS patient_missing_mrn
+      {%- endif %}
     FROM {{ ref('Patient') }} AS P
 {%- endset -%}
 
