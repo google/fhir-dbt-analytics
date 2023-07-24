@@ -6,7 +6,10 @@
       LOWER('{{condition}}') AS condition,
       cc.code AS code,
       {{ metric_date(['recordedDate']) }} AS recorded_date,
+      {%- if column_exists('onset.dateTime') %}
       {{ metric_date(['onset.dateTime']) }} AS onset_date
+      NULL AS onset_date
+      {%- endif %}
   ) AS condition
   {%- else -%}
   EXISTS (
