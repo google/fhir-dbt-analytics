@@ -25,8 +25,8 @@
     {%- endif %}
     AND cc.system = L.system
     AND IF(L.match_type = 'start',
-           cc.code LIKE CONCAT('\"', L.code, '%\"'),
-           cc.code = L.code)
+           REPLACE(cc.code,'.','') LIKE CONCAT('\"', L.code, '%\"'),
+           REPLACE(cc.code,'.','') = L.code)
   
   WHERE 0=0
   {%- if patient_join_key != None %}
