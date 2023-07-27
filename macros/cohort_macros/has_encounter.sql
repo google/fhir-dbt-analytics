@@ -48,9 +48,11 @@
   {%- if class != None %}
   AND class.code {{ sql_comparison_expression(class) }}
   {%- endif %}
+  {%- if cohort_snapshot_date != None %}
   AND DATE(E.period.start) <= {{ get_snapshot_date() }}
   {%- if lookback != None %}
   AND DATE(E.period.start) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+  {%- endif %}
   {%- endif %}
 )
 {%- endmacro %}

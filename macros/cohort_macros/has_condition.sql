@@ -25,7 +25,7 @@
     {%- endif %}
     AND cc.system = L.system
     AND IF(L.match_type = 'start',
-           REPLACE(cc.code,'.','') LIKE CONCAT('\"', L.code, '%\"'),
+           CONCAT('\"',REPLACE(cc.code,'.',''),'\"') LIKE CONCAT('\"', L.code, '%\"'),
            REPLACE(cc.code,'.','') = L.code)
   
   WHERE 0=0
