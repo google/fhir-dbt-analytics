@@ -54,5 +54,6 @@
   AND DATE(E.period.start) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
   {%- endif %}
   {%- endif %}
+  )
 )
 {%- endmacro %}
