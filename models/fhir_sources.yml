@@ -27,6 +27,7 @@ sources:
       - name: Claim
       - name: Composition
       - name: Condition
+      - name: Coverage
       - name: Device
       - name: DiagnosticReport
       - name: DocumentReference
