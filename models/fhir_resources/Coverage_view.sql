@@ -21,7 +21,7 @@ limitations under the License. */
     meta = {
       "description": "Union of all Coverage FHIR resources",
       "fhir_resource": "Coverage",
-      "metric_date_columns": ["date"],
+      "metric_date_columns": ["period.start"],
       "patient_reference_column": "beneficiary"
       },
     materialized = 'view'
