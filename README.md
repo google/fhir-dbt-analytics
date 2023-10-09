@@ -82,9 +82,9 @@ dbt deps
 dbt seed
 ```
 
-### Analytics
+### Data Quality Metrics
 
-Now you're ready to create the analytics by running the following two commands in your terminal:
+Now you're ready to create the data quality metrics by running the following two commands in your terminal:
 
 ```
 dbt run
@@ -103,6 +103,22 @@ After both of these commands have successfully run, you can inspect the tables a
 A good place to start is querying the `metric_overall` view that joins these two tables together and calculates overall metric values. The output of this view is one row per metric.
 
 Once you have confirmed that metrics are being generated, you will find it helpful to read the [project overview](readme/project_overview.md) to further understand the project structure, and then [extending the project](readme/extending_the_project.md) to learn how to add metrics of your own.
+
+### Patient Panels
+
+You can also use models within this project to summarize patient-related attributes. We have pre-defined a set of attributes that rely on combining data across FHIR resources. In order to include these models when running the project you will need to modify the `patient_panel_enabled` variable to `TRUE` in your `dbt_project.yml` file.
+
+Once this is done, you can run the relevant models by running the following command:
+
+```
+dbt run --selector patient_panel
+```
+
+After this command has successfully run, you can inspect the tables and views created in the same dataset that you specified within `profiles.yml`. A key table created is:
+
+- `patient_summary`: A table containing all patients in your data set with some key clinical and administrative attributes.
+
+A few other tables are also materialized, but ultimately all are generated in service of creating the `patient_summary` table. This table can then be used to summarize your population, create cohorts or stratify other data sets that contain a patient id.
 
 
 ## Support

@@ -120,6 +120,13 @@ Metrics can be selectively run against a patient cohort by setting the `cohort`
 project variable to the name of the cohort. For example: `dbt run --vars
 'cohort: adults'`.
 
+### summaries
+
+dbt models for constructing summaries. Current summaries includes Patient Panels
+which represents a collection of models that summarized characteristics about
+patients. The `patient_summary` table contains the output of these collection of
+models.
+
 ## Macros
 
 [Macros](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/docs/building-a-dbt-project/jinja-macros)
@@ -140,6 +147,7 @@ Macros are organized into the following folders:
     tools
 -   `cross_db_macros`: Enable execution of macros across multiple data
     platforms, mainly BigQuery and Spark
+-   `patient_panel_macros`: Enable execution of `summaries/patient_panel`
 -   `tests`: Unit tests for macros
 
 ## Selectors
@@ -148,8 +156,8 @@ Macros are organized into the following folders:
 allow complex selection criteria to be defined for which dbt models to run.
 
 In this project a default set of selectors are defined for logical groupings of
-metrics by FHIR resource and metric category. Users can extend this by defining
-their own selectors.
+metrics by FHIR resource and metric category and other functionality. Users can
+extend this by defining their own selectors.
 
 ## Tests
 

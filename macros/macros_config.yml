@@ -1201,6 +1201,25 @@ macros:
       - name: s
         type: string
 
+# Patient Panel macros
+
+  - name: condition_aggregate
+
+    description: |
+      For a given condition, calculates first documented date, last documented date and number of
+      intances it was documented at the master_patient_id level.
+
+  - name: patient_panel_chronic_condition_metadata
+
+    description: |
+      Gets the field names of the condition metadata generated in the condition_aggregate macro.
+
+    arguments:
+      - name: condition
+        type: string
+        description: |
+          The string representing the name of the condition.
+
 
 # Testing macros
 

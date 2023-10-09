@@ -66,6 +66,15 @@ selectors:
         - method: path
           value: models/metric_views/
 
+  - name: patient_panel
+    description: "Transformations that summarize information about a patient"
+    definition:
+      union:
+        - method: path
+          value: models/metric_views/
+        - method: path
+          value: models/summaries/patient_panel
+
   - name: anomaly_detection
     description: "Metric anomaly detection calculations"
     definition:
