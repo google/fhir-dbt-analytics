@@ -23,7 +23,7 @@ limitations under the License. */
       }
 ) -}}
 
-,cohort AS (
+WITH cohort AS (
   {{ has_condition(condition='HYPERTENSION', return_all=TRUE) }}
 )
   {{ condition_aggregate () }}

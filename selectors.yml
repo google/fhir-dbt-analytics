@@ -71,8 +71,6 @@ selectors:
     definition:
       union:
         - method: path
-          value: models/metric_views/
-        - method: path
           value: models/summaries/patient_panel
 
   - name: anomaly_detection

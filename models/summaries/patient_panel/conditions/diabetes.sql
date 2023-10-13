@@ -23,7 +23,7 @@ limitations under the License. */
       }
 ) -}}
 
-,cohort AS (
+WITH cohort AS (
   {{ has_condition(condition='DIABETES', return_all=TRUE) }}
 )
   {{ condition_aggregate () }}

@@ -24,7 +24,7 @@ limitations under the License. */
       }
 ) -}}
 
-,cohort AS (
+WITH cohort AS (
   {{ has_condition(condition='COPD', return_all=TRUE) }}
 )
 
