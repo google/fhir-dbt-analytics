@@ -22,7 +22,7 @@ limitations under the License. */
 ) -}}
 
 WITH encounter AS (
-  {{ has_encounter(class=['AMB', 'IMP','SS', 'OBSENC','NONAC','EMER'],status=['in-progress', 'finished'], lookback= var('encounter_lookback'), return_all=TRUE) }}
+  {{ has_encounter(class=['AMB', 'IMP','SS', 'OBSENC','NONAC','EMER'],status=['in-progress', 'finished'], lookback= var('encounter_lookback_years'), return_all=TRUE) }}
 )
   SELECT  
     e.encounter.id AS encounter_id,
