@@ -31,14 +31,6 @@ WITH empi AS (
       LEFT JOIN {{ ref('encounter_summary') }} e
         ON empi.patient_id = e.patient_id
   ),
-  latest_coverage AS (
-    SELECT
-      CAST(NULL AS STRING) as patient_id,
-      CAST(NULL AS STRING) AS payor,
-      NULL AS coverage_rank
-    FROM {{ ref('Coverage_view') }} AS C
-    WHERE  {{ metric_date(['period.end']) }} < {{ get_snapshot_date() }}
-  )
   ,patient_data AS (
       SELECT
         p.id AS patient_id,
@@ -125,16 +117,11 @@ WITH empi AS (
         pat.race,
         pat.ethnicity,
         enc.start_date,
-        IF(enc.enc_num_desc IS NOT NULL, TRUE, FALSE) as latest_dem_flag,
-        coverage.payor
-
+        IF(enc.enc_num_desc IS NOT NULL, TRUE, FALSE) as latest_dem_flag
       FROM patient_data pat
       LEFT JOIN latest_encounter enc
         ON pat.master_patient_id = enc.master_patient_id
-        AND enc.enc_num_desc = 1    
-      LEFT JOIN latest_coverage coverage 
-        ON pat.patient_id = coverage.patient_id
-        AND coverage.coverage_rank = 1
+        AND enc.enc_num_desc = 1
     )
     SELECT
       pa.master_patient_id,

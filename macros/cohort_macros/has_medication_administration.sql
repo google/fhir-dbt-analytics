@@ -12,41 +12,39 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro has_procedure(procedure, code_system=None, lookback=None, patient_join_key= None, return_all= FALSE) -%}
+{% macro has_medication_administration(medication, code_system=None, lookback=None, patient_join_key= None, return_all= FALSE) -%}
   {%- if return_all == TRUE %}
   (SELECT
   (SELECT AS STRUCT
-      P.subject.patientid AS patient_id,
-      P.encounter.encounterId, 
-      LOWER('{{procedure}}') AS procedure_group,
-      P.code.text AS procedure_name,
-      cc.code AS procedure_code,
-      COALESCE({{ metric_date(['performed.dateTime']) }}, {{ metric_date(['performed.period.start']) }}) AS performed_date,
-  ) AS procedure_struct
+      MA.subject.patientid AS patient_id, 
+      LOWER('{{medication}}') AS medication_group,
+      {{ get_medication('text') }} AS medication_free_text_name,
+      {{ get_medication('code',code_system) }} AS medication_code,
+      #(SELECT cc.code FROM UNNEST(get_medication().coding) AS cc WHERE cc.system=L.system ) AS medication_code,
+      {{ metric_date(['effective.period.start']) }} AS administered_date,
+  ) AS medication_administration_struct
   {%- else -%}
   EXISTS (
     SELECT
-      P.subject.patientId
+      MA.subject.patientId
   {%- endif %}
-  FROM {{ ref('Procedure_view') }} AS P, UNNEST(code.coding) AS cc
+  FROM {{ ref('MedicationAdministration_view') }} AS MA
   JOIN {{ ref('clinical_code_groups') }} AS L
-    ON L.group = '{{procedure}}'
+    ON L.group = '{{medication}}'
     {%- if code_system != None %}
     AND L.system {{ sql_comparison_expression(code_system) }}
     {%- endif %}
-    AND cc.system = L.system
     AND IF(L.match_type = 'exact', 
-           cc.code = L.code,
+           {{ get_medication('code',code_system)}}  = L.code,
             FALSE) # No support for other match types
-  
+
   WHERE TRUE
   {%- if patient_join_key != None %}
-    AND patient_join_key = P.subject.patientId
+    AND patient_join_key = MA.subject.patientId
     {%- endif %}
   {%- if lookback != None %}
-    AND COALESCE({{ metric_date(['performed.dateTime']) }}, 
-                 {{ metric_date(['performed.period.start']) }}) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+    AND {{ metric_date(['effective.period.start']) }} >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
     {%- endif %}
-    AND P.status NOT IN ('entered-in-error','not-done')
+    AND MA.status NOT IN ('entered-in-error','not-done')
   )
 {%- endmacro %}

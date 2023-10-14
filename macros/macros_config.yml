@@ -25,6 +25,20 @@ macros:
 
       If cohort_snapshot_date = 'today', then CURRENT_DATE is returned.
 
+  - name: get_medication 
+
+    description: |
+      Returns the medication name and codeable concept for a medication reference.
+
+    arguments:
+      - name: codeable_concept_field
+        type: string
+        description: |
+          A value within a codeable concept structure (one of 'text', 'display', 'code').
+      - name: code_system
+        type: string
+        description: |
+          A value defining the system for which a'code' or 'display' is returned.
 
   - name: alive
 
@@ -100,6 +114,11 @@ macros:
         description: |
           Restrict the search for a condition to only codes from this `code_system` in
           `clinical_code_groups.csv`.
+      - name: return_all
+        type: boolean
+        description: |
+          Whether to return a boolean if any conditions within parameters exist or the full list of
+          conditions that meet the criteria and their metadata.
 
 
   - name: has_procedure
@@ -129,6 +148,11 @@ macros:
         description: |
           Restrict the search for a procedure to only codes from this `code_system` in
           `clinical_code_groups.csv`.
+      - name: return_all
+        type: boolean
+        description: |
+          Whether to return a boolean if any procedures within parameters exist or the full list of
+          procedures that meet the criteria and their metadata.
 
 
   - name: has_observation
@@ -170,6 +194,11 @@ macros:
         description: |
           Restrict the search for a observation to only codes from this `code_system` in
           `clinical_code_groups.csv`.
+      - name: return_all
+        type: boolean
+        description: |
+          Whether to return a boolean if any observations within parameters exist or the full list
+          of observations that meet the criteria and their metadata.
 
 
   - name: has_medication_request
@@ -199,7 +228,44 @@ macros:
         description: |
           Restrict the search for a medication to only codes from this `code_system` in
           `clinical_code_groups.csv`.
+      - name: return_all
+        type: boolean
+        description: |
+          Whether to return a boolean if any medication requests within the criteria exist or the
+          full list of medication requests and their metadata.
 
+  - name: has_medication_administrastion
+
+    description: |
+      Evaluates whether a patient had a medication administration based on codes defined in
+      `clinical_code_groups.csv`.
+
+      By default the evaluation will be based on today's date and therefore include medication
+      administrations recorded up to today. If a date is specified by the `cohort_snapshot_date` project
+      variable, then the macro will ignore medication administrations recorded after this snapshot date to
+      determine whether the patient had medication administered prior to that time.
+
+    arguments:
+      - name: medication
+        type: string
+        description: |
+          Name of the medication as defined in the `group` field within `clinical_code_groups.csv`.
+      - name: lookback
+        type: string
+        description: |
+          Restrict the search for a medication administration to this time interval back from the
+          `cohort_snapshot_date`. Value must be in the format "int64 date_part", using one of the
+          following supported date_part: DAY; WEEK; MONTH; QUARTER; YEAR (e.g. "3 MONTH)".
+      - name: code_system
+        type: string
+        description: |
+          Restrict the search for a medication to only codes from this `code_system` in
+          `clinical_code_groups.csv`.
+      - name: return_all
+        type: boolean
+        description: |
+          Whether to return a boolean if any medication administrations within the criteria exist or
+          the full list of medication administrations and their metadata.
 
 # FHIR analysis macros
 

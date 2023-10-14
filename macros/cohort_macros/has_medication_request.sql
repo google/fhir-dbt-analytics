@@ -12,27 +12,39 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro has_medication_request(medication, code_system=None, lookback=None, patient_join_key= None) -%}
-{%- set snapshot_date = get_snapshot_date() -%}
- EXISTS (
-  SELECT cc.code
-  FROM {{ ref('MedicationRequest_view') }} AS M, UNNEST(medication.codeableConcept.coding) AS cc
+
+{% macro has_medication_request(medication, code_system=None, lookback=None, patient_join_key= None, return_all= FALSE) -%}
+  {%- if return_all == TRUE %}
+  (SELECT
+  (SELECT AS STRUCT
+      MR.subject.patientid AS patient_id, 
+      LOWER('{{medication}}') AS medication_group,
+      {{ get_medication('text') }} AS medication_free_text_name,
+      {{ get_medication('code',code_system) }} AS medication_code,
+      {{ metric_date(['authoredOn']) }} AS authored_date,
+  ) AS medication_request_struct
+  {%- else -%}
+  EXISTS (
+    SELECT
+      MR.subject.patientId
+  {%- endif %}
+  FROM {{ ref('MedicationRequest_view') }} AS MR
   JOIN {{ ref('clinical_code_groups') }} AS L
     ON L.group = '{{medication}}'
     {%- if code_system != None %}
     AND L.system {{ sql_comparison_expression(code_system) }}
     {%- endif %}
-    AND cc.system = L.system
-    AND cc.code = L.code
-    {%- if lookback != None %}
-    AND DATE(M.authoredOn) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
-    {%- endif %}
+    AND IF(L.match_type = 'exact', 
+           {{ get_medication('code',code_system) }} = L.code,
+            FALSE) # No support for other match types
+
+  WHERE TRUE
   {%- if patient_join_key != None %}
-  WHERE 
-    patient_join_key = E.subject.patientId
-  {%- endif %}
-   
-  
-  P.id = M.subject.patientId
-)
+    AND patient_join_key = MR.subject.patientId
+    {%- endif %}
+  {%- if lookback != None %}
+    AND {{ metric_date(['authored_on']) }} >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+    {%- endif %}
+    AND MR.status NOT IN ('entered-in-error','cancelled','draft')
+  )
 {%- endmacro %}

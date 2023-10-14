@@ -65,7 +65,7 @@
   {%- if cohort_snapshot_date != None %}
   AND DATE(E.period.start) <= {{ get_snapshot_date() }}
   {%- if lookback != None %}
-  AND DATE(E.period.start) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+  AND DATE(E.period.start) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }} YEAR
   {%- endif %}
   {%- endif %}
 )
