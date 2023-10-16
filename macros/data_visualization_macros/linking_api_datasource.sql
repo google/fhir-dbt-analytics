@@ -18,6 +18,7 @@
     'c.reportId=', '{{ report_id|urlencode }}',
     {%- for datasource in datasource_list %}
       {%- set alias = datasource[0] -%}
+    '&ds.{{ alias }}.connector=bigQuery',
     '&ds.{{ alias }}.type=TABLE',
     '&ds.{{ alias }}.projectId=', '{{ this.database|urlencode }}',
     '&ds.{{ alias }}.datasetId=', '{{ this.schema|urlencode }}',
