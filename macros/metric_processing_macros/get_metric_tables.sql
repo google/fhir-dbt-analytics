@@ -20,7 +20,7 @@
 {% macro bigquery__get_metric_tables() %}
   {% set metric_tables %}
   SELECT T.table_name
-  FROM {{target.project}}.{{target.dataset}}.INFORMATION_SCHEMA.TABLES AS T
+  FROM `{{target.project}}`.`{{target.dataset}}`.`INFORMATION_SCHEMA.TABLES` AS T
   JOIN {{ ref('metric_all_definitions') }} AS D ON T.table_name = D.metric_name
   {% endset %}
 
