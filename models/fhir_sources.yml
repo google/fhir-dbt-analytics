@@ -32,6 +32,7 @@ sources:
       - name: DiagnosticReport
       - name: DocumentReference
       - name: Encounter
+      - name: EpisodeOfCare
       - name: ExplanationOfBenefit
       - name: ImagingStudy
       - name: Immunization
@@ -46,6 +47,7 @@ sources:
       - name: Practitioner
       - name: PractitionerRole
       - name: Procedure
+      - name: ServiceRequest
 
       # Public Synthea data are stored in snake_case tables.
       - name: allergy_intolerance
@@ -59,6 +61,7 @@ sources:
       - name: diagnostic_report
       - name: document_reference
       - name: encounter
+      - name: episode_of_care
       - name: imaging_study
       - name: immunization
       - name: location
@@ -72,3 +75,4 @@ sources:
       - name: practitioner
       - name: practitioner_role
       - name: procedure
+      - name: service_request
