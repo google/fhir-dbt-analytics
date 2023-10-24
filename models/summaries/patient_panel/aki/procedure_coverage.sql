@@ -19,12 +19,12 @@ limitations under the License. */
     materialized = 'table',
     enabled = var('patient_panel_enabled'),
     meta = {
-      "cohort_description": "Adults with a diagnosis of CKD"
+      "description": "Coverage for aki-specific procedures"
       }
 ) -}}
 
 WITH cohort AS (
-  {{ has_condition(condition='CKD', return_all=TRUE) }}
+  {{ has_procedure(procedure=['DIALYSIS'], return_all=True) }}
 )
-  {{ condition_aggregate () }}
+  {{ resource_aggregate (encounter_level_aggregate=True, quantity_summary= False) }}
 

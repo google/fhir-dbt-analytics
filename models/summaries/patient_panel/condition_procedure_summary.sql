@@ -28,10 +28,10 @@ limitations under the License. */
         ARRAY_AGG(
           (
             SELECT AS STRUCT
-              cohort_name AS chronic_condition,
+              group_name AS chronic_condition,
               CAST(first_documented AS DATETIME) AS first_documented,
               CAST(last_documented AS DATETIME) AS last_documented,
-              number_recorded AS number_instances_coded
+              number_documented AS number_instances_coded
           )) AS chronic_condition_array
       FROM
         (

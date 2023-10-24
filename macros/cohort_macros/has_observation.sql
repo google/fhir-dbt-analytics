@@ -12,17 +12,21 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro has_observation(observation, code_system=None, lookback=None, patient_join_key= None, value_greater_than=None, value_less_than=None, return_all= FALSE) -%}
-  {%- if return_all == TRUE %}
+{% macro has_observation(observation, code_system=None, lookback=None, patient_join_key= None, value_greater_than=None, value_less_than=None, return_all= False) -%}
+  {%- if return_all == True %}
   (SELECT
   (SELECT AS STRUCT
+      O.id,
       O.subject.patientid AS patient_id,
-      O.encounter.encounterId, 
-      LOWER('{{observation}}') AS observation_group,
-      O.code.text AS observation_name,
-      cc.code AS observation_code,
-      {{ metric_date(['effective.datetime']) }} AS effective_date,
-  ) AS observation_struct
+      O.encounter.encounterId AS encounter_id, 
+      O.value.quantity.value as result,
+      O.value.quantity.unit as unit,
+      LOWER(L.group_type) AS clinical_group_type, 
+      LOWER(L.group) AS clinical_group_name,
+      O.code.text AS free_text_name,
+      cc.code AS code,
+      {{ metric_date(['effective.datetime']) }} AS clinical_date,
+  ) AS summary_struct
   {%- else -%}
   EXISTS (
     SELECT
@@ -30,7 +34,7 @@
   {%- endif %}
   FROM {{ ref('Observation_view') }} AS O, UNNEST(code.coding) AS cc
   JOIN {{ ref('clinical_code_groups') }} AS L
-    ON L.group = '{{observation}}'
+    ON L.group  {{ sql_comparison_expression(observation) }}
     {%- if code_system != None %}
     AND L.system {{ sql_comparison_expression(code_system) }}
     {%- endif %}

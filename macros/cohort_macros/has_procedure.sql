@@ -12,17 +12,19 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro has_procedure(procedure, code_system=None, lookback=None, patient_join_key= None, return_all= FALSE) -%}
-  {%- if return_all == TRUE %}
+{% macro has_procedure(procedure, code_system=None, lookback=None, patient_join_key= None, return_all= False) -%}
+  {%- if return_all == True %}
   (SELECT
   (SELECT AS STRUCT
+      P.id,
       P.subject.patientid AS patient_id,
-      P.encounter.encounterId, 
-      LOWER('{{procedure}}') AS procedure_group,
-      P.code.text AS procedure_name,
-      cc.code AS procedure_code,
-      COALESCE({{ metric_date(['performed.dateTime']) }}, {{ metric_date(['performed.period.start']) }}) AS performed_date,
-  ) AS procedure_struct
+      P.encounter.encounterId AS encounter_id, 
+      LOWER(L.group_type) AS clinical_group_type, 
+      LOWER(L.group) AS clinical_group_name,
+      P.code.text AS free_text_name,
+      cc.code AS code,
+      COALESCE({{ metric_date(['performed.dateTime']) }}, {{ metric_date(['performed.period.start']) }}) AS clinical_date,
+  ) AS summary_struct
   {%- else -%}
   EXISTS (
     SELECT
@@ -30,7 +32,7 @@
   {%- endif %}
   FROM {{ ref('Procedure_view') }} AS P, UNNEST(code.coding) AS cc
   JOIN {{ ref('clinical_code_groups') }} AS L
-    ON L.group = '{{procedure}}'
+    ON L.group  {{ sql_comparison_expression(observation) }}
     {%- if code_system != None %}
     AND L.system {{ sql_comparison_expression(code_system) }}
     {%- endif %}

@@ -19,12 +19,12 @@ limitations under the License. */
     materialized = 'table',
     enabled = var('patient_panel_enabled'),
     meta = {
-      "cohort_description": "Adults with a diagnosis of diabetes"
+      "cohort_description": "Adults with a diagnosis of heart failure"
       }
 ) -}}
 
 WITH cohort AS (
-  {{ has_condition(condition='DIABETES', return_all=TRUE) }}
+  {{ has_condition(condition='HEART_FAILURE', return_all=True) }}
 )
-  {{ condition_aggregate () }}
+  {{ resource_aggregate (quantity_summary= False, encounter_level_aggregate= False) }}
 

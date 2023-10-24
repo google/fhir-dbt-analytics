@@ -13,27 +13,21 @@
 -- limitations under the License.
 
 {% macro get_medication(codeable_concept_field, code_system = None)-%}
-  {%- if codeable_concept_field == 'text' %}
 
-  IF(medication.reference.medicationid IS NOT NULL, 
-    (SELECT
-      m.code.text AS medication_text
-      FROM {{ref('Medication_view')}} AS m
-      WHERE m.id = medication.reference.medicationid
-    ),
-    medication.codeableConcept.text AS medication_text
-  )
-  {% elif codeable_concept_field in ('code' , 'display') and code_system != None %}
-      IF(medication.reference.medicationid IS NOT NULL, 
-        ( SELECT "cc." ~ {{codeable_concept_field}}
+    {%- if codeable_concept_field == 'text' %}
+    IF(medication.reference.medicationid IS NOT NULL, 
+      m.code.text,
+      medication.codeableConcept.text
+    )
+    {% elif codeable_concept_field in ('code' , 'display') and code_system != None %}
+    IF(medication.reference.medicationid IS NOT NULL, 
+      ( SELECT cc.{{codeable_concept_field}}
           FROM UNNEST(m.code.coding) AS cc 
-          WHERE cc.system=code_system ) AS medication_code
-        FROM {{ref('Medication_view')}} AS m
-        WHERE m.id = medication.reference.medicationid
+          WHERE cc.system= {{ code_system }} )
       ,
-      (SELECT cc.code 
+      (SELECT cc.{{codeable_concept_field}}
        FROM UNNEST(medication.codeableConcept.coding) AS cc 
-       WHERE cc.system=code_system ) AS medication_code
+       WHERE cc.system={{ code_system }} )
       )
-  {%- endif %}
-{%- endmacro %}
+    {%- endif %}
+ {%- endmacro %} 

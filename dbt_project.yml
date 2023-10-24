@@ -49,6 +49,7 @@ vars:
   minimum_age: 18 # Used to exclude patients younger than age specified
   age_calculation_method: "age_based_on_last_encounter" # Methodology for age calculation (age_based_on_last_encounter or age_as_of_cohort_snapshot). age_as_of_snapshot uses cohort_snapshot_date
   empi_as_person_enabled: FALSE  # Whether to enable summarization at a person level for patient panels. This assumes a Person resource references a collection of patient resources using Person.link.target. [boolean]
+  disease_specific: "AKI" # Used to run additional metrics related to a specific clinical disease
 # Model configurations
 
 models:

@@ -19,12 +19,12 @@ limitations under the License. */
     materialized = 'table',
     enabled = var('patient_panel_enabled'),
     meta = {
-      "cohort_description": "Adults with a diagnosis of heart failure"
+      "description": "Coverage for aki-specific observations"
       }
 ) -}}
 
 WITH cohort AS (
-  {{ has_condition(condition='HEART_FAILURE', return_all=TRUE) }}
+  {{ has_observation(observation=['AKI_CREATININE','BUN','CALCIUM','URINE_CREATININE','PHOSPHORUS','URINE_PROTEIN','URINE_SODIUM','HEMATOCRIT','HEMOGLOBIN','PLATELETS','LEUKOCYTES'], return_all=True) }}
 )
-  {{ condition_aggregate () }}
+  {{ resource_aggregate (encounter_level_aggregate=True, quantity_summary= True) }}
 

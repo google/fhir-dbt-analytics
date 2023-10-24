@@ -25,7 +25,7 @@ limitations under the License. */
 ) -}}
 
 WITH cohort AS (
-  {{ has_condition(condition='COPD', return_all=TRUE) }}
+  {{ has_condition(condition='COPD', return_all=True) }}
 )
 
-  {{ condition_aggregate () }}
+  {{ resource_aggregate (encounter_level_aggregate=False,quantity_summary=False) }}

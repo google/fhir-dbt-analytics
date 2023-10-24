@@ -12,20 +12,22 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro has_condition(condition, code_system=None, lookback=None, patient_join_key= None, return_all= FALSE) -%}
-  {%- if return_all == TRUE %}
+{% macro has_condition(condition, code_system=None, lookback=None, patient_join_key= None, return_all= False) -%}
+  {%- if return_all == True %}
   (SELECT
   (SELECT AS STRUCT
-      C.subject.patientid AS patient_id, 
-      LOWER('{{condition}}') AS condition,
+      C.id,
+      C.subject.patientid AS patient_id,
+      LOWER(L.group_type) AS clinical_group_type, 
+      LOWER(L.group) AS clinical_group_name,
       cc.code AS code,
-      {{ metric_date(['recordedDate']) }} AS recorded_date,
+      {{ metric_date(['recordedDate']) }} AS clinical_date,
       {%- if column_exists('onset.dateTime') %}
       {{ metric_date(['onset.dateTime']) }} AS onset_date
       {%- else -%}
       (NULL) AS onset_date
       {%- endif %}   
-  ) AS condition
+  ) AS summary_struct
   {%- else -%}
   EXISTS (
     SELECT
@@ -45,10 +47,10 @@
   WHERE 0=0
   {%- if patient_join_key != None %}
     AND patient_join_key = C.subject.patientId
-    {%- endif %}
+  {%- endif %}
   {%- if lookback != None %}
     AND DATE(C.recordedDate) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
-    {%- endif %}
+  {%- endif %}
     AND C.verificationStatus IS NULL
         OR
           {{ code_from_codeableconcept(
