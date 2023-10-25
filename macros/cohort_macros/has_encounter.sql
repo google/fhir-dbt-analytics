@@ -12,8 +12,8 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro has_encounter(class=None, status=None, lookback=None, patient_join_key=None, return_all= FALSE) -%}
-{%- if return_all == TRUE %}
+{% macro has_encounter(class=None, status=None, lookback=None, patient_join_key=None, return_all= False) -%}
+{%- if return_all == True %}
 (SELECT
   (SELECT AS STRUCT
     E.id,
@@ -23,12 +23,12 @@
     {{ metric_date(['period.end']) }} AS end_date,
     e.status,
     e.class.code AS class,
-    {%- if column_exists('serviceType') %}
+    {%- if column_exists('serviceType','Encounter') %}
     e.serviceType.text AS service,
     {%- else %}
     CAST(NULL AS STRING) AS service,
     {%- endif %}
-    {%- if column_exists('classHistory') %}
+    {%- if column_exists('classHistory','Encounter') %}
     IF('EMER' IN (SELECT class.code FROM UNNEST(classHistory)) OR class.code = 'EMER', TRUE, FALSE)
     AS  emergency_adm_flag,
     {%- else %}

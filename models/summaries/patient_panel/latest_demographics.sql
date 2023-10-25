@@ -35,16 +35,16 @@ WITH empi AS (
       SELECT
         p.id AS patient_id,
         empi.master_patient_id,
-        {%- if column_exists('p.identifier.type') %}
+      {%- if column_exists('p.identifier.type','Patient') %}
         ARRAY(
           SELECT DISTINCT value 
           FROM UNNEST(p.identifier) i, UNNEST(i.type.coding) t 
           WHERE t.system = 'http://terminology.hl7.org/CodeSystem/v2-0203'
           ) AS mrns,
-       {%- else %}
+      {%- else %}
        ARRAY(SELECT NULL) AS mrns,
       {%- endif %}
-      {%- if column_exists('p.race.ombCategory') %}
+      {%- if column_exists('race', 'Patient') %}
         ARRAY_TO_STRING(
           ARRAY(
             SELECT DISTINCT display 
@@ -55,7 +55,7 @@ WITH empi AS (
         {%- else %}
         CAST(NULL AS STRING) AS race,
         {%- endif %}
-        {%- if column_exists('p.ethnicity.ombCategory') %}
+        {%- if column_exists('p.ethnicity.ombCategory.display','Patient') %}
         p.ethnicity.ombCategory.display AS ethnicity,
         {%- else %}
         CAST(NULL AS STRING) AS ethnicity,
@@ -64,7 +64,7 @@ WITH empi AS (
         SAFE_CAST(p.deceased.dateTime AS DATE) AS deceased_date,
         SAFE_CAST(p.birthDate AS DATE) AS birth_date,
         p.gender,
-        {%- if column_exists('p.address') %}
+        {%- if column_exists('p.address', 'Patient') %}
         SUBSTR(
           COALESCE(
             (SELECT postalCode
@@ -80,9 +80,9 @@ WITH empi AS (
         CAST(NULL AS STRING) AS zipcode
         {%- endif %}
       FROM empi
-      JOIN {{ ref('Patient') }} p
+      JOIN {{ ref('Patient_view') }} p
         ON empi.patient_id = p.id
-      {%- if column_exists('active') %}
+      {%- if column_exists('active','Patient') %}
       WHERE
        p.active IS NULL OR p.active = TRUE
      {%- endif %}
