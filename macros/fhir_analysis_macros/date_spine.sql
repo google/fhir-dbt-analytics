@@ -12,12 +12,12 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro date_spine() -%}
-  {{ return(adapter.dispatch('date_spine2', 'fhir_dbt_analytics') ()) }}
+{% macro date_spine(max_days=None) -%}
+  {{ return(adapter.dispatch('date_spine2', 'fhir_dbt_analytics') (max_days)) }}
 {%- endmacro %}
 
 
-{% macro default__date_spine2() -%}
+{% macro default__date_spine2(max_days=None) -%}
 
 {%- if var('static_dataset') -%}
   {% set start_date="cast('" ~ var('earliest_date') ~ "' as date)" %}
@@ -33,11 +33,15 @@ with date_spine as (
 )
 {# dbt_utils cast to datetime, but we want date #}
 select cast(date_day as date) as date_day from date_spine
+{%- if max_days != None %}
+order by date_day desc limit {{ max_days }}
+{%- endif %}
+
 -- ---------------------- end of date_spine -------------------------
 {% endmacro %}
 
 
-{% macro bigquery__date_spine2() -%}
+{% macro bigquery__date_spine2(max_days=None) -%}
 SELECT * FROM UNNEST(GENERATE_DATE_ARRAY(
 {%- if var('static_dataset') %}
   "{{ var('earliest_date') }}", "{{ var('latest_date') }}"
@@ -46,4 +50,8 @@ SELECT * FROM UNNEST(GENERATE_DATE_ARRAY(
   CURRENT_DATE()
 {%- endif %}
 )) AS date_day
+{%- if max_days != None %}
+ORDER BY date_day DESC
+LIMIT {{ max_days }}
+{%- endif %}
 {%- endmacro %}

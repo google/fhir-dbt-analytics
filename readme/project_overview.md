@@ -60,26 +60,13 @@ execution of metrics.
 
 ### fhir_resources
 
-Foundational models for the project that produce views and common table
-expressions (CTEs) for FHIR resources that are then referenced by the metrics.
-
-For each FHIR resource, the project contains two dbt models:
-
--   A View named `FhirResource_view` (e.g. *AllergyIntolerance_view*)
--   A CTE named `FhirResource` (e.g. *AllergyIntolerance*)
-
-Logic performed within the *View*:
+Foundational models for the project that produce views for FHIR resources that
+are then referenced by the metrics. Logic performed within the view:
 
 -   Identify whether the FHIR resource exists in the dataset
 -   Construct the view referencing the FHIR resource table
 -   Append metadata commonly used by the metrics such as `metric_date`,
     `source_system` and `site`
-
-Logic performed within the *CTE*:
-
--   Reference the corresponding FHIR View
--   Filter the View on the patient cohort selected by the `cohort` project
-    variable (no filtering applied if `cohort=all_patients`)
 
 ### metadata
 
@@ -91,9 +78,8 @@ metric metadata.
 All metrics with one dbt model per metric. Metrics are structured in accordance
 with the metric data model.
 
-The input tables for metrics are FHIR resource common table expressions (CTEs)
-defined within the `fhir_resource` folder. They are referenced in metrics by
-using the
+The input tables for metrics are FHIR resource views defined within the
+`fhir_resource` folder. They are referenced in metrics by using the
 [dbt ref](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
 function. For example: `SELECT * FROM {{ref(AllergyIntolerance)}}`
 
@@ -108,17 +94,6 @@ been executed.
 SQL views that join the metric outputs with their metadata and groups them by
 varying levels of aggregation. Data visualization tools can read from these
 views to display the metrics.
-
-### cohorts
-
-dbt models for constructing patient cohorts that can be used in analyses. Each
-dbt model generates a common table expression (CTE) for one patient cohort.
-Cohorts can be constructed by using macros within the `macros/cohort_macros`
-folder.
-
-Metrics can be selectively run against a patient cohort by setting the `cohort`
-project variable to the name of the cohort. For example: `dbt run --vars
-'cohort: adults'`.
 
 ### summaries
 
@@ -138,7 +113,7 @@ Macros are organized into the following folders:
 -   `cohort_macros`: Extract patient characteristics to construct patient
     cohorts
 -   `fhir_analysis_macros`: Commonly used complex SQL to analyze FHIR data
--   `fhir_view_macros`: Construct views and CTEs for FHIR resources
+-   `fhir_view_macros`: Construct views for FHIR resources
 -   `infrastructure_macros`: Interact with database and dbt objects
 -   `metric_processing_macros`: Calculate metrics and process metric output
     tables

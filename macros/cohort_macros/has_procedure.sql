@@ -18,8 +18,8 @@
   (SELECT AS STRUCT
       P.id,
       P.subject.patientid AS patient_id,
-      P.encounter.encounterId AS encounter_id, 
-      LOWER(L.group_type) AS clinical_group_type, 
+      P.encounter.encounterId AS encounter_id,
+      LOWER(L.group_type) AS clinical_group_type,
       LOWER(L.group) AS clinical_group_name,
       P.code.text AS free_text_name,
       cc.code AS code,
@@ -30,17 +30,17 @@
     SELECT
       P.subject.patientId
   {%- endif %}
-  FROM {{ ref('Procedure_view') }} AS P, UNNEST(code.coding) AS cc
+  FROM {{ ref('Procedure') }} AS P, UNNEST(code.coding) AS cc
   JOIN {{ ref('clinical_code_groups') }} AS L
     ON L.group  {{ sql_comparison_expression(observation) }}
     {%- if code_system != None %}
     AND L.system {{ sql_comparison_expression(code_system) }}
     {%- endif %}
     AND cc.system = L.system
-    AND IF(L.match_type = 'exact', 
+    AND IF(L.match_type = 'exact',
            cc.code = L.code,
             FALSE) # No support for other match types
-  
+
   WHERE TRUE
   {%- if patient_join_key != None %}
     AND patient_join_key = P.subject.patientId

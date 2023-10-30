@@ -18,7 +18,7 @@
   (SELECT AS STRUCT
     E.id,
     E.subject.patientid,
-    ({{ code_from_codeableconcept('e.hospitalization.dischargeDisposition', 'http://terminology.hl7.org/CodeSystem/discharge-disposition') }}) AS discharge_disposition,
+    ({{ code_from_codeableconcept('e.hospitalization.dischargeDisposition', 'http://terminology.hl7.org/CodeSystem/discharge-disposition', 'Encounter') }}) AS discharge_disposition,
     {{ metric_date(['period.start']) }} AS start_date,
     {{ metric_date(['period.end']) }} AS end_date,
     e.status,
@@ -48,8 +48,8 @@
     SELECT
       E.subject.patientId
   {%- endif %}
-  FROM {{ ref('Encounter_view') }} AS E
-  
+  FROM {{ ref('Encounter') }} AS E
+
   WHERE 0=0
   {%- if patient_join_key != None %}
   AND patient_join_key = E.subject.patientId

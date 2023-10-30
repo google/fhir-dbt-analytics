@@ -52,7 +52,7 @@ limitations under the License. */
           AND E.status IN ('in-progress', 'finished')
       ),
       DS AS (
-        {{ date_spine()}}
+        {{ date_spine(max_days = 100)}}
       )
 
     SELECT

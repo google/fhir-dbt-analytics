@@ -32,7 +32,7 @@
             AND period.start <> ''
         ),
         DS AS (
-          {{ date_spine()|indent }}
+          {{ date_spine(max_days = 100)|indent }}
         )
 
         SELECT

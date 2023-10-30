@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('AllergyIntolerance_view' )}}
-{{ config(
+{{- config(
     name = "AllergyIntolerance",
     meta = {
-      "description": "AllergyIntolerance FHIR resources filtered by cohort",
-      "fhir_resource": "AllergyIntolerance"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all AllergyIntolerance FHIR resources",
+      "fhir_resource": "AllergyIntolerance",
+      "metric_date_columns": ["recordedDate"],
+      "patient_reference_column": "patient"
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

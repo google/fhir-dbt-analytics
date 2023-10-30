@@ -14,6 +14,10 @@
 
 {% macro column_exists(column_name, fhir_resource=None) %}
 
+    {%- if var('assume_fields_exist') -%}
+        {% do return (True) %}
+    {%- endif -%}
+
     {%- if not execute -%}
         {% do return(True) %}
     {% endif %}

@@ -13,7 +13,7 @@
 -- limitations under the License.
 
 {%- macro get_source_specific_category_index() -%}
-    {% if is_public_synthea_dataset() %}
+    {% if var('fhir_version') == 'STU3' %}
         {{ return(None) }}
     {% else %}
         {{ return(0) }}

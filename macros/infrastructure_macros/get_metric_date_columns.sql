@@ -18,7 +18,7 @@
         {{ return(None) }}
     {% endif %}
 
-    {% if is_public_synthea_dataset() %}
+    {% if var('fhir_version') == 'STU3' %}
         {% if columns == ['recordedDate'] %}
             {{ return(['assertedDate']) }}
         {% endif %}

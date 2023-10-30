@@ -18,22 +18,22 @@
   (SELECT AS STRUCT
       C.id,
       C.subject.patientid AS patient_id,
-      LOWER(L.group_type) AS clinical_group_type, 
+      LOWER(L.group_type) AS clinical_group_type,
       LOWER(L.group) AS clinical_group_name,
       cc.code AS code,
       {{ metric_date(['recordedDate']) }} AS clinical_date,
-      {%- if column_exists('onset.dateTime') %}
+      {%- if column_exists('onset.dateTime', 'Condition') %}
       {{ metric_date(['onset.dateTime']) }} AS onset_date
       {%- else -%}
       (NULL) AS onset_date
-      {%- endif %}   
+      {%- endif %}
   ) AS summary_struct
   {%- else -%}
   EXISTS (
     SELECT
       C.subject.patientId
   {%- endif %}
-  FROM {{ ref('Condition_view') }} AS C, UNNEST(code.coding) AS cc
+  FROM {{ ref('Condition') }} AS C, UNNEST(code.coding) AS cc
   JOIN {{ ref('clinical_code_groups') }} AS L
     ON L.group = '{{condition}}'
     {%- if code_system != None %}
@@ -43,7 +43,7 @@
     AND IF(L.match_type = 'start',
            CONCAT('\"',REPLACE(cc.code,'.',''),'\"') LIKE CONCAT('\"', L.code, '%\"'),
            REPLACE(cc.code,'.','') = L.code)
-  
+
   WHERE 0=0
   {%- if patient_join_key != None %}
     AND patient_join_key = C.subject.patientId
@@ -51,12 +51,13 @@
   {%- if lookback != None %}
     AND DATE(C.recordedDate) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
   {%- endif %}
-    AND C.verificationStatus IS NULL
-        OR
-          {{ code_from_codeableconcept(
-          'verificationStatus',
-          'http://terminology.hl7.org/CodeSystem/condition-ver-status',
-          index=0
-          ) }} NOT IN ('entered-in-error')
+    AND (
+      C.verificationStatus IS NULL
+      OR {{ code_from_codeableconcept(
+           'verificationStatus',
+           'http://terminology.hl7.org/CodeSystem/condition-ver-status',
+           'Condition'
+           ) }} NOT IN ('entered-in-error')
+    )
   )
 {%- endmacro %}

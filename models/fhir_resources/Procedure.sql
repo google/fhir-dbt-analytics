@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('Procedure_view' )}}
-{{ config(
+{{- config(
     name = "Procedure",
     meta = {
-      "description": "Procedure FHIR resources filtered by cohort",
-      "fhir_resource": "Procedure"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all Procedure FHIR resources",
+      "fhir_resource": "Procedure",
+      "metric_date_columns": ["performed.period.start", "performed.dateTime"],
+      "patient_reference_column": "subject"
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

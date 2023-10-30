@@ -14,20 +14,43 @@
 
 {% macro get_medication(codeable_concept_field, code_system = None)-%}
 
+  {%- if column_exists('medication.reference.medicationid') and column_exists('medication.codeableConcept')%}
+
     {%- if codeable_concept_field == 'text' %}
-    IF(medication.reference.medicationid IS NOT NULL, 
+    IF(medication.reference.medicationid IS NOT NULL,
       m.code.text,
       medication.codeableConcept.text
     )
     {% elif codeable_concept_field in ('code' , 'display') and code_system != None %}
     IF(medication.reference.medicationid IS NOT NULL, 
       ( SELECT cc.{{codeable_concept_field}}
-          FROM UNNEST(m.code.coding) AS cc 
+          FROM UNNEST(m.code.coding) AS cc
           WHERE cc.system= {{ code_system }} )
       ,
       (SELECT cc.{{codeable_concept_field}}
-       FROM UNNEST(medication.codeableConcept.coding) AS cc 
+       FROM UNNEST(medication.codeableConcept.coding) AS cc
        WHERE cc.system={{ code_system }} )
       )
     {%- endif %}
- {%- endmacro %} 
+
+  {%- elif column_exists('medication.codeableConcept') %}
+
+    {%- if codeable_concept_field == 'text' %}
+      medication.codeableConcept.text
+    {% elif codeable_concept_field in ('code' , 'display') and code_system != None %}
+      (SELECT cc.{{codeable_concept_field}}
+       FROM UNNEST(medication.codeableConcept.coding) AS cc 
+       WHERE cc.system={{ code_system }} )
+    {%- endif %}
+  {%- else %}
+    {%- if codeable_concept_field == 'text' %}
+      m.code.text
+    {% elif codeable_concept_field in ('code' , 'display') and code_system != None %}
+      ( SELECT cc.{{codeable_concept_field}}
+          FROM UNNEST(m.code.coding) AS cc
+          WHERE cc.system= {{ code_system }} )
+    {%- endif %}
+
+  {%- endif %}
+
+{%- endmacro %}

@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('Condition_view' )}}
-{{ config(
+{{- config(
     name = "Condition",
     meta = {
-      "description": "Condition FHIR resources filtered by cohort",
-      "fhir_resource": "Condition"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all Condition FHIR resources",
+      "fhir_resource": "Condition",
+      "metric_date_columns": ["recordedDate"],
+      "patient_reference_column": "subject"
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

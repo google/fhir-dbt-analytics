@@ -17,9 +17,9 @@
   (SELECT
   (SELECT AS STRUCT
       MA.id,
-      MA.subject.patientid AS patient_id, 
+      MA.subject.patientid AS patient_id,
       MA.context.encounterId AS encounter_id,
-      LOWER(L.group_type) AS clinical_group_type, 
+      LOWER(L.group_type) AS clinical_group_type,
       LOWER(L.group) AS clinical_group_name,
       {{ get_medication('text') }} AS free_text_name,
       {{ get_medication('code','L.system') }} AS code,
@@ -30,8 +30,8 @@
     SELECT
       MA.subject.patientId
   {%- endif %}
-  FROM {{ ref('MedicationAdministration_view') }} AS MA
-  LEFT JOIN {{ ref('Medication_view') }} AS m
+  FROM {{ ref('MedicationAdministration') }} AS MA
+  LEFT JOIN {{ ref('Medication') }} AS m
     ON m.id = medication.reference.medicationid
   JOIN {{ ref('clinical_code_groups') }} AS L
     ON L.group  {{ sql_comparison_expression(medication) }}

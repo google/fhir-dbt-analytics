@@ -30,7 +30,9 @@
 
 {% set column_dict = get_column_datatype_dict(fhir_resource) %}
 
-{% if execute and (
+{% if execute
+   and var('assume_fields_exist') == False
+   and (
       field_name~'.coding.code' not in column_dict or
       field_name~'.coding.system' not in column_dict
     )

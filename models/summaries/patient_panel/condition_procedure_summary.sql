@@ -79,7 +79,7 @@ limitations under the License. */
           {{ code_from_codeableconcept(
           'verificationStatus',
           'http://terminology.hl7.org/CodeSystem/condition-ver-status',
-          index=0
+          'Condition'
           ) }} NOT IN ('entered-in-error'))
         AND cc.system LIKE '%icd%'
       GROUP BY empi.master_patient_id

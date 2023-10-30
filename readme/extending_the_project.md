@@ -102,62 +102,32 @@ Once you have a good understanding of the [project structure](https://github.com
 
 ### Tips
 
-- The input tables for metrics are FHIR resource common table expressions (CTEs) defined within the `models/fhir_resource/` folder. They are referenced in metrics by using the [dbt ref](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/dbt-jinja-functions/ref) function. Example: `SELECT * FROM {{ref('AllergyIntolerance')}}`.
+-   The input tables for metrics are FHIR resource views defined within the
+    `models/fhir_resource/` folder. They are referenced in metrics by using the
+    [dbt ref](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
+    function. Example: `SELECT * FROM {{ref('AllergyIntolerance')}}`.
 
-- Once a metric has been added to your project it will be automatically integrated into the data pipeline. When running the post_processing dbt models (`dbt run --selector post_processing`) the new metric will be incorporated into the `metric` table and therefore appear within _metric_views_ and any downstream data visualizations that take these views as inputs.
+-   Once a metric has been added to your project it will be automatically
+    integrated into the data pipeline. When running the post_processing dbt
+    models (`dbt run --selector post_processing`) the new metric will be
+    incorporated into the `metric` table and therefore appear within
+    _metric_views_ and any downstream data visualizations that take these views
+    as inputs.
 
-- Metrics can be segmented by up to three dimensions to enable drill-down analysis. To add a dimension, derive the column in the output table produced by `metric_sql` and assign an alias matching the expression provided in one of the dimension fields in the config block. If you have fewer than three dimensions, omit the unused dimensions from the config block.
+-   Metrics can be segmented by up to three dimensions to enable drill-down
+    analysis. To add a dimension, derive the column in the output table produced
+    by `metric_sql` and assign an alias matching the expression provided in one
+    of the dimension fields in the config block. If you have fewer than three
+    dimensions, omit the unused dimensions from the config block.
 
-- To enable time-series analysis, metrics are segmented by date where possible. This date should be the most clinically-relevant local calendar date extracted from the FHIR data. The `metric_date` field is added to FHIR resources in the FHIR resource views defined within the `models/fhir_resource/` folder. You therefore do not need to derive this date yourself within the metric SQL.
+-   To enable time-series analysis, metrics are segmented by date where
+    possible. This date should be the most clinically-relevant local calendar
+    date extracted from the FHIR data. The `metric_date` field is added to FHIR
+    resources in the FHIR resource views defined within the
+    `models/fhir_resource/` folder. You therefore do not need to derive this
+    date yourself within the metric SQL.
 
-- You can use the macros in the `macros/fhir_analysis_macros/` folder to help analyze your FHIR data. For example, you can extract clinical codes from FHIR codeable concept fields using  `{{ code_from_codeableconcept(field_name, code_system) }}`.
-
-
-## Add a new patient cohort
-
-### Instructions
-
-1.  Create a new empty SQL file within the `models/cohorts/` folder, assigning
-    it the name of your new cohort. For example, _my_new_cohort.sql_.
-
-1.  Copy the contents of the cohort template below into this new file.
-    Alternatively, you can copy the contents of an existing cohort if you prefer
-    to adapt a working example.
-
-1.  Edit the contents of the file to adapt it to your desired cohort:
-
-    a. Update the config block with a description for your cohort.
-
-    b. Update the SQL query WHERE clause with inclusion and exclusion criteria
-    for your patient cohort
-
-1.  Test running the _patient_count_ metric over your new cohort by running the
-    following command in the project directory: `dbt run --select patient_count
-    --vars 'cohort: my_new_cohort'`
-
-1.  If the metric runs successfully, check the calculated outputs in the
-    `patient_count` table within your target BigQuery or Spark schema.
-
-### Cohort template
-
-```sql
-{{- config(
-   materialized = 'ephemeral',
-   meta = {
-     "cohort_description": "<TODO: Description of the patient cohort>"
-     }
-) -}}
-
-SELECT
- '{{this.name}}' AS cohort_name,
- {{ get_snapshot_date() }} AS cohort_snapshot_date,
- P.id AS patient_id
-FROM {{ ref('Patient_view') }} AS P
-WHERE <TODO: Add criteria to filter your patient cohort list>
-```
-
-### Tips
-
-- You can use the macros in the `macros/cohort_macros/` folder to help construct your patient cohort. For example, you can restrict to adults by using `{{ age() }} >= 18` or patients with a specified condition using `{{ has_condition('condition_name')`.
-
-- Cohort macros join to the `clinical_code_group` table to obtain codes mapped to a clinical group (for example, a condition, procedure or medication group). This table is generated from `clinical_code_group.csv` by running the `dbt seed` command. Example clinical code groups are included in this file for demonstration purposes only. To construct cohorts with criteria based on clinical codes, update this file with the required mappings.
+-   You can use the macros in the `macros/fhir_analysis_macros/` folder to help
+    analyze your FHIR data. For example, you can extract clinical codes from
+    FHIR codeable concept fields using `{{ code_from_codeableconcept(field_name,
+    code_system) }}`.

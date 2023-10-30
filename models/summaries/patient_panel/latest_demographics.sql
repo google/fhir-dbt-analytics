@@ -16,7 +16,7 @@ limitations under the License. */
 
 {{config(materialized = 'table', enabled = var('patient_panel_enabled'))
 -}}
-WITH empi AS ( 
+WITH empi AS (
   SELECT *
   FROM {{ ref('empi_patient_crosswalk') }}
 ),
@@ -37,8 +37,8 @@ WITH empi AS (
         empi.master_patient_id,
       {%- if column_exists('p.identifier.type','Patient') %}
         ARRAY(
-          SELECT DISTINCT value 
-          FROM UNNEST(p.identifier) i, UNNEST(i.type.coding) t 
+          SELECT DISTINCT value
+          FROM UNNEST(p.identifier) i, UNNEST(i.type.coding) t
           WHERE t.system = 'http://terminology.hl7.org/CodeSystem/v2-0203'
           ) AS mrns,
       {%- else %}
@@ -47,8 +47,8 @@ WITH empi AS (
       {%- if column_exists('race', 'Patient') %}
         ARRAY_TO_STRING(
           ARRAY(
-            SELECT DISTINCT display 
-            FROM UNNEST(p.race.ombCategory) 
+            SELECT DISTINCT display
+            FROM UNNEST(p.race.ombCategory)
             ORDER BY display
             ),
           ',') AS race,
@@ -86,7 +86,7 @@ WITH empi AS (
       WHERE
        p.active IS NULL OR p.active = TRUE
      {%- endif %}
-      
+
     ),
     person_aggregates
     AS (

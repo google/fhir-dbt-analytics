@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('Location_view' )}}
-{{ config(
+{{- config(
     name = "Location",
     meta = {
-      "description": "Location FHIR resources",
-      "fhir_resource": "Location"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all Location FHIR resources",
+      "fhir_resource": "Location",
+      "metric_date_columns": None,
+      "patient_reference_column": None
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

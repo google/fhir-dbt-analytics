@@ -6,7 +6,7 @@
 
 ## What is FHIR dbt analytics?
 
-A dbt project which produces data-quality analytics from FHIR resources stored in BigQuery or Apache Spark.
+A dbt project which produces data-quality analytics from FHIR® resources stored in BigQuery or Apache Spark.
 
 Use the metrics in **fhir-dbt-analytics** to check the quality of clinical data. The metrics might count the number of [FHIR resources](http://www.google.com/url?sa=D&q=http://build.fhir.org/resourcelist.html) to compare to expected counts or check references between FHIR resources, such as between patients and encounters. Some metrics can help you check the distribution of coded values in your data. You can run all the metrics as a suite, selected metrics, or individually.
 
@@ -126,3 +126,5 @@ A few other tables are also materialized, but ultimately all are generated in se
 fhir-dbt-analytics is not an officially supported Google product. The project is work-in-progress so expect additional metrics and other content to be added as well as potentially breaking changes as we refine the project structure.
 
 If you believe that something’s not working, please [create a GitHub issue](http://www.google.com/url?sa=D&q=https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue).
+
+FHIR® is the registered trademark of HL7 and is used with the permission of HL7. Use of the FHIR trademark does not constitute endorsement of the contents of this repository by HL7.

@@ -26,7 +26,6 @@ WITH LatestExecution AS (
 SELECT
   execution_id,
   execution_date,
-  '{{ var('cohort') }}' AS `cohort`,
   ARRAY_AGG(STRUCT(metric_name, execution_datetime, min_metric_date, max_metric_date, row_count)) AS metric
 FROM LatestExecution
 GROUP BY 1, 2

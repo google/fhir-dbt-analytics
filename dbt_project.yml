@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 # Project configurations
 
 name: 'fhir_dbt_analytics'
@@ -20,36 +21,55 @@ config-version: 2
 profile: 'fhir_dbt_analytics'
 require-dbt-version: '>=1.3.0'
 
+
 # Project variables
 
 vars:
+
+  # Organization name
   organization: "Synthea"  # Name of the organization or business unit which owns the FHIR data. Used for titles in the analytics reports. [string]
+
+  # FHIR data location
   database: "bigquery-public-data"  # Name of the Google Cloud project that contains the BigQuery data. Used to connect to your FHIR data. [string]
   schema: "fhir_synthea"  # Name of the BigQuery dataset storing the FHIR data. Used to connect to your FHIR data. [string]
+
+  # FHIR data format
+  fhir_version: "STU3"  # Version of FHIR that your data conforms to. Options: "STU3"; "R4". [string]
+  snake_case_fhir_tables: TRUE  # TRUE if your FHIR database tables are in snake case (e.g. allergy_intolerance) rather than pascal case (e.g AllergyIntolerance). [boolean]
+  multiple_tables_per_resource: FALSE  # TRUE if your database can contain more than one table per FHIR resources which should be unioned. [boolean]
+  assume_resources_exist: FALSE  # TRUE if you want to always assume that FHIR resources exist in your database rather than relying on logic within the fhir_resource_exists macro. [boolean]
+  assume_fields_exist: FALSE  # TRUE if you want to always assume that fields exists in a FHIR resource rather than relying on logic within the field_exists macro. [boolean]
+
+  # Default values
   source_system_default: "Synthea-EHR"  # Default to populate as the 'source_system' in metrics when this is not extracted from the FHIR data. [string]
   site_default: "Synthea General Hospital"  # Default to populate as the 'site' in metrics when this is not extracted from the FHIR data. [string]
   data_transfer_type_default: "BigQuery"  # Default to populate as the 'data_transfer_type' in metrics when this is not extracted from the FHIR data. [string]
   timezone_default: "America/New_York"  # Default time zone for this dataset. The IANA time-zone name. For example, "Europe/London". [string]
+  length_of_stay_cap: 90  # Default argument to pass to cap_encounter_end_date macro which caps encounter length of stay at this number of days to limit the effect of long stay encounters on metrics. [integer]
+  null_values: [""]  # List of string values to be considered as missing data by has_value macro and other macros that call this variable. [list]
+
+  # Metric data period
   static_dataset: TRUE  # TRUE if the dataset is static; FALSE if the dataset is being dynamically updated. [boolean]
   earliest_date: "2009-10-01"  # If static_dataset = TRUE then input the earliest date for the data. This is used to restrict metric output date ranges. Use format: "YYYY-MM-DD". [string]
   latest_date: "2019-09-23"  # If static_dataset = TRUE then input the latest date for the data. This is used to restrict metric output date ranges. Use format: "YYYY-MM-DD". [string]
   months_history: 12  # For a dynamic dataset (static_dataset = FALSE) the number of months in the past from current_date to include in metric output. [integer]
-  length_of_stay_cap: 90  # Default argument to pass to cap_encounter_end_date macro which caps encounter length of stay at this number of days to limit the effect of long stay encounters on metrics. [integer]
-  null_values: [""]  # List of string values to be considered as missing data when evaluating whether a field is recorded. [list]
+
+  # Pipeline configurations
   persist_all_metric_executions: FALSE  # Whether to enable metric_all model which incrementally adds the output from every execution of the metrics pipeline. [boolean]
-  cohort: "all_patients"  # Run metrics for a specific group of patients defined in models/cohorts/. For example, "adults". Use "all_patients" to disable cohort filtering. [string]
-  cohort_snapshot_date: "today"  # Date on which to evaluate patient membership of cohort. Default of "today" will evaluate membership as of today using CURRENT_DATE(). Use format: "YYYY-MM-DD". [string]
   drop_metric_tables: TRUE  # TRUE to drop intermediate metric tables. Pro: Fewer tables in the dataset. Con: Takes quite a bit of time.
   print_why_metric_empty: FALSE  # Prints what inputs are missing for metrics.
   init_sources_fhir_resource_list: "Encounter,Observation,Patient"  # List of FHIR resources to call init_sources on.
   init_sources_parquet_location: ""  # File location with Parquet files for init_sources.
-# Variables needed for Patient Panels and Table 1(https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6773463/)
+
+  # Variables for Patient Panels and Table 1(https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6773463/)
   patient_panel_enabled: FALSE  # Whether to enable patient panel and queries to summarize data about a patient. [boolean]
   encounter_lookback_years: 5 # Used in patient panels to determine how far back encounter history metrics should use (encounter_aggregate model)
   minimum_age: 18 # Used to exclude patients younger than age specified
   age_calculation_method: "age_based_on_last_encounter" # Methodology for age calculation (age_based_on_last_encounter or age_as_of_cohort_snapshot). age_as_of_snapshot uses cohort_snapshot_date
   empi_as_person_enabled: FALSE  # Whether to enable summarization at a person level for patient panels. This assumes a Person resource references a collection of patient resources using Person.link.target. [boolean]
+  cohort_snapshot_date: "today"  # Date on which to evaluate patient membership of cohort. Default of "today" will evaluate membership as of today using CURRENT_DATE(). Use format: "YYYY-MM-DD". [string]
   disease_specific: "AKI" # Used to run additional metrics related to a specific clinical disease
+
 # Model configurations
 
 models:
@@ -60,3 +80,8 @@ models:
       +materialized: table
     metric_views:
       +materialized: view
+    fhir_resources:
+      +materialized: |
+        {%- if target.name == "internal_pipeline" -%} ephemeral
+        {%- else -%} view
+        {%- endif -%}

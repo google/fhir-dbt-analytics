@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('Coverage_view' )}}
-{{ config(
+{{- config(
     name = "Coverage",
     meta = {
-      "description": "Coverage FHIR resources filtered by cohort",
-      "fhir_resource": "Coverage"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all Coverage FHIR resources",
+      "fhir_resource": "Coverage",
+      "metric_date_columns": ["period.start"],
+      "patient_reference_column": "beneficiary"
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

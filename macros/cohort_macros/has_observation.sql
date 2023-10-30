@@ -32,7 +32,7 @@
     SELECT
       O.subject.patientId
   {%- endif %}
-  FROM {{ ref('Observation_view') }} AS O, UNNEST(code.coding) AS cc
+  FROM {{ ref('Observation') }} AS O, UNNEST(code.coding) AS cc
   JOIN {{ ref('clinical_code_groups') }} AS L
     ON L.group  {{ sql_comparison_expression(observation) }}
     {%- if code_system != None %}

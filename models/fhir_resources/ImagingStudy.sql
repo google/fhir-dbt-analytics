@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('ImagingStudy_view' )}}
-{{ config(
+{{- config(
     name = "ImagingStudy",
     meta = {
-      "description": "ImagingStudy FHIR resources filtered by cohort",
-      "fhir_resource": "ImagingStudy"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all ImagingStudy FHIR resources",
+      "fhir_resource": "ImagingStudy",
+      "metric_date_columns": ["started"],
+      "patient_reference_column": "subject"
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('PractitionerRole_view' )}}
-{{ config(
+{{- config(
     name = "PractitionerRole",
     meta = {
-      "description": "PractitionerRole FHIR resources",
-      "fhir_resource": "PractitionerRole"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all PractitionerRole FHIR resources",
+      "fhir_resource": "PractitionerRole",
+      "metric_date_columns": ["period.start"],
+      "patient_reference_column": None
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

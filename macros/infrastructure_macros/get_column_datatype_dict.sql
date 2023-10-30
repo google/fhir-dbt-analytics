@@ -28,7 +28,7 @@
     {%- set relation = adapter.get_relation(
         database = this.project,
         schema = this.schema,
-        identifier = fhir_resource ~ "_view") -%}
+        identifier = fhir_resource) -%}
 
     {% if not relation %}
         {% do return ({}) %}

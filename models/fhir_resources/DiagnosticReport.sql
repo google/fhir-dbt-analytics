@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('DiagnosticReport_view' )}}
-{{ config(
+{{- config(
     name = "DiagnosticReport",
     meta = {
-      "description": "DiagnosticReport FHIR resources filtered by cohort",
-      "fhir_resource": "DiagnosticReport"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all DiagnosticReport FHIR resources",
+      "fhir_resource": "DiagnosticReport",
+      "metric_date_columns": ["issued"],
+      "patient_reference_column": "subject"
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

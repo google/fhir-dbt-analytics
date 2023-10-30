@@ -16,14 +16,14 @@ limitations under the License. */
 
 -- depends_on: {{ ref('fhir_table_list') }}
 -- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('Composition_view' )}}
-{{ config(
+{{- config(
     name = "Composition",
     meta = {
-      "description": "Composition FHIR resources filtered by cohort",
-      "fhir_resource": "Composition"
-      },
-    materialized = 'ephemeral'
+      "description": "Union of all Composition FHIR resources",
+      "fhir_resource": "Composition",
+      "metric_date_columns": ["date"],
+      "patient_reference_column": "subject"
+      }
 ) -}}
 
-{{ fhir_resource_table_expression() -}}
+{{ fhir_resource_view_expression() -}}

@@ -234,7 +234,7 @@ macros:
           Whether to return a boolean if any medication requests within the criteria exist or the
           full list of medication requests and their metadata.
 
-  - name: has_medication_administrastion
+  - name: has_medication_administration
 
     description: |
       Evaluates whether a patient had a medication administration based on codes defined in
@@ -619,18 +619,6 @@ macros:
 
 # FHIR view macros
 
-  - name: query_fhir_table
-
-    description: |
-      Prints SQL for selecting from a FHIR resource table with appended metadata columns.
-
-    arguments:
-      - name: fhir_resource
-        type: string
-        description: |
-          The FHIR resource to be queried.
-
-
   - name: metadata_cols
 
     description: |
@@ -652,19 +640,36 @@ macros:
       (e.g Patient_view.sql).
 
 
-  - name: fhir_resource_table_expression
-
-    description: |
-      Prints SQL for a common table expression for a FHIR resource.
-
-      It is used by models within the `fhir_resources` folder to generate FHIR resource common
-      table expressions (CTE) that incorporate patient cohorting.
-
-
   - name: spark__init_sources
 
     description: |
       Initiates Spark sources by creating the source tables based on Parquet files stored locally.
+
+
+  - name: get_maps_for_resource
+
+    description: |
+      Returns an array of BigQuery table names for a FHIR resource by querying `fhir_table_list` and
+      filtering to the resource of interest. If no tables exist then a dummy array is returned.
+
+    arguments:
+      - name: fhir_resource
+        type: string
+        description: |
+          FHIR resource for which to return array of BigQuery table names (e.g. AllergyIntolerance).
+
+
+  - name: build_union_query
+
+    description: |
+      Prints SQL for a unioned view of all input tables, returning the superset of columns from all
+      tables.
+
+    arguments:
+      - name: maps
+        type: list
+        description: |
+          Array of BigQuery table names.
 
 
 # Infrastructure macros
@@ -801,28 +806,6 @@ macros:
         type: string
         description: |
           Default value to return when no value is returned for the specified key.
-
-
-  - name: is_public_synthea_dataset
-
-    description: |
-      Returns TRUE if project schema and database variables are pointing to the [Synthea public
-      BiqQuery dataset](https://console.cloud.google.com/marketplace/details/mitre/synthea-fhir)
-
-
-  - name: get_source_table_name
-
-    description: |
-      Returns FHIR resource name in the correct case depending on the source dataset.
-
-      If the source dataset is the Synthea public BiqQuery dataset, then FHIR resource table names
-      are converted to snake case (e.g. allergy_intolerance).
-
-    arguments:
-      - name: fhir_resource
-        type: string
-        description: |
-          FHIR resource name in Pascal case (e.g AllergyIntolerance).
 
 
   - name: get_metric_date_columns
@@ -1269,16 +1252,28 @@ macros:
 
 # Patient Panel macros
 
-  - name: condition_aggregate
+  - name: resource_aggregate
 
     description: |
-      For a given condition, calculates first documented date, last documented date and number of
-      intances it was documented at the master_patient_id level.
+      For a given condition, prints the SQL to calculate first documented date, last documented date
+      and number of intances it was documented at the master_patient_id level.
 
-  - name: patient_panel_chronic_condition_metadata
+    arguments:
+      - name: encounter_level_aggregate
+        type: boolean
+        description: |
+          If set to True, the printed SQL will include encounter_id in the group by and therefore
+          calculate values for each encounter individually, rather than at the person-level.
+      - name: quantity_summary
+        type: boolean
+        description: |
+          If set to True, the printed SQL will also include summary statistics for the quantity.
+
+
+  - name: condition_metadata
 
     description: |
-      Gets the field names of the condition metadata generated in the condition_aggregate macro.
+      Gets the field names of the condition metadata generated in the resource_aggregate macro.
 
     arguments:
       - name: condition

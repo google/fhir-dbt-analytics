@@ -31,15 +31,15 @@
     SELECT
       MR.subject.patientId
   {%- endif %}
-  FROM {{ ref('MedicationRequest_view') }} AS MR
-  LEFT JOIN {{ ref('Medication_view') }} AS m
+  FROM {{ ref('MedicationRequest') }} AS MR
+  LEFT JOIN {{ ref('Medication') }} AS m
     ON m.id = medication.reference.medicationid
   JOIN {{ ref('clinical_code_groups') }} AS L
     ON L.group  {{ sql_comparison_expression(medication) }}
     {%- if code_system != None %}
     AND L.system {{ sql_comparison_expression(code_system) }}
     {%- endif %}
-  WHERE IF(L.match_type = 'exact', 
+  WHERE IF(L.match_type = 'exact',
            {{ get_medication('code','L.system') }} = L.code,
             FALSE) # No support for other match types
   {%- if patient_join_key != None %}
