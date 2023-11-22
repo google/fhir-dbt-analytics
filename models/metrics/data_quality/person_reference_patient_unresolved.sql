@@ -38,7 +38,7 @@ limitations under the License. */
       CAST({{ get_column_or_default('gender') }} AS STRING) as person_gender,
       (
         SELECT SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(unnest("P.link", "PL")) }}
+        FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest("P.link", "PL")) }}
         JOIN {{ ref('Patient') }} AS Pat
           ON PL.target.patientId = Pat.id
       ) AS reference_patient_resolved

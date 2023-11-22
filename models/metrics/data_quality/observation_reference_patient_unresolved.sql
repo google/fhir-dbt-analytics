@@ -30,6 +30,8 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Patient') }}
+
 {%- set metric_sql -%}
     SELECT
       id,

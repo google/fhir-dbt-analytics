@@ -26,8 +26,8 @@
 {#- For a reference_column foo, indirect reference path is foo.reference. -#}
 {%- set indirect_reference_path = reference_column ~ '.reference' -%}
 
-{%- set fhir_resource = model_metadata(meta_key='fhir_resource') -%}
-{%- set column_dict = get_column_datatype_dict(fhir_resource) -%}
+{%- set fhir_resource = fhir_dbt_utils.get_fhir_resource() -%}
+{%- set column_dict = fhir_dbt_utils.get_datatype_dict(fhir_resource) -%}
 
 {%- set reference_column_is_array = 
       execute 

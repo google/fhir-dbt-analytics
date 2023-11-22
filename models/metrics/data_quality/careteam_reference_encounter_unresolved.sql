@@ -30,6 +30,8 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Encounter') }}
+
 {%- set metric_sql -%}
     SELECT
       C.id,

@@ -25,20 +25,20 @@
 
 {%- if reference_column_is_array -%}
 
-  {%- if column_exists(direct_reference_path) -%}
-    (SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest(reference_column, "RC")) }} WHERE {{has_value("RC."~direct_reference)}})
-  {%- elif column_exists(indirect_reference_path) -%}
-    (SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest(reference_column, "RC")) }} WHERE RC.type = '{{reference_resource}}' AND {{has_value('RC.reference')}})
+  {%- if fhir_dbt_utils.field_exists(direct_reference_path) -%}
+    (SELECT SIGN(COUNT(*)) FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest(reference_column, "RC")) }} WHERE {{fhir_dbt_utils.has_value("RC."~direct_reference)}})
+  {%- elif fhir_dbt_utils.field_exists(indirect_reference_path) -%}
+    (SELECT SIGN(COUNT(*)) FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest(reference_column, "RC")) }} WHERE RC.type = '{{reference_resource}}' AND {{fhir_dbt_utils.has_value('RC.reference')}})
   {%- else -%}
     0
   {%- endif -%}
 
 {%- else -%}
 
-  {%- if column_exists(direct_reference_path) -%}
-    IF({{has_value(direct_reference_path)}}, 1, 0)
-  {%- elif column_exists(indirect_reference_path) -%}
-    IF({{reference_column}}.type = '{{reference_resource}}' AND {{has_value(indirect_reference_path)}}, 1, 0)
+  {%- if fhir_dbt_utils.field_exists(direct_reference_path) -%}
+    IF({{fhir_dbt_utils.has_value(direct_reference_path)}}, 1, 0)
+  {%- elif fhir_dbt_utils.field_exists(indirect_reference_path) -%}
+    IF({{reference_column}}.type = '{{reference_resource}}' AND {{fhir_dbt_utils.has_value(indirect_reference_path)}}, 1, 0)
   {%- else -%}
     0
   {%- endif -%}

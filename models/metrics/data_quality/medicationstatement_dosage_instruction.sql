@@ -33,8 +33,8 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       M.id,
       IF(
-        NULLIF({{ safe_offset("dosage", 0) }}.patientInstruction, '') IS NOT NULL
-          OR NULLIF({{ safe_offset("dosage", 0) }}.text, '') IS NOT NULL,
+        NULLIF({{ fhir_dbt_utils.safe_offset("dosage", 0) }}.patientInstruction, '') IS NOT NULL
+          OR NULLIF({{ fhir_dbt_utils.safe_offset("dosage", 0) }}.text, '') IS NOT NULL,
         1,
         0) AS has_dosage_text
     FROM {{ ref('MedicationStatement') }} AS M

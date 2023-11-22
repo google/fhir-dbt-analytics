@@ -35,8 +35,8 @@ limitations under the License. */
 {%- set metric_sql -%}
     SELECT
       id,
-      {{- metric_common_dimensions(exclude_col='metric_date') }}
-      {{ metric_date(['period.end']) }} AS metric_date,
+      {{- metric_common_dimensions(include_metric_date=False) }}
+      {{ fhir_dbt_utils.metric_date(['period.end']) }} AS metric_date,
       {{ get_column_or_default('serviceProvider.organizationId', 'Encounter') }} AS encounter_service_provider,
       CASE
         WHEN UPPER(class.code) IN ('IMP', 'ACUTE', 'NONAC') THEN 'IMP/ACUTE/NONAC'

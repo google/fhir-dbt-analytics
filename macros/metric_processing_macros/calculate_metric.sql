@@ -28,17 +28,17 @@ WITH
 
 {# Check that all inputs are available. #}
 {% macro _are_inputs_available() %}
-  {% if not fhir_resource_exists(model_metadata('primary_resource')) %}
-    {{ _print_why("primary resource " ~ model_metadata('primary_resource')) }}
+  {% if not fhir_dbt_utils.fhir_resource_exists(fhir_dbt_utils.model_metadata('primary_resource')) %}
+    {{ _print_why("primary resource " ~ fhir_dbt_utils.model_metadata('primary_resource')) }}
     {% do return(False) %}
   {% endif %}
-  {% for secondary_resource in model_metadata('secondary_resources', value_if_missing=[])
-      if not fhir_resource_exists(secondary_resource) %}
+  {% for secondary_resource in fhir_dbt_utils.model_metadata('secondary_resources', value_if_missing=[])
+      if not fhir_dbt_utils.fhir_resource_exists(secondary_resource) %}
     {{ _print_why("secondary resource " ~ secondary_resource) }}
     {% do return(False) %}
   {% endfor %}
-  {% for primary_field in model_metadata('primary_fields', value_if_missing=[])
-      if not column_exists(primary_field) %}
+  {% for primary_field in fhir_dbt_utils.model_metadata('primary_fields', value_if_missing=[])
+      if not fhir_dbt_utils.field_exists(primary_field) %}
     {{ _print_why("primary field " ~ primary_field) }}
     {% do return(False) %}
   {% endfor %}

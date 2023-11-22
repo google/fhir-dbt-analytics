@@ -38,9 +38,9 @@ limitations under the License. */
     SELECT
       id,
       {{- metric_common_dimensions() }}
-      {{ code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/condition-clinical') }} AS clinical_status,
-      {{ code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/condition-ver-status') }} AS verification_status,
-      {{ code_from_codeableconcept('category', 'http://terminology.hl7.org/CodeSystem/condition-category', index = 0) }} AS category,
+      {{ fhir_dbt_utils.code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/condition-clinical') }} AS clinical_status,
+      {{ fhir_dbt_utils.code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/condition-ver-status') }} AS verification_status,
+      {{ fhir_dbt_utils.code_from_codeableconcept('category', 'http://terminology.hl7.org/CodeSystem/condition-category') }} AS category,
       {{ has_reference_value('subject', 'Patient') }} AS has_reference_value
     FROM {{ ref('Condition') }} AS C
 {%- endset -%}

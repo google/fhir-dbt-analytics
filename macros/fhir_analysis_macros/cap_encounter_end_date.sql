@@ -23,7 +23,7 @@
 {%- endif -%}
 LEAST(
   IFNULL({{period_end}}, CURRENT_DATE()),
-  {{ date_add_days(period_start, length_of_stay_cap) }},
+  {{ fhir_dbt_utils.date_add_days(period_start, length_of_stay_cap) }},
   IF({{encounter_class}} = 'AMB', {{period_start}}, CURRENT_DATE())
 )
 {%- endmacro -%}

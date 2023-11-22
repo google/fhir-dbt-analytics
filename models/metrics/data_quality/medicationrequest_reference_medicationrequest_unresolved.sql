@@ -36,16 +36,17 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('MedicationRequest') }}
+
 {%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       status,
       intent,
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'http://terminology.hl7.org/CodeSystem/medicationrequest-category',
-        index = get_source_specific_category_index()
+        'http://terminology.hl7.org/CodeSystem/medicationrequest-category'
       ) }} AS category,
       {{ has_reference_value('basedOn', 'MedicationRequest') }} AS has_reference_value,
       {{ reference_resolves('basedOn', 'MedicationRequest') }} AS reference_resolves

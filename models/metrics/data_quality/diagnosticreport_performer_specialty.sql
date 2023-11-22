@@ -31,15 +31,17 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Practitioner') }}
+-- depends_on: {{ ref('PractitionerRole') }}
+
 {%- set metric_sql -%}
 
   SELECT
     D.id,
     {{- metric_common_dimensions("D") }}
-    {{ code_from_codeableconcept(
+    {{ fhir_dbt_utils.code_from_codeableconcept(
       'category',
-      'https://g.co/fhir/harmonized/diagnostic_report/category',
-      index = get_source_specific_category_index()
+      'https://g.co/fhir/harmonized/diagnostic_report/category'
     ) }} AS category,
     (
       SELECT SIGN(COUNT(*))

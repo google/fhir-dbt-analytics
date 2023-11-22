@@ -32,38 +32,37 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Binary') }}
+
 {%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       status as status,
-      COALESCE({{ code_from_codeableconcept(
+      COALESCE({{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
         'https://g.co/fhir/harmonized/diagnostic_report/category',
-        index = get_source_specific_category_index()
+
       ) }},
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'http://snomed.info/sct,',
-        index = get_source_specific_category_index()
+        'http://snomed.info/sct,'
       ) }},
-       {{ code_from_codeableconcept(
+       {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'http://terminology.hl7.org/CodeSystem/v2-0074,',
-        index = get_source_specific_category_index()
+        'http://terminology.hl7.org/CodeSystem/v2-0074,'
       ) }},
-       {{ code_from_codeableconcept(
+       {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'http://loinc.org,',
-        index = get_source_specific_category_index()
+        'http://loinc.org,'
       ) }}, 'Undefined')
        AS category,
-      {%- if column_exists('presentedForm.url') %}
+      {%- if fhir_dbt_utils.field_exists('presentedForm.url') %}
       (
         SELECT SIGN(COUNT(*))
         FROM {{ ref('Binary') }} AS B
         WHERE
-          SPLIT(D.{{ safe_offset("presentedForm", 0) }}.url,'/Binary/')[SAFE_OFFSET(1)] = B.id
+          SPLIT(D.{{ fhir_dbt_utils.safe_offset("presentedForm", 0) }}.url,'/Binary/')[SAFE_OFFSET(1)] = B.id
       ) AS reference_binary_resolved
       {%- else %}
       0 AS reference_binary_resolved

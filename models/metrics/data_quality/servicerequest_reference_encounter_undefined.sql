@@ -37,10 +37,9 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
         'http://snomed.info/sct',
-        index = get_source_specific_category_index(),
         return_field='display'
       ) }} AS category,
       {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value

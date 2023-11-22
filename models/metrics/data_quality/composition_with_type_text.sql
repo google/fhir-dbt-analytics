@@ -35,7 +35,7 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status as composition_status,
-      {%- if column_exists('type.text') %}
+      {%- if fhir_dbt_utils.field_exists('type.text') %}
       type.text IS NOT NULL
         AND type.text <> '' AS has_type_text
       {%- else %}
@@ -46,6 +46,6 @@ limitations under the License. */
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(CAST(has_type_text AS '~type_long()~'))',
+    numerator = 'SUM(CAST(has_type_text AS '~fhir_dbt_utils.type_long()~'))',
     denominator = 'COUNT(id)'
 ) }}

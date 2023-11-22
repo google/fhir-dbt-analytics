@@ -12,6 +12,16 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro source_system() -%}
-        '{{ var('source_system_default') }}'
+{%- macro source_system(table_alias=None, fhir_resource=None) -%}
+
+  {%- if table_alias != None -%}
+    {%- set prefix = table_alias ~ '.' -%}
+  {%- else -%}
+    {%- set prefix = '' -%}
+  {%- endif -%}
+
+    {#- A FHIR dataset can often be populated from data originating from different source systems -#}
+    {#- Update code here to extract source_system from where this is recorded in your FHIR data  -#}
+    '{{ var('source_system_default') }}'
+
 {%- endmacro -%}

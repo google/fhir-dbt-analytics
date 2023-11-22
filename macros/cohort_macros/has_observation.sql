@@ -25,7 +25,7 @@
       LOWER(L.group) AS clinical_group_name,
       O.code.text AS free_text_name,
       cc.code AS code,
-      {{ metric_date(['effective.datetime']) }} AS clinical_date,
+      {{ fhir_dbt_utils.metric_date(['effective.datetime']) }} AS clinical_date,
   ) AS summary_struct
   {%- else -%}
   EXISTS (
@@ -48,7 +48,7 @@
     AND patient_join_key = O.subject.patientId
     {%- endif %}
   {%- if lookback != None %}
-    AND {{ metric_date(['effective.datetime']) }} >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+    AND {{ fhir_dbt_utils.metric_date(['effective.datetime']) }} >= {{ fhir_dbt_utils.get_snapshot_date() }} - INTERVAL {{ lookback }}
     {%- endif %}
     AND O.status NOT IN ('entered-in-error','cancelled')
     {%- if value_greater_than != None %}

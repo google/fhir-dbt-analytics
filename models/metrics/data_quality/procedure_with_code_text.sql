@@ -35,12 +35,12 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      {{ has_value('P.code.text') }} AS has_code_text
+      {{ fhir_dbt_utils.has_value('P.code.text') }} AS has_code_text
     FROM {{ ref('Procedure') }} AS P
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(CAST(has_code_text AS '~type_long()~'))',
+    numerator = 'SUM(CAST(has_code_text AS '~fhir_dbt_utils.type_long()~'))',
     denominator = 'COUNT(id)'
 ) }}

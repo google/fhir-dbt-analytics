@@ -12,6 +12,16 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-{% macro site() -%}
-        '{{ var('site_default') }}'
+{%- macro site(table_alias=None, fhir_resource=None) -%}
+
+  {%- if table_alias != None -%}
+    {%- set prefix = table_alias ~ '.' -%}
+  {%- else -%}
+    {%- set prefix = '' -%}
+  {%- endif -%}
+
+    {#- A FHIR dataset can often be populated from data originating from different sites -#}
+    {#- Update code here to extract site from where this is recorded in your FHIR data -#}
+    '{{ var('site_default') }}'
+
 {%- endmacro -%}

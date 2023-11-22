@@ -37,7 +37,7 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      {{ code_from_codeableconcept('type', 'http://hl7.org/fhir/ValueSet/episodeofcare-type', index = 0) }} AS type
+      {{ fhir_dbt_utils.code_from_codeableconcept('type', 'http://hl7.org/fhir/ValueSet/episodeofcare-type') }} AS type
     FROM {{ ref('EpisodeOfCare') }}
 {%- endset -%}
 

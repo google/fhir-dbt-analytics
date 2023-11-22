@@ -35,7 +35,7 @@ limitations under the License. */
 {%- set metric_sql -%}
     SELECT
       P.id,
-      {{- metric_common_dimensions(table_alias='P', exclude_col='metric_date') }}
+      {{- metric_common_dimensions(table_alias='P', include_metric_date=False) }}
       CAST({{ get_column_or_default('active') }} AS STRING) AS active,
       gender,
       MIN(E.metric_date) AS metric_date
@@ -49,7 +49,7 @@ limitations under the License. */
         'UNKNOWN',
         'HIST'
       )
-    GROUP BY 1,2,3,4,5,6,7
+    GROUP BY 1,2,3,4,5,6
 {%- endset -%}
 
 {{- calculate_metric(metric_sql) -}}

@@ -18,13 +18,6 @@ macros:
 
 # Cohort macros
 
-  - name: get_snapshot_date
-
-    description: |
-      Returns the snapshot date declared by the `cohort_snapshot_date` variable.
-
-      If cohort_snapshot_date = 'today', then CURRENT_DATE is returned.
-
   - name: get_medication 
 
     description: |
@@ -39,28 +32,6 @@ macros:
         type: string
         description: |
           A value defining the system for which a'code' or 'display' is returned.
-
-  - name: alive
-
-    description: |
-      Evaluates whether a patient was alive on a given date.
-
-
-  - name: age
-
-    description: |
-      Calculates a patient's age on a given date from their date of birth.
-
-      By default this macro will calculate the patient's age as of today's date. If a date is
-      specified by the `cohort_snapshot_date` project variable, then the macro will calculate the
-      patient's age on that date.
-
-    arguments:
-      - name: date_of_birth
-        type: string
-        description: |
-          Patient's date of birth. Default argument is the `birthDate` field from the Patient FHIR
-          resource.
 
 
   - name: has_encounter
@@ -293,77 +264,6 @@ macros:
           disambiguation of columns is needed in the query join.
 
 
-  - name: code_from_codeableconcept
-
-    description: |
-      Attempts to extract a code for a specified code system from a FHIR codeableConcept field.
-
-      If coding.code is not informative, then can return coding.display instead by setting the
-      return_field argument to 'display'.
-
-      To return an integer flag for whether a code exists, set return_int to True.
-
-      If the field specified does not exist in the table, then "missing_field" or 0 is returned,
-      depending on the return_int agument.
-
-    arguments:
-      - name: field_name
-        type: string
-        description: |
-          FHIR field that is of type codeableConcept. If this field in an array, then the macro will
-          unnest this field.
-      - name: code_system
-        type: string
-        description: |
-          Coding system to filter the search of the codeableConcept field.
-      - name: fhir_resource
-        type: string
-        description: |
-          The FHIR resource to check whether the specified `field_name` exists. If not specified,
-          the macro will default to using the `primary_resource` for the metric.
-      - name: index
-        type: int
-        description: |
-          For codeableConcept fields that are repeatable, return the field specified by this index
-          value.
-      - name: null_values
-        type: list
-        description: |
-          List of string values considered as NULL. If the extracted code matches any of these
-          values, the macro will return a 0. Default: `null_values` project variable.
-      - name: return_field
-        type: string
-        description: |
-          If set to 'display', the macro will return the coding.display field from the
-          codeableConcept. By default, coding.code will be returned.
-      - name: return_int
-        type: boolean
-        description: |
-          If set to True, the macro will return an integer flag for whether a code exists, rather
-          than the code or display value itself.
-
-
-  - name: has_value
-
-    description: |
-      Prints SQL for evaluating whether a field has a value recorded, returning TRUE if so and
-      FALSE if not.
-
-      A field is evaluated as not recorded if it is NULL or contains a value matching any value
-      within the `null_values` list argument.
-
-    arguments:
-      - name: field_name
-        type: string
-        description: |
-          FHIR field to evaluate.
-      - name: null_values
-        type: list
-        description: |
-          List of string values considered as NULL. If `field_name` matches any of these values, the
-          SQL will return FALSE. Default: `null_values` project variable.
-
-
   - name: has_reference_value
 
     description: |
@@ -433,81 +333,42 @@ macros:
   - name: source_system
 
     description: |
-      Extracts the data source from which the FHIR data queried originates.
+      Extracts the name of the data source from which the FHIR data queried originates.
+
+      A FHIR dataset can often be populated from data originating from different source systems.
+      This macro enables metrics to be segmented by source system.
+
+      The default for this macro is the `source_system_default` project variable. You can update the
+      code in this macro to extract source_system from where this is recorded in your FHIR data.
+
+    arguments:
+      - name: table_alias
+        type: string
+        description: |
+          Alias assigned to the table in which the source_system fields are located. Only required
+          if disambiguation of columns is needed in the query join.
 
 
   - name: site
 
     description: |
-      Extracts the provider code from which the FHIR data queried originates.
+      Extracts the name of the site/location/provider from which the FHIR data queried originates.
 
+      A FHIR dataset can often be populated from data originating from multiple sites (e.g. hospital
+      facilities, departments, practitioners, geographies).
 
-  - name: data_transfer_type
+      This macro enables metrics to be segmented by such sites.
 
-    description: |
-      Extracts the mechanism of data transfer from which the FHIR data queried originates.
-
-
-  - name: data_timezone
-
-    description: |
-      Extracts the timezone code from which the FHIR data queried originates.
-
-
-  - name: local_date
-
-    description: |
-      Prints SQL for returning the local date from a specified date, datetime or timestamp column.
-
-      Local date is the date where the clinical event took place.
-
-      The macro uses the `timezone_default` project variable.
+      The default for this macro is the `site_default` project variable. You can update the
+      code in this macro to extract site from where this is recorded in your FHIR data.
 
     arguments:
-      - name: date_column
-        type: String, date, datetime or timestamp
-        description: |
-          String, date, datetime or timestamp column from which to derive the local date.
-      - name: date_column_data_type
+      - name: table_alias
         type: string
         description: |
-          The datatype of `date_column`.
+          Alias assigned to the table in which the site fields are located. Only required if
+          disambiguation of columns is needed in the query join.
 
-
-  - name: metric_date
-
-    description: |
-      Prints SQL for returining the local date from an ordered list of FHIR fields.
-
-      It is used for returning the most clinically-relevant local date for a given FHIR resource.
-
-    arguments:
-      - name: metric_date_columns
-        type: list
-        description: |
-          Ordered list of columns to use to derive the metric date.
-      - name: date_column_data_type
-        type: string
-        description: |
-          The datatype of `metric_date_columns`.
-
-
-  - name: metric_hour
-
-    description: |
-      Prints SQL for returining the local hour from an ordered list of FHIR fields.
-
-      It is used for returning the most clinically-relevant local hour for a given FHIR resource.
-
-    arguments:
-      - name: metric_date_columns
-        type: list
-        description: |
-          Ordered list of columns to use to derive the metric date.
-      - name: date_column_data_type
-        type: string
-        description: |
-          The datatype of `metric_date_columns`.
 
   - name: date_spine
 
@@ -619,214 +480,10 @@ macros:
 
 # FHIR view macros
 
-  - name: metadata_cols
-
-    description: |
-      Prints SQL for metadata columns to be appended to the FHIR resource views.
-
-
-  - name: create_dummy_table
-
-    description: |
-      Prints SQL to select dummy values when no tables exist for a FHIR resource.
-
-
-  - name: fhir_resource_view_expression
-
-    description: |
-      Prints SQL for views over a FHIR resource.
-
-      It is used by models within the `fhir_resources` folder to generate FHIR resource views
-      (e.g Patient_view.sql).
-
-
   - name: spark__init_sources
 
     description: |
       Initiates Spark sources by creating the source tables based on Parquet files stored locally.
-
-
-  - name: get_maps_for_resource
-
-    description: |
-      Returns an array of BigQuery table names for a FHIR resource by querying `fhir_table_list` and
-      filtering to the resource of interest. If no tables exist then a dummy array is returned.
-
-    arguments:
-      - name: fhir_resource
-        type: string
-        description: |
-          FHIR resource for which to return array of BigQuery table names (e.g. AllergyIntolerance).
-
-
-  - name: build_union_query
-
-    description: |
-      Prints SQL for a unioned view of all input tables, returning the superset of columns from all
-      tables.
-
-    arguments:
-      - name: maps
-        type: list
-        description: |
-          Array of BigQuery table names.
-
-
-# Infrastructure macros
-
-  - name: fhir_resource_exists
-
-    description: |
-      Returns TRUE if a specified FHIR resource exists within the source schema defined by the
-      `database` and `schema` variables in dbt_project.yml.
-
-    arguments:
-      - name: test_fhir_resource
-        type: string
-        description: |
-          FHIR resource to evaluate in Pascal case (e.g AllergyIntolerance).
-
-
-  - name: get_column_datatype_dict
-
-    description: |
-      Returns a dictionary object containing all columns (keys) in a FHIR resource view and their
-      data types (values).
-
-      Included in the dictionary are both top-level columns (e.g. code) and nested columns (e.g
-      code.coding.display).
-
-    arguments:
-      - name: fhir_resource
-        type: string
-        description: |
-          The FHIR resource from which to return a dictionary of columns contained in the FHIR
-          resource view.
-
-          If not specified, the macro will default to using the `primary_resource` for the metric.
-
-
-  - name: get_dbt_objects
-
-    description: |
-      Returns a dictionary containing all objects in the dbt project as documented in the dbt graph.
-      The dictionary keys are the object names (e.g "metric") and the values are the paths for the
-      object in the project (e.g. "post_processing/metric.sql")
-
-    arguments:
-      - name: resource_type
-        type: string
-        description: |
-          Filter the dbt objects returned in the dictionary to a specific type (e.g. "model",
-          "macro", "seed").
-
-          If not specified, the macro will return all object types.
-
-
-  - name: column_exists
-
-    description: |
-      Returns TRUE if a specified column exists within a FHIR resource view.
-
-    arguments:
-      - name: column_name
-        type: string
-        description: |
-          Column name to evaluate. Can be a top-level column (e.g. code) or nested column (e.g.
-          code.coding.display).
-      - name: fhir_resource
-        type: string
-        description: |
-          The FHIR resource to check whether the specified `column_name` exists.
-
-          If not specified, the macro will default to using the `primary_resource` for the metric.
-
-
-  - name: column_data_type
-
-    description: |
-      Returns the data type of a specified column in a source table.
-
-    arguments:
-      - name: column_name
-        type: string
-        description: |
-          Fully qualified column name to evaluate (e.g. code.coding.display).
-      - name: source_table
-        type: string
-        description: |
-          The source table in which `column_name` exists.
-
-
-  - name: get_reference_paths
-
-    description: |
-      Get a dictionary containing direct and indirect FHIR references based in an input reference
-      column and reference resource.
-
-      For example, the Encounter resource contains the column "subject" for references to the
-      Patient resource. In this example the reference_column argument would be "subject" and the
-      reference_resource argument would be "Patient". The macro will return the following
-      dictionary:
-
-      direct_reference_path: "subject.patientId"
-      indirect_reference_path: "subject.reference"
-      reference_column_is_array: False
-
-    arguments:
-      - name: reference_column
-        type: string
-        description: |
-           FHIR reference field. Only include the top-level reference field.
-           For example,'subject' rather than 'subject.patientId'
-      - name: reference_resource
-        type: string
-        description: |
-          FHIR resource for which this reference value refers to (e.g. 'Patient).
-
-
-  - name: model_metadata
-
-    description: |
-      Returns the value for a specified key defined in a dbt model's metadata config.
-
-    arguments:
-      - name: meta_key
-        type: string
-        description: |
-          Meta key for which to return the value (e.g. category)
-      - name: model_name
-        type: string
-        description: |
-          The dbt model from which to extract the metadata value.
-
-          If not specified, the macro will default to using the model within which this macro is
-          called.
-      - name: value_if_missing
-        type: string
-        description: |
-          Default value to return when no value is returned for the specified key.
-
-
-  - name: get_metric_date_columns
-
-    description: |
-      Returns the metric date columns from metric metadata, with corrected values for the Synthea
-      public BigQuery dataset.
-
-
-  - name: get_source_specific_category_index
-    description: |
-      Returns the index for category codes, with the correct value for the Synthea public BigQuery
-      dataset.
-
-
-  - name: empty_metric_output
-
-    description: |
-      Prints SQL select statement that writes a default row as the output of a metric. This is used
-      when a metric is not evaluated because the required FHIR resources do not exist in the
-      dataset.
 
 
 # Metric processing macros
@@ -844,11 +501,10 @@ macros:
         description: |
           Alias assigned to the table in which the dimension columns are located. Only required if
           disambiguation of columns is needed in the query join.
-      - name: exclude_cols
-        type: string
+      - name: include_metric_date
+        type: boolean
         description: |
-          Columns to exclude from the returned SQL. Required if this column is to be calculated
-          within the query itself.
+          Whether to include `metric_date` field in the returned SQL.
 
 
   - name: calculate_metric
@@ -979,58 +635,39 @@ macros:
           If no value is provided then the view will not segment by any metric-specific dimensions.
 
 
-# String macros
-
-  - name: find_first_of
+  - name: get_reference_paths
 
     description: |
-      Finds first of a given list of letters in a string.
+      Get a dictionary containing direct and indirect FHIR references based in an input reference
+      column and reference resource.
+
+      For example, the Encounter resource contains the column "subject" for references to the
+      Patient resource. In this example the reference_column argument would be "subject" and the
+      reference_resource argument would be "Patient". The macro will return the following
+      dictionary:
+
+      direct_reference_path: "subject.patientId"
+      indirect_reference_path: "subject.reference"
+      reference_column_is_array: False
 
     arguments:
-      - name: haystack
-        type: string
-        description: String to search through
-
-      - name: letters
-        type: string
-        description: Letters to search for
-
-
-
-  - name: quote_array
-
-    description: |
-      Returns an array with each string wrapped in single quotes.
-
-    arguments:
-      - name: x
-        type: list of strings
-        description: |
-          List of strings to be quoted.
-
-
-  - name: snake_case
-
-    description: |
-      Returns a snake_case version of a CamelCase string.
-
-    arguments:
-      - name: str
+      - name: reference_column
         type: string
         description: |
-          String in CamelCase to be converted to snake_case.
-
-
-  - name: snake_case_to_proper_case
-
-    description: |
-      Converts a snake_case column (e.g. encounter_class) to Proper Case (e.g Encounter Class).
-
-    arguments:
-      - name: snake_case_column
+           FHIR reference field. Only include the top-level reference field.
+           For example,'subject' rather than 'subject.patientId'
+      - name: reference_resource
         type: string
         description: |
-          Column with snake_case value to be converted to Proper Case.
+          FHIR resource for which this reference value refers to (e.g. 'Patient).
+
+
+  - name: empty_metric_output
+
+    description: |
+      Prints SQL select statement that writes a default row as the output of a metric. This is used
+      when a metric is not evaluated because the required FHIR resources do not exist in the
+      dataset.
 
 
 # Data visualization macros
@@ -1052,247 +689,3 @@ macros:
         type: list
         description: |
           List of Looker Studio datasources used by the template dashboard.
-
-
-# Cross DB macros
-
-  - name: flatten_column
-
-    description: |
-      Parses the data type and returns a list of sub-columns as structs with `name` and `data_type`
-      fields. Recursively finds all sub-columns in a nested data type.
-
-    arguments:
-      - name: column
-        type: struct with `name` and `data_type` fields
-        description: |
-          Column definition, including a structured `data_type`.
-
-
-  - name: is_spark
-
-    description: Returns `true` if the target database is Apache Spark SQL. No arguments.
-
-
-  - name: safe_cast_as_date
-
-    description: Convenience function to safe_cast as date.
-
-    arguments:
-      - name: x
-        type: string
-        description: Expression to be cast as date.
-
-
-  - name: safe_cast_as_timestamp
-
-    description: Convenience function to safe_cast as timestamp.
-
-    arguments:
-      - name: x
-        type: string
-        description: Expression to be cast as timestamp.
-
-
-  - name: safe_divide
-
-    description: Return NULL if dividing by zero.
-
-    arguments:
-      - name: x
-        type: string
-        description: The numerator.
-
-      - name: y
-        type: string
-        description: The denominator.
-
-
-  - name: type_double
-
-    description: Database specific type name for 64-bit rational number. No arguments.
-
-
-  - name: type_long
-
-    description: Database specific type name for 64-bit integer. No arguments.
-
-
-  - name: timestamp_trunc
-
-    description: Re-implement dbt.date_trunc for BigQuery, in order to allow entering timezone.
-
-    arguments:
-      - name: datepart
-        type: string
-        description: E.g. "hour".
-
-      - name: date
-        type: string
-        description: The date expression.
-
-      - name: timezone
-        type: string
-        description: The timezone.
-
-
-  - name: current_datetime
-
-    description: Returns the current date and time. No arguments.
-
-
-  - name: uuid
-
-    description: Returns the SQL for UUID.
-
-
-  - name: error
-
-    description: Returns the SQL to fail the query with an error.
-
-    arguments:
-      - name: expression
-        description: Error message.
-
-
-  - name: array_join
-
-    description: Creates a string by joining the `array` values by the `delimiter`.
-
-    arguments:
-      - name: array
-      - name: delimiter
-
-
-  - name: table_ref
-
-    description: Constructs a table reference. Useful e.g. when `ref` macro can't be used.
-
-    arguments:
-      - name: database
-      - name: schema
-      - name: table
-
-
-  - name: unnest
-
-    description: |
-      Prints SQL which unnests an array.
-
-    arguments:
-      - name: array
-        type: string
-        description: The array to unnest.
-
-      - name: alias
-        type: string
-        description: The alias for the unnested values.
-
-
-  - name: unnest_multiple
-
-    description: |
-      Prints SQL which unnests a nested array.
-
-    arguments:
-      - name: arrays
-        type: list
-        description: |
-          Configurations of the arrays to be unnested, each ideally created using the `array_config`
-          macro.
-
-
-  - name: array_config
-
-    description: Creates array config for the `unnest_config` macro.
-
-    arguments:
-      - name: field
-        type: string
-        description: The array field to unnest.
-
-      - name: unnested_alias
-        type: string
-        description: The alias for the unnested array values.
-
-
-  - name: select_from_unnest
-
-    description: |
-      Prints SQL which selects the first value from unnested arrays.
-
-    arguments:
-      - name: select
-        type: string
-        description: The field to select.
-
-      - name: unnested
-        type: number
-        description: |
-          The unnested arrays, perhaps a result of the `unnest` or `unnest_multiple` macros.
-
-      - name: where
-        type: string
-        description: |
-          The WHERE clause, can use the alias of the unnested array values.
-
-      - name: order_by
-        type: string
-        description: |
-          The ORDER BY clause, important because we select the first value.
-
-
-  - name: spark_parenthesis
-
-    description: Surrounds `s` by parenthesis on Spark, leaves as is on BigQuery.
-
-    arguments:
-      - name: s
-        type: string
-
-# Patient Panel macros
-
-  - name: resource_aggregate
-
-    description: |
-      For a given condition, prints the SQL to calculate first documented date, last documented date
-      and number of intances it was documented at the master_patient_id level.
-
-    arguments:
-      - name: encounter_level_aggregate
-        type: boolean
-        description: |
-          If set to True, the printed SQL will include encounter_id in the group by and therefore
-          calculate values for each encounter individually, rather than at the person-level.
-      - name: quantity_summary
-        type: boolean
-        description: |
-          If set to True, the printed SQL will also include summary statistics for the quantity.
-
-
-  - name: condition_metadata
-
-    description: |
-      Gets the field names of the condition metadata generated in the resource_aggregate macro.
-
-    arguments:
-      - name: condition
-        type: string
-        description: |
-          The string representing the name of the condition.
-
-
-# Testing macros
-
-  - name: assert_string_equals
-
-    description: |
-      Compares two strings, throws exception and shows the first difference if any.
-
-    arguments:
-      - name: x
-        type: string
-
-      - name: y
-        type: string
-

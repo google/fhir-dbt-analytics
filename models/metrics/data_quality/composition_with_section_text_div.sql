@@ -35,9 +35,9 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status as composition_status,
-      {%- if column_exists('section.text.div') %}
-      {{ safe_offset("section", 0) }}.text.div IS NOT NULL
-        AND {{ safe_offset("section", 0) }}.text.div <> '' AS has_section_text_div
+      {%- if fhir_dbt_utils.field_exists('section.text.div') %}
+      {{ fhir_dbt_utils.safe_offset("section", 0) }}.text.div IS NOT NULL
+        AND {{ fhir_dbt_utils.safe_offset("section", 0) }}.text.div <> '' AS has_section_text_div
       {%- else %}
       FALSE AS has_section_text_div
       {%- endif %},
@@ -46,6 +46,6 @@ limitations under the License. */
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(CAST(has_section_text_div AS '~type_long()~'))',
+    numerator = 'SUM(CAST(has_section_text_div AS '~fhir_dbt_utils.type_long()~'))',
     denominator = 'COUNT(id)'
 ) }}

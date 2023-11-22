@@ -33,12 +33,12 @@ limitations under the License. */
 {%- set metric_sql -%}
     SELECT
       B.id,
-      {{- metric_common_dimensions(table_alias='B', exclude_col='metric_date') }}
+      {{- metric_common_dimensions(table_alias='B', include_metric_date=False) }}
       C.metric_date,
       {{ get_column_or_default('status', 'Composition', table_alias='C') }} AS status
     FROM {{ ref('Binary') }} AS B
     LEFT JOIN {{ ref('Composition') }} AS C
-    {%- if column_exists('section.entry.binaryId', 'Composition') %}
+    {%- if fhir_dbt_utils.field_exists('section.entry.binaryId', 'Composition') %}
       ON B.id = (SELECT binaryId FROM UNNEST((SELECT entry FROM UNNEST(section))))
     {%- else %}
       ON FALSE

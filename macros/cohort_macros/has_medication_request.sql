@@ -24,7 +24,7 @@
       LOWER(L.group) AS clinical_group_name,
       {{ get_medication('text') }} AS free_text_name,
       {{ get_medication('code','L.system') }} AS code,
-      {{ metric_date(['authoredOn']) }} AS clinical_date,
+      {{ fhir_dbt_utils.metric_date(['authoredOn']) }} AS clinical_date,
   ) AS summary_struct
   {%- else -%}
   EXISTS (
@@ -46,7 +46,7 @@
     AND patient_join_key = MR.subject.patientId
     {%- endif %}
   {%- if lookback != None %}
-    AND {{ metric_date(['authored_on']) }} >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+    AND {{ fhir_dbt_utils.metric_date(['authored_on']) }} >= {{ fhir_dbt_utils.get_snapshot_date() }} - INTERVAL {{ lookback }}
     {%- endif %}
     AND MR.status NOT IN ('entered-in-error','cancelled','draft')
   )

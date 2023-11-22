@@ -18,9 +18,9 @@
           SELECT
             id,
             subject.patientId AS patientId,
-            {{ metric_date(['period.start'])|indent(2) }} AS period_start,
-            {{ metric_date(['period.end'])|indent(2) }} AS period_end,
-            {{- metric_common_dimensions(exclude_col='metric_date')|indent }}
+            {{ fhir_dbt_utils.metric_date(['period.start'])|indent(2) }} AS period_start,
+            {{ fhir_dbt_utils.metric_date(['period.end'])|indent(2) }} AS period_end,
+            {{- metric_common_dimensions(include_metric_date=False)|indent }}
             CASE WHEN UPPER(class.code) IN ('IMP', 'ACUTE', 'NONAC') THEN 'IMP/ACUTE/NONAC' ELSE class.code END AS encounter_class,
             {{ encounter_class_group('class.code')|indent(6) }} AS encounter_class_group,
             {{ get_column_or_default('serviceProvider.organizationId', 'Encounter') }} AS encounter_service_provider

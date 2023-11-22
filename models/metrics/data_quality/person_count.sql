@@ -33,7 +33,7 @@ limitations under the License. */
 {%- set metric_sql -%}
     SELECT
       id,
-      {{- metric_common_dimensions(exclude_col='metric_date') }}
+      {{- metric_common_dimensions(include_metric_date=False) }}
       CAST({{ get_column_or_default('active') }} AS STRING) AS active,
       MIN(
         (
@@ -51,7 +51,7 @@ limitations under the License. */
       ) AS metric_date
     FROM {{ ref('Person') }} AS P,
     UNNEST(P.link) AS l
-    GROUP BY 1, 2, 3, 4, 5, 6
+    GROUP BY 1, 2, 3, 4, 5
 {%- endset -%} 
 
 {{ calculate_metric(metric_sql) }}

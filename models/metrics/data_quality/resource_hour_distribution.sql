@@ -32,100 +32,100 @@ limitations under the License. */
 
     WITH combined_resources AS (
       SELECT
-        {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+        {{-metric_common_dimensions(include_metric_date=False, fhir_resource='Encounter')}}
         'Encounter' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('Encounter')}} AS E
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='AllergyIntolerance')}}
         'AllergyIntolerance' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('AllergyIntolerance')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='Composition')}}
         'Composition' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('Composition')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='Condition')}}
         'Condition' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('Condition')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='DiagnosticReport')}}
         'DiagnosticReport' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('DiagnosticReport')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='DocumentReference')}}
         'DocumentReference' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('DocumentReference')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='MedicationRequest')}}
         'MedicationRequest' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('MedicationRequest')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='MedicationAdministration')}}
         'MedicationAdministration' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('MedicationAdministration')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='MedicationStatement')}}
         'MedicationStatement' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('MedicationStatement')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='Observation')}}
         'Observation' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('Observation')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='Procedure')}}
         'Procedure' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('Procedure')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
       UNION ALL
       SELECT
-      {{-metric_common_dimensions(exclude_col = 'metric_date')}}
+      {{-metric_common_dimensions(include_metric_date=False, fhir_resource='ServiceRequest')}}
         'ServiceRequest' AS resource,
         EXTRACT(HOUR FROM metric_hour) AS hour_of_day,
         COUNT(*) AS resource_count
       FROM {{ref('ServiceRequest')}}
-      GROUP BY 1, 2, 3, 4, 5, 6
+      GROUP BY 1, 2, 3, 4, 5
 )
 SELECT
   *,

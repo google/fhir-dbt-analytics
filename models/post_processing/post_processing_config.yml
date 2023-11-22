@@ -68,9 +68,6 @@ models:
       - name: source_system
         description: Data source from which the FHIR data queried originates.
 
-      - name: data_transfer_type
-        description: Mechanism of data transfer from which the FHIR data queried originates.
-
       - name: metric_date
         description: Clinically-relevant local calendar date for which this metric value is
           calculated. This field will be NULL for metrics that are not segmented by date (e.g.

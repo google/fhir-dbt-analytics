@@ -24,7 +24,7 @@ WITH
   Breakdowns AS (
     SELECT DISTINCT
       M.execution_id, M.execution_date, M.execution_datetime,
-      M.metric_name, M.source_system, M.site, M.data_transfer_type, M.dimension_a, M.dimension_b, M.dimension_c, M.fhir_mapping,
+      M.metric_name, M.source_system, M.site, M.dimension_a, M.dimension_b, M.dimension_c, M.fhir_mapping,
       D.calculation, D.metric_date_field
       FROM {{ ref('metric_latest_execution') }} AS M
       JOIN {{ ref('metric_all_definitions') }} AS D ON M.metric_name = D.metric_name
@@ -40,7 +40,6 @@ SELECT
   B.metric_name,
   B.fhir_mapping,
   B.source_system,
-  B.data_transfer_type,
   CAST(metric_date AS DATE) AS metric_date,
   B.site,
   B.dimension_a,
@@ -58,7 +57,6 @@ LEFT JOIN {{ ref('metric_latest_execution') }} AS M
   ON B.metric_name = M.metric_name
   AND (DS.date_day = M.metric_date OR (DS.date_day IS NULL AND M.metric_date IS NULL))
   AND (B.source_system = M.source_system OR (B.source_system IS NULL AND M.source_system IS NULL))
-  AND (B.data_transfer_type = M.data_transfer_type OR (B.data_transfer_type IS NULL AND M.data_transfer_type IS NULL))
   AND (B.site = M.site OR (B.site IS NULL AND M.site IS NULL))
   AND (B.dimension_a = M.dimension_a OR (B.dimension_a IS NULL AND M.dimension_a IS NULL))
   AND (B.dimension_b = M.dimension_b OR (B.dimension_b IS NULL AND M.dimension_b IS NULL))

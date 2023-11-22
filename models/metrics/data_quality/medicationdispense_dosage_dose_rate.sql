@@ -32,7 +32,7 @@ limitations under the License. */
     SELECT
       {{- metric_common_dimensions() }}
       M.id,
-      IF({{ safe_offset("dosageInstruction", 0) }}.doseAndRate IS NOT NULL, 1, 0) AS has_dosage_dose_rate
+      IF({{ fhir_dbt_utils.safe_offset("dosageInstruction", 0) }}.doseAndRate IS NOT NULL, 1, 0) AS has_dosage_dose_rate
     FROM {{ ref('MedicationDispense') }} AS M
 {%- endset -%}
 

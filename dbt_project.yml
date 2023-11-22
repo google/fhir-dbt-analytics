@@ -37,16 +37,15 @@ vars:
   fhir_version: "STU3"  # Version of FHIR that your data conforms to. Options: "STU3"; "R4". [string]
   snake_case_fhir_tables: TRUE  # TRUE if your FHIR database tables are in snake case (e.g. allergy_intolerance) rather than pascal case (e.g AllergyIntolerance). [boolean]
   multiple_tables_per_resource: FALSE  # TRUE if your database can contain more than one table per FHIR resources which should be unioned. [boolean]
-  assume_resources_exist: FALSE  # TRUE if you want to always assume that FHIR resources exist in your database rather than relying on logic within the fhir_resource_exists macro. [boolean]
+  assume_resources_exist: FALSE  # TRUE if you want to always assume that FHIR resources exist in your database rather than relying on logic within the fhir_dbt_utils.fhir_resource_exists macro. [boolean]
   assume_fields_exist: FALSE  # TRUE if you want to always assume that fields exists in a FHIR resource rather than relying on logic within the field_exists macro. [boolean]
 
   # Default values
   source_system_default: "Synthea-EHR"  # Default to populate as the 'source_system' in metrics when this is not extracted from the FHIR data. [string]
   site_default: "Synthea General Hospital"  # Default to populate as the 'site' in metrics when this is not extracted from the FHIR data. [string]
-  data_transfer_type_default: "BigQuery"  # Default to populate as the 'data_transfer_type' in metrics when this is not extracted from the FHIR data. [string]
   timezone_default: "America/New_York"  # Default time zone for this dataset. The IANA time-zone name. For example, "Europe/London". [string]
   length_of_stay_cap: 90  # Default argument to pass to cap_encounter_end_date macro which caps encounter length of stay at this number of days to limit the effect of long stay encounters on metrics. [integer]
-  null_values: [""]  # List of string values to be considered as missing data by has_value macro and other macros that call this variable. [list]
+  null_values: [""]  # List of string values to be considered as missing data by fhir_dbt_utils.has_value macro and other macros that call this variable. [list]
 
   # Metric data period
   static_dataset: TRUE  # TRUE if the dataset is static; FALSE if the dataset is being dynamically updated. [boolean]

@@ -23,7 +23,7 @@
       LOWER(L.group) AS clinical_group_name,
       {{ get_medication('text') }} AS free_text_name,
       {{ get_medication('code','L.system') }} AS code,
-      {{ metric_date(['effective.period.start']) }} AS clinical_date,
+      {{ fhir_dbt_utils.metric_date(['effective.period.start']) }} AS clinical_date,
   ) AS summary_struct
   {%- else -%}
   EXISTS (
@@ -45,7 +45,7 @@
     AND patient_join_key = MA.subject.patientId
     {%- endif %}
   {%- if lookback != None %}
-    AND {{ metric_date(['effective.period.start']) }} >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+    AND {{ fhir_dbt_utils.metric_date(['effective.period.start']) }} >= {{ fhir_dbt_utils.get_snapshot_date() }} - INTERVAL {{ lookback }}
     {%- endif %}
     AND MA.status NOT IN ('entered-in-error','not-done')
   )

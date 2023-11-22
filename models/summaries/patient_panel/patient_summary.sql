@@ -31,7 +31,7 @@ WITH pp AS(
     DATE_DIFF(DATE(enc.last_encounter_start),(ld.birth_date), YEAR) AS age_in_years,
     {%- else %}
     'age_as_of_cohort_snapshot' AS age_method,
-    {{ age(date_of_birth='birth_date') }} AS age_in_years,
+    {{ fhir_dbt_utils.age(date_of_birth='birth_date') }} AS age_in_years,
     {%- endif %}
     ld.gender,
     ld.zipcode,
@@ -55,35 +55,35 @@ WITH pp AS(
     ld.payor,
     enc.services, 
     IF(
-      last_encounter_start > DATE_SUB({{ get_snapshot_date() }}, INTERVAL 5 YEAR),
+      last_encounter_start > DATE_SUB({{ fhir_dbt_utils.get_snapshot_date() }}, INTERVAL 5 YEAR),
       1,
       0) AS enc_last_5_years_flag,
     IF(
-      last_encounter_start > DATE_SUB({{ get_snapshot_date() }}, INTERVAL 1 YEAR),
+      last_encounter_start > DATE_SUB({{ fhir_dbt_utils.get_snapshot_date() }}, INTERVAL 1 YEAR),
       1,
       0) AS enc_last_1_year_flag,
     IF(
-      last_encounter_start > DATE_SUB({{ get_snapshot_date() }}, INTERVAL 6 MONTH),
+      last_encounter_start > DATE_SUB({{ fhir_dbt_utils.get_snapshot_date() }}, INTERVAL 6 MONTH),
       1,
       0) AS enc_last_6_month_flag,
     IF(
-      last_encounter_start > DATE_SUB({{ get_snapshot_date() }}, INTERVAL 3 MONTH),
+      last_encounter_start > DATE_SUB({{ fhir_dbt_utils.get_snapshot_date() }}, INTERVAL 3 MONTH),
       1,
       0) AS enc_last_3_month_flag,
     IF(
-      last_amb_enc > DATE_SUB({{ get_snapshot_date() }}, INTERVAL 5 YEAR),
+      last_amb_enc > DATE_SUB({{ fhir_dbt_utils.get_snapshot_date() }}, INTERVAL 5 YEAR),
       1,
       0) AS amb_enc_last_5_years_flag,
     IF(
-      last_amb_enc > DATE_SUB({{ get_snapshot_date() }}, INTERVAL 1 YEAR),
+      last_amb_enc > DATE_SUB({{ fhir_dbt_utils.get_snapshot_date() }}, INTERVAL 1 YEAR),
       1,
       0) AS amb_enc_last_1_year_flag,
     IF(
-      last_amb_enc > DATE_SUB({{ get_snapshot_date() }}, INTERVAL 6 MONTH),
+      last_amb_enc > DATE_SUB({{ fhir_dbt_utils.get_snapshot_date() }}, INTERVAL 6 MONTH),
       1,
       0) AS amb_enc_last_6_month_flag,
     IF(
-      last_amb_enc > DATE_SUB({{ get_snapshot_date() }}, INTERVAL 3 MONTH),
+      last_amb_enc > DATE_SUB({{ fhir_dbt_utils.get_snapshot_date() }}, INTERVAL 3 MONTH),
       1,
       0) AS amb_enc_last_3_month_flag,
     enc.encounter_lookback_years,
@@ -113,7 +113,7 @@ WITH pp AS(
     cp.cpt_pc_list,
     cp.icd_pc_struct_list,
     cp.cpt_pc_struct_list,
-    DATETIME_TRUNC(CURRENT_DATETIME(), MINUTE) AS last_run
+    DATETIME_TRUNC(fhir_dbt_utils.current_datetime(), MINUTE) AS last_run
   FROM {{ ref('latest_demographics') }} ld
   LEFT JOIN {{ ref('encounter_aggregate') }} enc
     ON enc.master_patient_id = ld.master_patient_id

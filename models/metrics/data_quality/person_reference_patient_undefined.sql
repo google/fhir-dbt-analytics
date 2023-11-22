@@ -36,7 +36,7 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       CAST({{ get_column_or_default('active') }} AS STRING) person_active,
       CAST({{ get_column_or_default('gender') }} AS STRING) as person_gender,
-      ( SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest("link", "PL")) }} WHERE PL.target.patientId IS NOT NULL ) AS has_patient_id
+      ( SELECT SIGN(COUNT(*)) FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest("link", "PL")) }} WHERE PL.target.patientId IS NOT NULL ) AS has_patient_id
     FROM {{ ref('Person') }}
 {%- endset -%}
 

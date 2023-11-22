@@ -27,7 +27,7 @@ UnionedMetrics AS (
 ),
 
 Execution AS (
-  SELECT {{ uuid() }} AS execution_id,
+  SELECT {{ fhir_dbt_utils.uuid() }} AS execution_id,
   CURRENT_DATE() AS execution_date
 )
 

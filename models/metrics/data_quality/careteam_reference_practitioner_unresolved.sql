@@ -30,6 +30,8 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Practitioner') }}
+
 {%- set metric_sql -%}
     SELECT
       id,
@@ -37,13 +39,13 @@ limitations under the License. */
       {{ get_column_or_default('status') }} AS status,
       (
         SELECT SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(unnest("C.participant", "CP")) }}
+        FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest("C.participant", "CP")) }}
         WHERE CP.member.practitionerId IS NOT NULL
         AND CP.member.practitionerId <> ''
       ) AS has_reference_value,
       (
         SELECT SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(unnest("C.participant", "CP")) }}
+        FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest("C.participant", "CP")) }}
         JOIN {{ ref('Practitioner') }} AS P
           ON CP.member.practitionerId = P.id
       ) AS reference_resolves

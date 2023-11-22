@@ -38,33 +38,29 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status as status,
-      COALESCE({{ code_from_codeableconcept(
+      COALESCE({{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'https://g.co/fhir/harmonized/diagnostic_report/category',
-        index = get_source_specific_category_index()
+        'https://g.co/fhir/harmonized/diagnostic_report/category'
       ) }},
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'http://snomed.info/sct,',
-        index = get_source_specific_category_index()
+        'http://snomed.info/sct,'
       ) }},
-       {{ code_from_codeableconcept(
+       {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'http://terminology.hl7.org/CodeSystem/v2-0074,',
-        index = get_source_specific_category_index()
+        'http://terminology.hl7.org/CodeSystem/v2-0074,'
       ) }},
-       {{ code_from_codeableconcept(
+       {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'http://loinc.org,',
-        index = get_source_specific_category_index()
+        'http://loinc.org,'
       ) }}, 'Undefined')
        AS category,
-      {{ safe_offset("presentedForm", 0) }}.data IS NOT NULL AS has_inlined_attachment
+      {{ fhir_dbt_utils.safe_offset("presentedForm", 0) }}.data IS NOT NULL AS has_inlined_attachment
     FROM {{ ref('DiagnosticReport') }} AS D
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(CAST(has_inlined_attachment AS '~type_long()~'))',
+    numerator = 'SUM(CAST(has_inlined_attachment AS '~fhir_dbt_utils.type_long()~'))',
     denominator = 'COUNT(id)'
 ) }}

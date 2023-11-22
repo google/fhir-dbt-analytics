@@ -14,7 +14,7 @@
 
 {% macro get_medication(codeable_concept_field, code_system = None)-%}
 
-  {%- if column_exists('medication.reference.medicationid') and column_exists('medication.codeableConcept')%}
+  {%- if fhir_dbt_utils.field_exists('medication.reference.medicationid') and fhir_dbt_utils.field_exists('medication.codeableConcept')%}
 
     {%- if codeable_concept_field == 'text' %}
     IF(medication.reference.medicationid IS NOT NULL,
@@ -33,7 +33,7 @@
       )
     {%- endif %}
 
-  {%- elif column_exists('medication.codeableConcept') %}
+  {%- elif fhir_dbt_utils.field_exists('medication.codeableConcept') %}
 
     {%- if codeable_concept_field == 'text' %}
       medication.codeableConcept.text

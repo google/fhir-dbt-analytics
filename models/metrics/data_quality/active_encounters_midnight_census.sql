@@ -36,9 +36,9 @@ limitations under the License. */
       Episode AS (
         SELECT
           E.id,
-          {{- metric_common_dimensions(exclude_col='metric_date')|indent(8) }}
-          {{ metric_date(['C.period.start', 'E.period.start']) }} AS period_start,
-          {{ metric_date(['C.period.end', 'E.period.end']) }} AS period_end,
+          {{- metric_common_dimensions(include_metric_date=False)|indent(8) }}
+          {{ fhir_dbt_utils.metric_date(['C.period.start', 'E.period.start']) }} AS period_start,
+          {{ fhir_dbt_utils.metric_date(['C.period.end', 'E.period.end']) }} AS period_end,
           E.status AS encounter_status,
           CASE
             WHEN UPPER(COALESCE(C.class.code, E.class.code)) IN ('IMP', 'ACUTE', 'NONAC') THEN 'IMP/ACUTE/NONAC'
@@ -57,7 +57,9 @@ limitations under the License. */
 
     SELECT
       Episode.id,
-      {{- metric_common_dimensions(exclude_col='metric_date')|indent }}
+      Episode.site,
+      Episode.source_system,
+      Episode.fhir_mapping,
       DS.date_day AS metric_date,
       Episode.episode_class,
       Episode.encounter_service_provider,

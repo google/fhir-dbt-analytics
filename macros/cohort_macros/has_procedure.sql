@@ -23,7 +23,7 @@
       LOWER(L.group) AS clinical_group_name,
       P.code.text AS free_text_name,
       cc.code AS code,
-      COALESCE({{ metric_date(['performed.dateTime']) }}, {{ metric_date(['performed.period.start']) }}) AS clinical_date,
+      COALESCE({{ fhir_dbt_utils.metric_date(['performed.dateTime']) }}, {{ fhir_dbt_utils.metric_date(['performed.period.start']) }}) AS clinical_date,
   ) AS summary_struct
   {%- else -%}
   EXISTS (
@@ -46,8 +46,8 @@
     AND patient_join_key = P.subject.patientId
     {%- endif %}
   {%- if lookback != None %}
-    AND COALESCE({{ metric_date(['performed.dateTime']) }}, 
-                 {{ metric_date(['performed.period.start']) }}) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+    AND COALESCE({{ fhir_dbt_utils.metric_date(['performed.dateTime']) }}, 
+                 {{ fhir_dbt_utils.metric_date(['performed.period.start']) }}) >= {{ fhir_dbt_utils.get_snapshot_date() }} - INTERVAL {{ lookback }}
     {%- endif %}
     AND P.status NOT IN ('entered-in-error','not-done')
   )

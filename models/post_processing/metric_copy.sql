@@ -22,7 +22,22 @@ limitations under the License. */
 
 {% if adapter.get_relation(this.database, this.schema, 'metric') %}
 {# Can't use `ref` because that would cause a cycle. #}
-SELECT * FROM {{ table_ref(this.database, this.schema, 'metric') }}
+SELECT
+  execution_id,
+  execution_date,
+  execution_datetime,
+  metric_name,
+  fhir_mapping,
+  source_system,
+  metric_date,
+  site,
+  dimension_a,
+  dimension_b,
+  dimension_c,
+  numerator,
+  denominator,
+  measure
+FROM {{ fhir_dbt_utils.table_ref(this.database, this.schema, 'metric') }}
 {% else %}
 SELECT "not found" AS dummy
 {% endif %}

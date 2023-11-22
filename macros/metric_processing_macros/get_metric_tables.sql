@@ -27,7 +27,7 @@
   {% set metric_names = run_query(metric_tables).columns[0].values() %}
   {% set metric_dict = {} %}
   {% for metric in metric_names %}
-    {{ metric_dict.update({ metric : table_ref(target.project, target.schema, metric) } )}}
+    {{ metric_dict.update({ metric : fhir_dbt_utils.table_ref(target.project, target.schema, metric) } )}}
   {% endfor %}
 
   {{ return(metric_dict) }}
@@ -47,7 +47,7 @@
      if node.resource_type == 'model'
      and node.path.startswith('metrics/')
      and node.name in metrics %}
-     {{ metric_dict.update({ node.name : table_ref("", target.schema, node.name) }) }}
+     {{ metric_dict.update({ node.name : fhir_dbt_utils.table_ref("", target.schema, node.name) }) }}
   {% endfor %}
   {{ return (metric_dict) }}
 {% endmacro %}

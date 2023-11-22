@@ -35,9 +35,9 @@ limitations under the License. */
     FROM ({{ active_encounters() }}) AS ActiveEncounters
     LEFT JOIN {{ ref('CareTeam') }} AS C
       ON ActiveEncounters.id = C.encounter.encounterId
-      AND ActiveEncounters.metric_date >= {{ metric_date(['C.period.start']) }}
+      AND ActiveEncounters.metric_date >= {{ fhir_dbt_utils.metric_date(['C.period.start']) }}
       AND (
-        ActiveEncounters.metric_date <= {{ metric_date(['C.period.end']) }}
+        ActiveEncounters.metric_date <= {{ fhir_dbt_utils.metric_date(['C.period.end']) }}
         OR C.period.end IS NULL
         OR C.period.end = ''
       )

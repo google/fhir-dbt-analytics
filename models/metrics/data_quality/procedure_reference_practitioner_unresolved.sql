@@ -37,13 +37,13 @@ limitations under the License. */
       status,
       (
         SELECT SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(unnest("P.performer", "PP")) }}
+        FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest("P.performer", "PP")) }}
         WHERE PP.actor.practitionerId IS NOT NULL
         AND PP.actor.practitionerId <> ''
       ) AS has_reference_practitioner,
       (
         SELECT SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(unnest("P.performer", "PP")) }}
+        FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest("P.performer", "PP")) }}
         JOIN {{ ref('Practitioner') }} AS P
           ON PP.actor.practitionerId = P.id
       ) AS reference_practitioner_resolved

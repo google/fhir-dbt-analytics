@@ -39,12 +39,12 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status as document_status,
-      {%- if column_exists('content.format.code') %}
-      {{ safe_offset("content", 0) }}.format.code AS format
+      {%- if fhir_dbt_utils.field_exists('content.format.code') %}
+      {{ fhir_dbt_utils.safe_offset("content", 0) }}.format.code AS format
       {%- else %}
       NULL AS format
       {%- endif %},
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'type',
         'http://loinc.org'
       ) }} AS type

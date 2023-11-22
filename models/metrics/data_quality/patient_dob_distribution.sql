@@ -31,7 +31,7 @@ limitations under the License. */
     SELECT
       id,
       {{- metric_common_dimensions() }}
-      CAST(ROUND(SAFE_CAST(SUBSTR(P.birthdate,0,4) AS {{ type_long() }}),-1) AS STRING) AS decade,
+      CAST(ROUND(SAFE_CAST(SUBSTR(P.birthdate,0,4) AS {{ fhir_dbt_utils.type_long() }}),-1) AS STRING) AS decade,
     FROM {{ ref('Patient') }} AS P
 {%- endset -%}
 

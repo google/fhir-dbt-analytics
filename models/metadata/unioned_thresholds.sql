@@ -13,7 +13,7 @@ limitations under the License. */
 {{ config(
     materialized='view'
 ) -}}
-{%- set models_dict = get_dbt_objects('seed') -%}
+{%- set models_dict = fhir_dbt_utils.get_dbt_objects('seed') -%}
 {%- set threshold_relations = [] -%}
 {%- for name, path in models_dict.items()
   if name[:10] == 'thresholds'
@@ -30,8 +30,8 @@ limitations under the License. */
     source_column_name = "thresholds_source",
     column_override = {
       "metric_name": "STRING",
-      "threshold_low": type_double(),
-      "threshold_high": type_double(),
+      "threshold_low": fhir_dbt_utils.type_double(),
+      "threshold_high": fhir_dbt_utils.type_double(),
       "time_grain": "STRING",
       "dimension": "STRING",
       "validation_feature": "STRING",

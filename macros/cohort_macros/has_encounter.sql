@@ -18,28 +18,28 @@
   (SELECT AS STRUCT
     E.id,
     E.subject.patientid,
-    ({{ code_from_codeableconcept('e.hospitalization.dischargeDisposition', 'http://terminology.hl7.org/CodeSystem/discharge-disposition', 'Encounter') }}) AS discharge_disposition,
-    {{ metric_date(['period.start']) }} AS start_date,
-    {{ metric_date(['period.end']) }} AS end_date,
+    ({{ fhir_dbt_utils.code_from_codeableconcept('e.hospitalization.dischargeDisposition', 'http://terminology.hl7.org/CodeSystem/discharge-disposition', 'Encounter') }}) AS discharge_disposition,
+    {{ fhir_dbt_utils.metric_date(['period.start']) }} AS start_date,
+    {{ fhir_dbt_utils.metric_date(['period.end']) }} AS end_date,
     e.status,
     e.class.code AS class,
-    {%- if column_exists('serviceType','Encounter') %}
+    {%- if fhir_dbt_utils.field_exists('serviceType','Encounter') %}
     e.serviceType.text AS service,
     {%- else %}
     CAST(NULL AS STRING) AS service,
     {%- endif %}
-    {%- if column_exists('classHistory','Encounter') %}
+    {%- if fhir_dbt_utils.field_exists('classHistory','Encounter') %}
     IF('EMER' IN (SELECT class.code FROM UNNEST(classHistory)) OR class.code = 'EMER', TRUE, FALSE)
     AS  emergency_adm_flag,
     {%- else %}
     IF(class.code = 'EMER', TRUE, FALSE) AS  emergency_adm_flag,
     {%- endif %}
     IF( e.period.end IS NOT NULL
-        AND {{ metric_date(['period.end']) }} < {{ get_snapshot_date() }}
+        AND {{ fhir_dbt_utils.metric_date(['period.end']) }} < {{ fhir_dbt_utils.get_snapshot_date() }}
         AND e.period.end <> '',
         DATE_DIFF(
-          {{ metric_date(['period.end']) }},
-          {{ metric_date(['period.start']) }},
+          {{ fhir_dbt_utils.metric_date(['period.end']) }},
+          {{ fhir_dbt_utils.metric_date(['period.start']) }},
           DAY), NULL
     ) AS LOS
   ) AS encounter
@@ -63,9 +63,9 @@
   AND class.code {{ sql_comparison_expression(class) }}
   {%- endif %}
   {%- if cohort_snapshot_date != None %}
-  AND DATE(E.period.start) <= {{ get_snapshot_date() }}
+  AND DATE(E.period.start) <= {{ fhir_dbt_utils.get_snapshot_date() }}
   {%- if lookback != None %}
-  AND DATE(E.period.start) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }} YEAR
+  AND DATE(E.period.start) >= {{ fhir_dbt_utils.get_snapshot_date() }} - INTERVAL {{ lookback }} YEAR
   {%- endif %}
   {%- endif %}
 )

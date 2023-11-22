@@ -37,8 +37,8 @@ limitations under the License. */
       D.id,
       {{- metric_common_dimensions() }}
       status as document_status,
-      {%- if column_exists('content.attachment.contentType') %}
-      {{ safe_offset("content", 0) }}.attachment.contentType AS mime_type
+      {%- if fhir_dbt_utils.field_exists('content.attachment.contentType') %}
+      {{ fhir_dbt_utils.safe_offset("content", 0) }}.attachment.contentType AS mime_type
       {%- else %}
       NULL AS mime_type
       {%- endif %}

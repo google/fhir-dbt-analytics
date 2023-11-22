@@ -32,15 +32,16 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Patient') }}
+
 {%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       status,
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'https://g.co/fhir/harmonized/diagnostic_report/category',
-        index = get_source_specific_category_index()
+        'https://g.co/fhir/harmonized/diagnostic_report/category'
       ) }} AS category,
       {{ has_reference_value('subject', 'Patient') }} AS has_reference_value,
       {{ reference_resolves('subject', 'Patient') }} AS reference_resolves

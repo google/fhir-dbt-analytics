@@ -37,10 +37,9 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       status,
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'https://g.co/fhir/harmonized/diagnostic_report/category',
-        index = get_source_specific_category_index()
+        'https://g.co/fhir/harmonized/diagnostic_report/category'
       ) }} AS category,
       {{ has_reference_value('encounter', 'Encounter') }} AS has_reference_value
     FROM {{ ref('DiagnosticReport') }} AS D

@@ -21,9 +21,9 @@
       LOWER(L.group_type) AS clinical_group_type,
       LOWER(L.group) AS clinical_group_name,
       cc.code AS code,
-      {{ metric_date(['recordedDate']) }} AS clinical_date,
-      {%- if column_exists('onset.dateTime', 'Condition') %}
-      {{ metric_date(['onset.dateTime']) }} AS onset_date
+      {{ fhir_dbt_utils.metric_date(['recordedDate']) }} AS clinical_date,
+      {%- if fhir_dbt_utils.field_exists('onset.dateTime', 'Condition') %}
+      {{ fhir_dbt_utils.metric_date(['onset.dateTime']) }} AS onset_date
       {%- else -%}
       (NULL) AS onset_date
       {%- endif %}
@@ -49,11 +49,11 @@
     AND patient_join_key = C.subject.patientId
   {%- endif %}
   {%- if lookback != None %}
-    AND DATE(C.recordedDate) >= {{ get_snapshot_date() }} - INTERVAL {{ lookback }}
+    AND DATE(C.recordedDate) >= {{ fhir_dbt_utils.get_snapshot_date() }} - INTERVAL {{ lookback }}
   {%- endif %}
     AND (
       C.verificationStatus IS NULL
-      OR {{ code_from_codeableconcept(
+      OR {{ fhir_dbt_utils.code_from_codeableconcept(
            'verificationStatus',
            'http://terminology.hl7.org/CodeSystem/condition-ver-status',
            'Condition'

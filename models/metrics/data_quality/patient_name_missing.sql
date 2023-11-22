@@ -33,7 +33,7 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       CAST({{ get_column_or_default('active') }} AS STRING) AS active,
-      CASE WHEN P.name IS NULL OR ARRAY_LENGTH(P.name) = 0 OR {{ safe_offset("P.name", 0) }}.family IS NULL OR {{ safe_offset("P.name", 0) }}.family = '' OR {{ safe_offset("P.name", 0) }}.given IS NULL OR ARRAY_LENGTH({{ safe_offset("P.name", 0) }}.given) = 0 OR {{ safe_offset("P.name", 0) }}{{ safe_offset(".given", 0) }} = '' THEN 1 ELSE 0 END AS patient_structured_name_missing
+      CASE WHEN P.name IS NULL OR ARRAY_LENGTH(P.name) = 0 OR {{ fhir_dbt_utils.safe_offset("P.name", 0) }}.family IS NULL OR {{ fhir_dbt_utils.safe_offset("P.name", 0) }}.family = '' OR {{ fhir_dbt_utils.safe_offset("P.name", 0) }}.given IS NULL OR ARRAY_LENGTH({{ fhir_dbt_utils.safe_offset("P.name", 0) }}.given) = 0 OR {{ fhir_dbt_utils.safe_offset("P.name", 0) }}{{ fhir_dbt_utils.safe_offset(".given", 0) }} = '' THEN 1 ELSE 0 END AS patient_structured_name_missing
 
     FROM {{ ref('Patient') }} AS P
 {%- endset -%}

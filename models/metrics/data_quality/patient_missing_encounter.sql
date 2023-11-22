@@ -30,7 +30,7 @@ limitations under the License. */
 {%- set metric_sql -%}
     SELECT
       P.id,
-      {{- metric_common_dimensions(table_alias='P', exclude_col='metric_date') }}
+      {{- metric_common_dimensions(table_alias='P', include_metric_date=False) }}
       CAST(NULL AS DATE) AS metric_date,
       CAST( {{ get_column_or_default('P.active') }} AS STRING) AS active,
       SIGN(SUM(CASE WHEN E.id IS NULL THEN 0 ELSE 1 END)) AS patient_missing_encounter
@@ -39,7 +39,7 @@ limitations under the License. */
       ON E.subject.patientid=P.id
       AND UPPER(E.status) NOT IN ('ENTERED-IN-ERROR')
       AND UPPER(class.code) IN ('IMP', 'ACUTE', 'NONAC', 'SS', 'OBSENC', 'EMER', 'IMPPS', 'IMPRE','AMB')
-      GROUP BY 1, 2, 3, 4, 5, 6, 7
+      GROUP BY 1, 2, 3, 4, 5, 6
 {%- endset -%}
 
 {{ calculate_metric(

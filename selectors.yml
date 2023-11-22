@@ -25,8 +25,8 @@ selectors:
         - method: path
           value: models/metrics/
           parents: true
-        - method: path
-          value: models/fhir_resources/
+        - method: package
+          value: fhir_dbt_utils
         - method: path
           value: models/metadata/
         - method: path
@@ -37,11 +37,11 @@ selectors:
   # Selectors for pipeline transformations outside of execution of metrics
 
   - name: fhir_resources
-    description: "Views and CTEs for each FHIR resource"
+    description: "Views for each FHIR resource"
     definition:
       union:
-        - method: path
-          value: models/fhir_resources/
+        - method: package
+          value: fhir_dbt_utils
 
   - name: metadata
     description: "Project and metric metadata"
@@ -88,8 +88,8 @@ selectors:
     description: "Subset of metrics to include in tests"
     definition:
       union:
-        - method: path
-          value: models/fhir_resources/
+        - method: package
+          value: fhir_dbt_utils
         - method: path
           value: models/metadata/
         - method: path

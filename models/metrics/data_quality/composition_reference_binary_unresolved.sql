@@ -30,6 +30,8 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Binary') }}
+
 {%- set metric_sql -%}
     SELECT
       id,
@@ -37,17 +39,17 @@ limitations under the License. */
       status,
       (
         SELECT SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(unnest_multiple([
-          array_config("C.section", "CS"),
-          array_config("CS.entry", "CSE")])) }}
+        FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest_multiple([
+          fhir_dbt_utils.array_config("C.section", "CS"),
+          fhir_dbt_utils.array_config("CS.entry", "CSE")])) }}
         WHERE CSE.binaryid IS NOT NULL
         AND CSE.binaryid <> ''
       ) AS has_reference_value,
       (
         SELECT SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(unnest_multiple([
-          array_config("C.section", "CS"),
-          array_config("CS.entry", "CSE")])) }}
+        FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest_multiple([
+          fhir_dbt_utils.array_config("C.section", "CS"),
+          fhir_dbt_utils.array_config("CS.entry", "CSE")])) }}
         JOIN {{ ref('Binary') }} AS B
           ON CSE.binaryid = B.id
       ) AS reference_resolves

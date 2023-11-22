@@ -76,7 +76,7 @@ limitations under the License. */
         (
          c.verificationStatus IS NULL
         OR
-          {{ code_from_codeableconcept(
+          {{ fhir_dbt_utils.code_from_codeableconcept(
           'verificationStatus',
           'http://terminology.hl7.org/CodeSystem/condition-ver-status',
           'Condition'

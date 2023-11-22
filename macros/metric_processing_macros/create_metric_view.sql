@@ -30,8 +30,8 @@ SELECT
   D.description,
   D.short_description,
   D.primary_resource,
-  {{ array_join("D.primary_fields", ",") }} AS primary_fields,
-  {{ array_join("D.secondary_resources", ",") }} AS secondary_resources,
+  {{ fhir_dbt_utils.array_join("D.primary_fields", ",") }} AS primary_fields,
+  {{ fhir_dbt_utils.array_join("D.secondary_resources", ",") }} AS secondary_resources,
   D.category,
   D.calculation,
   M.source_system,
@@ -61,21 +61,21 @@ SELECT
 {#- dimension segments -#}
 {%- if 'dimension_a' in segment_by_dimensions %}
   {%- set group_by_count = group_by_count + 3 %}
-  {{ snake_case_to_proper_case('D.dimension_a') }} AS dimension_a_name,
+  {{ fhir_dbt_utils.snake_case_to_proper_case('D.dimension_a') }} AS dimension_a_name,
   D.dimension_a_description,
   M.dimension_a,
 {%- endif -%}
 
 {%- if 'dimension_b' in segment_by_dimensions %}
   {%- set group_by_count = group_by_count + 3 %}
-  {{ snake_case_to_proper_case('D.dimension_b') }} AS dimension_b_name,
+  {{ fhir_dbt_utils.snake_case_to_proper_case('D.dimension_b') }} AS dimension_b_name,
   D.dimension_b_description,
   M.dimension_b,
 {%- endif -%}
 
 {%- if 'dimension_c' in segment_by_dimensions %}
   {%- set group_by_count = group_by_count + 3 %}
-  {{ snake_case_to_proper_case('D.dimension_c') }} AS dimension_c_name,
+  {{ fhir_dbt_utils.snake_case_to_proper_case('D.dimension_c') }} AS dimension_c_name,
   D.dimension_c_description,
   M.dimension_c,
 {%- endif -%}

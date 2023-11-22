@@ -30,7 +30,7 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       (
-        SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest('P.meta.security', 's')) }}
+        SELECT SIGN(COUNT(*)) FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest('P.meta.security', 's')) }}
         WHERE s.system = 'http://terminology.hl7.org/CodeSystem/v3-ActReason'
           AND s.code = 'HTEST'
       )

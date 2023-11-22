@@ -32,11 +32,11 @@ limitations under the License. */
       id,
       {{- metric_common_dimensions() }}
       CAST({{ get_column_or_default('active') }} AS STRING) AS active,
-      {%- if column_exists('identifier.type') %}
+      {%- if fhir_dbt_utils.field_exists('identifier.type') %}
       (
         SELECT 1 - SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(
-          unnest_multiple([array_config('identifier', 'i'), array_config('i.type.coding', 't')])
+        FROM {{ fhir_dbt_utils.spark_parenthesis(
+          fhir_dbt_utils.unnest_multiple([fhir_dbt_utils.array_config('identifier', 'i'), fhir_dbt_utils.array_config('i.type.coding', 't')])
         )}}
         WHERE i.value IS NOT NULL AND i.value <> ''
           AND t.system = 'http://terminology.hl7.org/CodeSystem/v2-0203'

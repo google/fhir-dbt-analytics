@@ -32,12 +32,14 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Patient') }}
+
 {%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
-      {{ code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical') }} AS clinical_status,
-      {{ code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification') }} AS verification_status,
+      {{ fhir_dbt_utils.code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical') }} AS clinical_status,
+      {{ fhir_dbt_utils.code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification') }} AS verification_status,
       {{ has_reference_value('patient', 'Patient') }} AS has_reference_value,
       {{ reference_resolves('patient', 'Patient') }} AS reference_resolves
     FROM {{ ref('AllergyIntolerance') }} AS A

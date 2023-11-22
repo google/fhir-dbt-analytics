@@ -16,39 +16,6 @@ version: 2
 
 models:
 
-  - name: fhir_table_list
-
-    description: |
-      Creates a table that lists all FHIR resource tables that are located in the `database` and
-      `schema` specified within `dbt_project.yml`.
-
-    columns:
-
-      - name: bq_project
-        description: BigQuery project name (equivalent of dbt database).
-
-      - name: bq_dataset
-        description: BigQuery dataset name (equivalent of dbt schema).
-
-      - name: bq_table
-        description: BigQuery table name.
-
-      - name: fully_qualified_bq_table
-        description: Full BigQuery table name including project, dataset and table.
-
-      - name: fhir_resource
-        description: FHIR resource name.
-
-      - name: map_name
-        description: Name of mapping that generated FHIR resource.
-
-      - name: latest_version
-        description: Flag for whether this is the latest table for a given FHIR mapping.
-
-      - name: creation_time
-        description: Timestamp for creation of table.
-
-
   - name: metric_definition
 
     description: |

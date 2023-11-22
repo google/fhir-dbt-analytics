@@ -21,8 +21,8 @@ SELECT
     "{{ node.config.meta.description }}" AS description,
     "{{ node.config.meta.short_description }}" AS short_description,
     "{{ node.config.meta.primary_resource }}" AS primary_resource,
-    {{ dbt.array_construct(quote_array(node.config.meta.primary_fields)) }} AS primary_fields,
-    {{ dbt.array_construct(quote_array(node.config.meta.secondary_resources))
+    {{ dbt.array_construct(fhir_dbt_utils.quote_array(node.config.meta.primary_fields)) }} AS primary_fields,
+    {{ dbt.array_construct(fhir_dbt_utils.quote_array(node.config.meta.secondary_resources))
        if node.config.meta.secondary_resources else 'NULL' }} AS secondary_resources,
     "{{ node.config.meta.category }}" AS category,
     "{{ node.config.meta.calculation }}" AS calculation,

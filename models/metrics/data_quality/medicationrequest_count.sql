@@ -40,10 +40,9 @@ limitations under the License. */
       {{- metric_common_dimensions() }}
       status,
       intent,
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
-        'http://terminology.hl7.org/CodeSystem/medicationrequest-category',
-        index = get_source_specific_category_index()) }} AS category
+        'http://terminology.hl7.org/CodeSystem/medicationrequest-category') }} AS category
       FROM {{ ref('MedicationRequest') }}
 {%- endset -%}
 

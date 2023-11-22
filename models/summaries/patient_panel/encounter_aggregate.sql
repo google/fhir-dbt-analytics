@@ -27,7 +27,7 @@ SELECT
     DISTINCT
       IF(
         e.class = 'AMB'
-          AND e.start_date > DATE_SUB({{get_snapshot_date()}}, INTERVAL {{ var('encounter_lookback_years')}}  YEAR),
+          AND e.start_date > DATE_SUB({{fhir_dbt_utils.get_snapshot_date()}}, INTERVAL {{ var('encounter_lookback_years')}}  YEAR),
         e.encounter_id,
         NULL)) AS num_amb_enc_last_lookback_yrs,
   MIN(IF(e.class = 'IMP', e.start_date, NULL)) AS first_imp_enc,
@@ -37,7 +37,7 @@ SELECT
     DISTINCT
       IF(
         e.class = 'IMP'
-          AND e.start_date > DATE_SUB({{get_snapshot_date()}}, INTERVAL {{ var('encounter_lookback_years') }} YEAR),
+          AND e.start_date > DATE_SUB({{fhir_dbt_utils.get_snapshot_date()}}, INTERVAL {{ var('encounter_lookback_years') }} YEAR),
         e.encounter_id,
         NULL)) AS num_imp_enc_last_lookback_yrs,
   MIN(IF(e.class = 'EMER', e.start_date, NULL)) AS first_emer_discharge,
@@ -46,7 +46,7 @@ SELECT
     DISTINCT
       IF(
         e.class = 'EMER'
-          AND e.start_date > DATE_SUB({{get_snapshot_date()}}, INTERVAL {{ var('encounter_lookback_years') }} YEAR),
+          AND e.start_date > DATE_SUB({{fhir_dbt_utils.get_snapshot_date()}}, INTERVAL {{ var('encounter_lookback_years') }} YEAR),
         e.encounter_id,
         NULL)) AS num_emer_discharge_last_lookback_yrs,
   MIN(IF(emergency_adm_flag = TRUE, e.start_date, NULL))
@@ -57,7 +57,7 @@ SELECT
     DISTINCT
       IF(
         (emergency_adm_flag = TRUE)
-          AND e.start_date > DATE_SUB({{get_snapshot_date()}}, INTERVAL {{ var('encounter_lookback_years') }} YEAR),
+          AND e.start_date > DATE_SUB({{fhir_dbt_utils.get_snapshot_date()}}, INTERVAL {{ var('encounter_lookback_years') }} YEAR),
         e.encounter_id,
         NULL))
     AS num_emer_admission_last_lookback_yrs,

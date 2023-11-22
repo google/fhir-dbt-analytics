@@ -129,5 +129,5 @@ Once you have a good understanding of the [project structure](https://github.com
 
 -   You can use the macros in the `macros/fhir_analysis_macros/` folder to help
     analyze your FHIR data. For example, you can extract clinical codes from
-    FHIR codeable concept fields using `{{ code_from_codeableconcept(field_name,
+    FHIR codeable concept fields using `{{ fhir_dbt_utils.code_from_codeableconcept(field_name,
     code_system) }}`.

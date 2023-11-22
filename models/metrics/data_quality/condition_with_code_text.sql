@@ -36,14 +36,14 @@ limitations under the License. */
     SELECT
       id,
       {{- metric_common_dimensions() }}
-      {{ code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/condition-clinical') }} AS clinical_status,
-      {{ code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/condition-ver-status') }} AS verification_status,
-      {{ has_value('C.code.text') }} AS has_code_text
+      {{ fhir_dbt_utils.code_from_codeableconcept('clinicalStatus', 'http://terminology.hl7.org/CodeSystem/condition-clinical') }} AS clinical_status,
+      {{ fhir_dbt_utils.code_from_codeableconcept('verificationStatus', 'http://terminology.hl7.org/CodeSystem/condition-ver-status') }} AS verification_status,
+      {{ fhir_dbt_utils.has_value('C.code.text') }} AS has_code_text
     FROM {{ ref('Condition') }} AS C
 {%- endset -%}
 
 {{ calculate_metric(
     metric_sql,
-    numerator = 'SUM(CAST(has_code_text AS '~type_long()~'))',
+    numerator = 'SUM(CAST(has_code_text AS '~fhir_dbt_utils.type_long()~'))',
     denominator = 'COUNT(id)'
 ) }}

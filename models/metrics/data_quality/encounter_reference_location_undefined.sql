@@ -40,7 +40,7 @@ limitations under the License. */
       class.code AS latest_encounter_class,
       (
         SELECT SIGN(COUNT(*))
-        FROM {{ spark_parenthesis(unnest("E.location", "EL")) }}
+        FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest("E.location", "EL")) }}
         WHERE EL.location.locationId IS NOT NULL
         AND EL.location.locationId <> ''
       ) AS has_reference_location

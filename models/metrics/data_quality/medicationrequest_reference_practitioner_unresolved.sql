@@ -34,16 +34,18 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('Practitioner') }}
+
 {%- set metric_sql -%}
     SELECT
       id,
       {{- metric_common_dimensions() }}
       status,
       intent,
-      {{ code_from_codeableconcept(
+      {{ fhir_dbt_utils.code_from_codeableconcept(
         'category',
         'http://terminology.hl7.org/CodeSystem/medicationrequest-category',
-        index = get_source_specific_category_index()
+
       ) }} AS category,
       {{ has_reference_value('requester', 'Practitioner') }} AS has_reference_value,
       {{ reference_resolves('requester', 'Practitioner') }} AS reference_resolves

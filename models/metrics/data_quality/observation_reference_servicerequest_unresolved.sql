@@ -32,6 +32,8 @@ limitations under the License. */
     }
 ) -}}
 
+-- depends_on: {{ ref('ServiceRequest') }}
+
 {%- set metric_sql -%}
     SELECT
       id,

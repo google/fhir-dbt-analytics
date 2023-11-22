@@ -25,10 +25,10 @@
 
 {%- if reference_column_is_array -%}
 
-  {%- if column_exists(direct_reference_path) -%}
-    (SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest(reference_column, "RC")) }} JOIN {{ref(reference_resource)}} AS RR ON RC.{{direct_reference}} = RR.id)
-  {%- elif column_exists(indirect_reference_path) -%}
-    (SELECT SIGN(COUNT(*)) FROM {{ spark_parenthesis(unnest(reference_column, "RC")) }} JOIN {{ref(reference_resource)}} AS RR ON RC.reference = RR.id AND RC.type = '{{reference_resource}}')
+  {%- if fhir_dbt_utils.field_exists(direct_reference_path) -%}
+    (SELECT SIGN(COUNT(*)) FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest(reference_column, "RC")) }} JOIN {{ref(reference_resource)}} AS RR ON RC.{{direct_reference}} = RR.id)
+  {%- elif fhir_dbt_utils.field_exists(indirect_reference_path) -%}
+    (SELECT SIGN(COUNT(*)) FROM {{ fhir_dbt_utils.spark_parenthesis(fhir_dbt_utils.unnest(reference_column, "RC")) }} JOIN {{ref(reference_resource)}} AS RR ON RC.reference = RR.id AND RC.type = '{{reference_resource}}')
   {%- else -%}
     0
   {%- endif -%}
@@ -51,9 +51,10 @@
 
 
 {% macro default___reference_resolves(direct_reference_path, indirect_reference_path, reference_resource, reference_column) -%}
-  {%- if column_exists(direct_reference_path) -%}
+
+  {%- if fhir_dbt_utils.field_exists(direct_reference_path) -%}
     IF({{direct_reference_path}} IN (SELECT id FROM {{ ref(reference_resource) }}), 1, 0)
-  {%- elif column_exists(indirect_reference_path) -%}
+  {%- elif fhir_dbt_utils.field_exists(indirect_reference_path) -%}
     IF({{reference_column}}.type = '{{reference_resource}}' AND {{indirect_reference_path}} IN (SELECT id FROM {{ref(reference_resource)}}), 1, 0)
   {%- else -%}
     0
@@ -62,9 +63,9 @@
 
 
 {% macro spark___reference_resolves(direct_reference_path, indirect_reference_path, reference_resource, reference_column) -%}
-  {%- if column_exists(direct_reference_path) -%}
+  {%- if fhir_dbt_utils.field_exists(direct_reference_path) -%}
     (SELECT SIGN(COUNT(*)) FROM {{ ref(reference_resource) }} WHERE id = {{direct_reference_path}})
-  {%- elif column_exists(indirect_reference_path) -%}
+  {%- elif fhir_dbt_utils.field_exists(indirect_reference_path) -%}
     (SELECT SIGN(COUNT(*)) FROM {{ ref(reference_resource) }} WHERE id = {{indirect_reference_path}} AND {{reference_column}}.type = '{{reference_resource}}')
   {%- else -%}
     0
