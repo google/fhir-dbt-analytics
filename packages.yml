@@ -20,4 +20,4 @@ packages:
   - package: calogica/dbt_expectations
     version: [">=0.8.5", "<0.9.0"]
   - package: google/fhir_dbt_utils
-    version: 1.0.4
+    version: 1.0.8
