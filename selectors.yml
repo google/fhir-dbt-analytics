@@ -56,6 +56,7 @@ selectors:
       union:
         - method: path
           value: models/post_processing/
+          parents: true
         - method: path
           value: models/metric_views/
 
@@ -88,14 +89,8 @@ selectors:
     description: "Subset of metrics to include in tests"
     definition:
       union:
-        - method: package
-          value: fhir_dbt_utils
-        - method: path
-          value: models/metadata/
-        - method: path
-          value: seeds/
-        - method: path
-          value: models/metrics/
+        - method: selector
+          value: all_metrics
         - exclude:
             - method: config.meta.category
               value: Active patients with resource
@@ -496,17 +491,17 @@ selectors:
         - method: path
           value: models/metadata/
 
+
+  # CROSS DB
+  # Selectors related to Apache Spark compatibility.
+
   - name: succeed_on_spark
-    description: Metrics which were tested to work fine on Spark.
+    description: Metrics which were tested to work fine on Spark with Synthea data.
     definition:
-      intersection:
+      union:
         - method: path
-          value: models/
-        - union:
-          - method: selector
-            value: all_metrics
-          - exclude:
-            - method: tag
-              value: spark_todo
-          - method: path
-            value: models/metadata/
+          value: models/metrics
+          parents: true
+        - exclude:
+          - method: tag
+            value: spark_todo

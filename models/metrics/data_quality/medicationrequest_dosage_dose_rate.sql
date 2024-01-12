@@ -15,6 +15,7 @@ limitations under the License. */
 #}
 
 {{ config(
+    tags = ["spark_todo"],
     meta = {
       "description": "Proportion of medication requests with dosage dose and rate recorded",
       "short_description": "MedReq dose and rate recorded",

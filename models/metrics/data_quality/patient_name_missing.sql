@@ -15,6 +15,7 @@ limitations under the License. */
 #}
 
 {{ config(
+    tags = ["spark_todo"],
     meta = {
       "description": "Proportion of patients without structured name",
       "short_description": "Patients missing struct name",

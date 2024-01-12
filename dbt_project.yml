@@ -56,7 +56,7 @@ vars:
   # Pipeline configurations
   persist_all_metric_executions: FALSE  # Whether to enable metric_all model which incrementally adds the output from every execution of the metrics pipeline. [boolean]
   drop_metric_tables: TRUE  # TRUE to drop intermediate metric tables. Pro: Fewer tables in the dataset. Con: Takes quite a bit of time.
-  print_why_metric_empty: FALSE  # Prints what inputs are missing for metrics.
+  print_why_metric_empty: TRUE  # Prints what inputs are missing for metrics.
   init_sources_fhir_resource_list: "Encounter,Observation,Patient"  # List of FHIR resources to call init_sources on.
   init_sources_parquet_location: ""  # File location with Parquet files for init_sources.
 
