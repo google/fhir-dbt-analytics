@@ -144,16 +144,22 @@ the structure defined by our data model and have required metadata recorded.
 
 ## Data visualization
 
-Running this dbt project in BigQuery writes outputs to tables and views within
-your target *project* and *dataset*, as defined in
+Running this dbt project writes outputs to tables and views within your target
+*project* and *dataset*, as defined in
 [profiles.yml](http://www.google.com/url?sa=D&q=https://docs.getdbt.com/reference/profiles.yml).
+The output tables and views can be connected to a data visualization tool to
+display and investigate the metrics.
 
-These tables and views can be connected to a data visualization tool to display
-and investigate the metrics. A template
-[Looker Studio](https://cloud.google.com/looker-studio) dashboard is available
-that you can clone and connect to your data.
+### Apache Superset
 
-### Clone Looker Studio dashboard
+A template Apache Superset dashboard is available that you can clone and connect
+to your data. Follow these [instructions](../dashboards/superset/README.md) for
+connecting an Apache Spark database.
+
+### Looker Studio
+
+A template [Looker Studio](https://cloud.google.com/looker-studio) dashboard is
+available that you can clone and connect to your data. We tested with BigQuery:
 
 1.  Copy the URL within the `looker_studio_url` column of the
     `project_variables` table written to your dataset.
@@ -165,8 +171,7 @@ that you can clone and connect to your data.
         bq query --nouse_legacy_sql 'SELECT looker_studio_url FROM `<GCP project>.<dataset>.project_variables`'
         ```
 
-    *   Click on the output (if clickable), or copy from console to the URL box
-        in a browser.
+    *   Click on the output (if clickable), or copy the URL to a browser.
 
 1.  This will make a copy of the dashboard that points to your data.
 
