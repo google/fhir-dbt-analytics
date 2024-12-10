@@ -21,7 +21,11 @@
       LOWER(L.group_type) AS clinical_group_type,
       LOWER(L.group) AS clinical_group_name,
       cc.code AS code,
+      {%- if var('fhir_version') == "STU3" %}
+      {{ fhir_dbt_utils.metric_date(['assertedDate']) }} AS clinical_date,
+      {%- else -%}
       {{ fhir_dbt_utils.metric_date(['recordedDate']) }} AS clinical_date,
+      {%- endif %}
       {%- if fhir_dbt_utils.field_exists('onset.dateTime', 'Condition') %}
       {{ fhir_dbt_utils.metric_date(['onset.dateTime']) }} AS onset_date
       {%- else -%}

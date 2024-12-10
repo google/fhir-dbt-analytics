@@ -13,14 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 #}
--- depends_on: {{ ref('site_timezones') }}
--- depends_on: {{ ref('Medication_view') }}
+-- depends_on: {{ ref('Medication') }}
 
 {{ config(
     materialized = 'table',
     enabled = var('patient_panel_enabled'),
     meta = {
-      "description": "Coverage for aki-specific medications"
+      "description": "Coverage for aki-specific medications",
+      "fhir_resource": "MedicationRequest"
       }
 ) -}}
 

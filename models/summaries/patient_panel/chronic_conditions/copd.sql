@@ -14,8 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 #}
 
--- depends_on: {{ ref('site_timezones') }}
-
 {{ config(
     materialized = 'table',
     enabled = var('patient_panel_enabled'),

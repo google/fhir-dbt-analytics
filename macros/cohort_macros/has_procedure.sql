@@ -18,7 +18,11 @@
   (SELECT AS STRUCT
       P.id,
       P.subject.patientid AS patient_id,
+      {%- if var('fhir_version') == "STU3" %}
+      P.context.encounterId AS encounter_id,
+      {%- else -%}
       P.encounter.encounterId AS encounter_id,
+      {%- endif %}
       LOWER(L.group_type) AS clinical_group_type,
       LOWER(L.group) AS clinical_group_name,
       P.code.text AS free_text_name,

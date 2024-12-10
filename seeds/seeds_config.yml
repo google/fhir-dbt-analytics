@@ -18,14 +18,6 @@ version: 2
 
 seeds:
 
-  - name: site_timezones
-    description: Mapping from site in meta.sourceIdentifier.system to timezone for that site.
-    columns:
-      - name: site
-        description: Name of site as stored in meta.sourceIdentifier.system.
-      - name: bq_timezone
-        description: BigQuery-valid timezone, see [list of valid tz database entries](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
-
   - name: clinical_code_groups
     description: Reference table mapping clinical codes to broader clinical groups.
     columns:

@@ -31,7 +31,7 @@ WITH empi AS (
       LEFT JOIN {{ ref('encounter_summary') }} e
         ON empi.patient_id = e.patient_id
   ),
-  ,patient_data AS (
+  patient_data AS (
       SELECT
         p.id AS patient_id,
         empi.master_patient_id,
@@ -80,7 +80,7 @@ WITH empi AS (
         CAST(NULL AS STRING) AS zipcode
         {%- endif %}
       FROM empi
-      JOIN {{ ref('Patient_view') }} p
+      JOIN {{ ref('Patient') }} p
         ON empi.patient_id = p.id
       {%- if fhir_dbt_utils.field_exists('active','Patient') %}
       WHERE
